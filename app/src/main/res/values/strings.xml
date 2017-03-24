@@ -9,4 +9,8 @@
     <string name="profile_location" />
     <string name="profile_date" />
     <string name="title_activity_map">Map</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_animals">Your Pets</string>
+    <string name="nav_listings">Listings</string>
+    <string name="nav_home">Home</string>
 </resources>
