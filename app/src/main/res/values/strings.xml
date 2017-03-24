@@ -10,5 +10,12 @@
     <string name="nav_animals">Your Pets</string>
     <string name="nav_listings">Listings</string>
     <string name="nav_home">Home</string>
+    <string name="post_name" />
+    <string name="post_color" />
+    <string name="post_location" />
+    <string name="post_email" />
+    <string name="post_date" />
+    <string name="post_phone" />
+    <string name="post_description" />
 
 </resources>
