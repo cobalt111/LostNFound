@@ -1,99 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <EditText
-                android:id="@+id/post_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="Name"
-                android:inputType="textPersonName"
-                android:text="@string/post_name" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/post_type_spinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                <EditText
+                    android:id="@+id/post_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Name"
+                    android:inputType="textPersonName"
+                    android:text="@string/post_name" />
+
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/postColor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:hint="Color"
+                    android:inputType="textPersonName"
+                    android:text="@string/post_color" />
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/postDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Date Lost"
+                android:inputType="date"
+                android:text="@string/post_date" />
+
+            <EditText
+                android:id="@+id/postLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/postEmail"
+                android:layout_marginTop="0dp"
+                android:ems="10"
+                android:hint="Last Location"
+                android:inputType="textPersonName"
+                android:text="@string/post_location" />
+
+            <EditText
+                android:id="@+id/postPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="phone"
+                android:text="@string/post_phone" />
+
+            <EditText
+                android:id="@+id/postEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:text="@string/post_email" />
+
+            <EditText
+                android:id="@+id/postDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Extra Info"
+                android:inputType="textMultiLine"
+                android:text="@string/post_description" />
 
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/postColor"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Color"
-            android:inputType="textPersonName"
-            android:text="@string/post_color" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/postDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Date Lost"
-            android:inputType="date"
-            android:text="@string/post_date" />
+            <TextView
+                android:id="@+id/postPicture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/post_picture"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium"
+                tools:text="Picture" />
 
-        <EditText
-            android:id="@+id/postLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/postEmail"
-            android:layout_marginTop="0dp"
-            android:ems="10"
-            android:hint="Last Location"
-            android:inputType="textPersonName"
-            android:text="@string/post_location" />
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Button" />
 
-        <EditText
-            android:id="@+id/postPhone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:ems="10"
-            android:hint="Phone"
-            android:inputType="phone"
-            android:text="@string/post_phone" />
+            <TextView
+                android:id="@+id/postType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/post_type"
+                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
 
-        <EditText
-            android:id="@+id/postEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
-            android:text="@string/post_email" />
+            <Spinner
+                android:id="@+id/post_type_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
-        <EditText
-            android:id="@+id/postDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Extra Info"
-            android:inputType="textMultiLine"
-            android:text="@string/post_description" />
+        </LinearLayout>
 
     </LinearLayout>
 

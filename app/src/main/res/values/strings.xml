@@ -17,5 +17,7 @@
     <string name="post_date" />
     <string name="post_phone" />
     <string name="post_description" />
+    <string name="post_type">Type</string>
+    <string name="post_picture" />
 
 </resources>
