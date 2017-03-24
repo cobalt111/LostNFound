@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">LostNFound</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="profile_name">Name</string>
+    <string name="profile_type">Dog</string>
+    <string name="profile_color" />
+    <string name="profile_location" />
+    <string name="profile_date" />
+    <string name="title_activity_map">Map</string>
+</resources>
