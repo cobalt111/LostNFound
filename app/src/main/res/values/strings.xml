@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Lost n' Found</string>
+    <string name="app_name">Lost n\' Found</string>
     <string name="profile_name">Name</string>
     <string name="profile_type">Dog</string>
     <string name="profile_color" />
