@@ -15,7 +15,6 @@ public class Search extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.nav_home);
                     Intent intentHome = new Intent(Search.this, MainActivity.class);
                     startActivity(intentHome);
                     return true;

@@ -4,8 +4,6 @@ package com.example.tim.lostnfound;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -16,7 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.google.firebase.database.DatabaseReference;
@@ -27,6 +25,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.content.Intent.EXTRA_TEXT;
+import static android.widget.Toast.LENGTH_LONG;
+
 
 public class Post extends AppCompatActivity {
 
@@ -36,7 +37,6 @@ public class Post extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.nav_home);
                     Intent intentHome = new Intent(Post.this, MainActivity.class);
                     startActivity(intentHome);
                     return true;
@@ -62,14 +62,16 @@ public class Post extends AppCompatActivity {
     private DatabaseReference ref = database.getReference("server/animals");
 
     private SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor = sharedPreferences.edit();
+    SharedPreferences.Editor editor;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
 
         Button picButton = (Button) findViewById(R.id.postPictureButton);
         picButton.setOnClickListener(new View.OnClickListener(){
@@ -83,10 +85,19 @@ public class Post extends AppCompatActivity {
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+
                 String animalID = onSubmitAnimal();
 
-                editor.putString("animal_id", animalID);
+                editor.putString("com.example.tim.lostnfound.animal_id", animalID);
                 editor.commit();
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
+                toast.show();
+
+                Intent intent = new Intent(Post.this, Profile.class);
+                intent.putExtra(EXTRA_TEXT, animalID);
+                startActivity(intent);
+
             }
         });
 
@@ -125,10 +136,10 @@ public class Post extends AppCompatActivity {
         //editText = (TextView) findViewById(R.id.postType);
         //animal.setType(textView.getText().toString());
 
-        animalRef.push().setValue(animal);
-        String postID = animalRef.getKey();
+        DatabaseReference newAnimalRef = animalRef.push();
+        newAnimalRef.setValue(animal);
 
-        return postID;
+        return newAnimalRef.getKey();
     }
 
 

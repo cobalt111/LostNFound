@@ -14,8 +14,6 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
             android:orientation="vertical">
 
             <LinearLayout
@@ -63,9 +61,6 @@
                 android:id="@+id/postLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/postEmail"
                 android:layout_marginTop="0dp"
                 android:ems="10"
                 android:hint="@string/post_hint_location"
@@ -124,7 +119,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:text="@string/post_pic_button" />
 
             <TextView
                 android:id="@+id/postType"

@@ -21,7 +21,6 @@ public class Profile extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.nav_home);
                     Intent intentHome = new Intent(Profile.this, MainActivity.class);
                     startActivity(intentHome);
                     return true;
@@ -42,8 +41,8 @@ public class Profile extends AppCompatActivity {
 
     };
 
-//    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-//    private DatabaseReference ref = database.getReference("server/animals");
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference ref = database.getReference("server/animals");
 
     SharedPreferences sharedPreferences;
 
@@ -52,9 +51,10 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
+        String test = sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed");
         TextView textView = (TextView) findViewById(R.id.profileTest);
-        textView.setText(sharedPreferences.getString("animal_id", "Failed"));
+        textView.setText(sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed"));
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);

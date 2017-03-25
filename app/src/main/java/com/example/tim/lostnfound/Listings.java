@@ -25,7 +25,6 @@ public class Listings extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-//                    mTextMessage.setText(R.string.nav_home);
                     Intent intentHome = new Intent(Listings.this, MainActivity.class);
                     startActivity(intentHome);
                     return true;
