@@ -24,11 +24,11 @@
                 android:orientation="horizontal">
 
                 <EditText
-                    android:id="@+id/post_name"
+                    android:id="@+id/postName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Name"
+                    android:hint="@string/post_hint_name"
                     android:inputType="textPersonName"
                     android:text="@string/post_name" />
 
@@ -44,7 +44,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ems="10"
-                    android:hint="Color"
+                    android:hint="@string/post_hint_color"
                     android:inputType="textPersonName"
                     android:text="@string/post_color" />
 
@@ -55,7 +55,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Date Lost"
+                android:hint="@string/post_hint_date"
                 android:inputType="date"
                 android:text="@string/post_date" />
 
@@ -68,7 +68,7 @@
                 android:layout_below="@+id/postEmail"
                 android:layout_marginTop="0dp"
                 android:ems="10"
-                android:hint="Last Location"
+                android:hint="@string/post_hint_location"
                 android:inputType="textPersonName"
                 android:text="@string/post_location" />
 
@@ -76,11 +76,8 @@
                 android:id="@+id/postPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:ems="10"
-                android:hint="Phone"
+                android:hint="@string/post_hint_phone"
                 android:inputType="phone"
                 android:text="@string/post_phone" />
 
@@ -89,7 +86,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Email"
+                android:hint="@string/post_hint_email"
                 android:inputType="textEmailAddress"
                 android:text="@string/post_email" />
 
@@ -98,9 +95,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:hint="Extra Info"
+                android:hint="@string/post_hint_description"
                 android:inputType="textMultiLine"
                 android:text="@string/post_description" />
+
+            <Button
+                android:id="@+id/postSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/post_submit" />
 
         </LinearLayout>
 
@@ -114,12 +117,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/post_picture"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium"
-                tools:text="Picture" />
+                android:text="@string/post_picture" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/postPictureButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -130,8 +131,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/post_type"
-                android:textAppearance="@android:style/TextAppearance.Material.Medium" />
+                android:text="@string/post_type" />
 
             <Spinner
                 android:id="@+id/post_type_spinner"
