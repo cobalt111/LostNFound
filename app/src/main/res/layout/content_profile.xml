@@ -3,14 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"></LinearLayout>
-
     <TextView
-        android:id="@+id/profileName"
-        android:layout_width="match_parent"
+        android:id="@+id/profileTest"
+        android:layout_width="284dp"
         android:layout_height="wrap_content"
-        android:text="@string/profile_name" />
+        android:text="TextView" />
+
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.example.tim.lostnfound;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -11,20 +12,23 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView mTextMessage;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    mTextMessage.setText(R.string.nav_home);
+//                    mTextMessage.setText(R.string.nav_home);
+                    Intent intentHome = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intentHome);
                     return true;
                 case R.id.navigation_listings:
-                    mTextMessage.setText(R.string.nav_animals);
+                    Intent intentListings = new Intent(MainActivity.this, Listings.class);
+                    startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
-                    mTextMessage.setText(R.string.nav_listings);
+                    Intent intentAnimals = new Intent(MainActivity.this, MainActivity.class);
+                    startActivity(intentAnimals);
                     return true;
 //                case R.id.navigation_map:
 //                    mTextMessage.setText(R.string.nav_map);
