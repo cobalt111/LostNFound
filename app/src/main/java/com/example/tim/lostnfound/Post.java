@@ -24,6 +24,8 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.Intent.EXTRA_TEXT;
 import static android.widget.Toast.LENGTH_LONG;
@@ -111,26 +113,26 @@ public class Post extends AppCompatActivity {
     private String onSubmitAnimal () {
 
         EditText editText;
-        NewAnimal animal = new NewAnimal();
+        Map<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
         editText = (EditText) findViewById(R.id.postName);
-        animal.setName(editText.getText().toString());
+        animal.put("name", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postColor);
-        animal.setColor(editText.getText().toString());
+        animal.put("color", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDate);
-        animal.setColor(editText.getText().toString());
+        animal.put("date", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postEmail);
-        animal.setEmail(editText.getText().toString());
+        animal.put("email", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDescription);
-        animal.setLocation(editText.getText().toString());
+        animal.put("description", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postPhone);
-        animal.setPhone(editText.getText().toString());
+        animal.put("phone", editText.getText().toString());
 
         //TODO add picture and type
         //editText = (TextView) findViewById(R.id.postType);
