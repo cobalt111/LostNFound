@@ -16,12 +16,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.example.tim.lostnfound.DatabaseUtils;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
 
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 public class Profile extends AppCompatActivity {
 
@@ -51,12 +52,13 @@ public class Profile extends AppCompatActivity {
 
     };
 
-    final private FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference ref;
 
     SharedPreferences sharedPreferences;
 
     String animalID;
+    String name;
+    String location;
+
 
     TextView nameView;
     TextView colorView;
@@ -67,7 +69,7 @@ public class Profile extends AppCompatActivity {
     TextView emailView;
     TextView typeView;
 
-    Map<String, String> animal;
+    NewAnimal animal;
 
 
     @Override
@@ -75,29 +77,32 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        ref = mDatabase.getReference("server/animals/animals");
         sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-
-
         animalID = sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed to retrieve animal ID");
-        System.out.println(ref.orderByKey().toString());
+
+        final FirebaseDatabase mDatabase = DatabaseUtils.getDatabase();
+        DatabaseReference ref = mDatabase.getReference().child("server").child("animals").child(animalID);
 
 
+//        final CountDownLatch latch = new CountDownLatch(2);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
-        ref.child(animalID).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Map<String, String> animal = (Map<String, String>) dataSnapshot.getValue();
+                if (dataSnapshot.exists()) {
+                    animal = (NewAnimal) dataSnapshot.getValue();
+
+                }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Database retrieval error");
+                    Log.d("DEBUG", "Failure");
             }
         });
 
         nameView = (TextView) findViewById(R.id.profileName);
-        nameView.setText(animal.get("name"));
+        nameView.setText(animal.getName());
 
 
 

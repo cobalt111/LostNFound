@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 
 import com.google.firebase.database.DatabaseReference;
+import com.example.tim.lostnfound.DatabaseUtils;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.File;
@@ -60,16 +61,19 @@ public class Post extends AppCompatActivity {
     };
 
 
-    final FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference ref = database.getReference("server/animals");
+    FirebaseDatabase database;
+    private DatabaseReference ref;
 
-    private SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        database = DatabaseUtils.getDatabase();
+        ref = database.getReference("server");
 
         sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -113,26 +117,30 @@ public class Post extends AppCompatActivity {
     private String onSubmitAnimal () {
 
         EditText editText;
-        Map<String, String> animal = new HashMap<>();
+//        Map<String, String> animal = new HashMap<>();
+        NewAnimal animal = new NewAnimal();
         DatabaseReference animalRef = ref.child("animals");
 
         editText = (EditText) findViewById(R.id.postName);
-        animal.put("name", editText.getText().toString());
+        animal.setName(editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postColor);
-        animal.put("color", editText.getText().toString());
+        animal.setColor(editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDate);
-        animal.put("date", editText.getText().toString());
+        animal.setDate(editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postEmail);
-        animal.put("email", editText.getText().toString());
+        animal.setEmail(editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDescription);
-        animal.put("description", editText.getText().toString());
+        animal.setDescription(editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postPhone);
-        animal.put("phone", editText.getText().toString());
+        animal.setPhone(editText.getText().toString());
+
+        editText = (EditText) findViewById(R.id.postLocation);
+        animal.setLocation(editText.getText().toString());
 
         //TODO add picture and type
         //editText = (TextView) findViewById(R.id.postType);

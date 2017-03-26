@@ -1,85 +1,82 @@
 package com.example.tim.lostnfound;
 
 
-class NewAnimal {
-
+public class NewAnimal {
 
     private String name;
-    private String type;
     private String location;
     private String date;
-    private String email;
-    private String phone;
-    private String description;
+    private String type;
     private String color;
+    private String email;
+    private String description;
+    private String phone;
 
-
-    NewAnimal(){
+    public NewAnimal() {
 
     }
 
-     String getName() {
+    public String getName() {
         return name;
     }
 
-     void setName(String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-     String getType() {
-        return type;
-    }
-
-     void setType(String type) {
-        this.type = type;
-    }
-
-     String getLocation() {
+    public String getLocation() {
         return location;
     }
 
-     void setLocation(String location) {
+    public void setLocation(String location) {
         this.location = location;
     }
 
-     String getDate() {
+    public String getDate() {
         return date;
     }
 
-     void setDate(String date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-     String getEmail() {
-        return email;
+    public String getType() {
+        return type;
     }
 
-     void setEmail(String email) {
-        this.email = email;
+    public void setType(String type) {
+        this.type = type;
     }
 
-     String getPhone() {
-        return phone;
-    }
-
-     void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-     String getDescription() {
-        return description;
-    }
-
-     void setDescription(String description) {
-        this.description = description;
-    }
-
-     String getColor() {
+    public String getColor() {
         return color;
     }
 
-     void setColor(String color) {
+    public void setColor(String color) {
         this.color = color;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }
