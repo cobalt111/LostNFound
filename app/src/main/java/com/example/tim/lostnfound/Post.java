@@ -50,7 +50,7 @@ public class Post extends AppCompatActivity {
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
-                    Intent intentAnimals = new Intent(Post.this, MainActivity.class);
+                    Intent intentAnimals = new Intent(Post.this, YourPets.class);
                     finish();
                     startActivity(intentAnimals);
                     return true;

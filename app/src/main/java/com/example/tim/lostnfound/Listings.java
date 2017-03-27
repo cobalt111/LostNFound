@@ -81,15 +81,11 @@ public class Listings extends AppCompatActivity {
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                //TODO figure out how to pass the ID to the other activity
+                                //TODO pass the ID to the other activity
 //                                int ID =
 //                                intent.putExtra(EXTRA_INDEX, ID);
                                 startActivity(intent);
 
-
-//                                list.remove(item);
-//                                adapter.notifyDataSetChanged();
-//                                view.setAlpha(1);
                             }
                         });
             }
