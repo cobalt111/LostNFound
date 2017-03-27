@@ -109,6 +109,7 @@ public class Post extends AppCompatActivity {
         });
 
         Button submitButton = (Button) findViewById(R.id.postSubmit);
+
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){

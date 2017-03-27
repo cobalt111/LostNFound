@@ -1,20 +1,32 @@
 package com.example.tim.lostnfound;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.*;
+import java.util.Map;
 
 import static android.content.Intent.EXTRA_INDEX;
+import static android.content.Intent.EXTRA_TEXT;
 
 public class Listings extends AppCompatActivity {
 
@@ -46,6 +58,13 @@ public class Listings extends AppCompatActivity {
     };
 
 
+    FirebaseDatabase mDatabase;
+    DatabaseReference ref;
+    SharedPreferences sharedPreferences;
+    Map<String, String> animal;
+    ArrayList<String> animalArrayList;
+    ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,21 +72,38 @@ public class Listings extends AppCompatActivity {
         setContentView(R.layout.activity_listings);
 
 
-        final ListView listView = (ListView) findViewById(R.id.listview);
-        String[] values = new String[] { "Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile" };
+        //TODO get the list of animals
 
-        final ArrayList<String> list = new ArrayList<>();
-        for (int i = 0; i <values.length; i++){
-            list.add(values[i]);
-        }
 
-        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, list);
 
-        listView.setAdapter(adapter);
+        mDatabase = DatabaseUtils.getDatabase();
+        ref = mDatabase.getReference().child("server").child("animals");
+
+        listView = (ListView) findViewById(R.id.listview);
+        animalArrayList = new ArrayList<>();
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()){
+                    animal = (Map<String, String>) animalDatabaseEntry.getValue();
+                    animalArrayList.add(animal.get("name"));
+
+                }
+
+                ArrayAdapter adapter = new ArrayAdapter(Listings.this, android.R.layout.simple_selectable_list_item, animalArrayList);
+                listView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.d("DEBUG", "Failure");
+            }
+        });
+
+
+
 
         final Intent intent = new Intent(this, Profile.class);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -82,9 +118,8 @@ public class Listings extends AppCompatActivity {
                             @Override
                             public void run() {
                                 //TODO pass the ID to the other activity
-//                                int ID =
-//                                intent.putExtra(EXTRA_INDEX, ID);
-                                startActivity(intent);
+//                                intent.putExtra(EXTRA_TEXT, view.);
+//                                startActivity(intent);
 
                             }
                         });

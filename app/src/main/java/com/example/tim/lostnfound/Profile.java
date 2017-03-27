@@ -99,8 +99,6 @@ public class Profile extends AppCompatActivity {
         phoneView = (TextView) findViewById(R.id.profilePhone);
         emailView = (TextView) findViewById(R.id.profileEmail);
 
-
-
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
@@ -122,8 +120,6 @@ public class Profile extends AppCompatActivity {
                     Log.d("DEBUG", "Failure");
             }
         });
-
-
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
