@@ -41,14 +41,17 @@ public class Post extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Intent intentHome = new Intent(Post.this, MainActivity.class);
+                    finish();
                     startActivity(intentHome);
                     return true;
                 case R.id.navigation_listings:
                     Intent intentListings = new Intent(Post.this, Listings.class);
+                    finish();
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
                     Intent intentAnimals = new Intent(Post.this, MainActivity.class);
+                    finish();
                     startActivity(intentAnimals);
                     return true;
 //                case R.id.navigation_map:
@@ -102,6 +105,7 @@ public class Post extends AppCompatActivity {
 
                 Intent intent = new Intent(Post.this, Profile.class);
                 intent.putExtra(EXTRA_TEXT, animalID);
+                finish();
                 startActivity(intent);
 
             }
@@ -117,30 +121,29 @@ public class Post extends AppCompatActivity {
     private String onSubmitAnimal () {
 
         EditText editText;
-//        Map<String, String> animal = new HashMap<>();
-        NewAnimal animal = new NewAnimal();
+        Map<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
         editText = (EditText) findViewById(R.id.postName);
-        animal.setName(editText.getText().toString());
+        animal.put("name", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postColor);
-        animal.setColor(editText.getText().toString());
+        animal.put("color", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDate);
-        animal.setDate(editText.getText().toString());
+        animal.put("date", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postEmail);
-        animal.setEmail(editText.getText().toString());
+        animal.put("email", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postDescription);
-        animal.setDescription(editText.getText().toString());
+        animal.put("description", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postPhone);
-        animal.setPhone(editText.getText().toString());
+        animal.put("phone", editText.getText().toString());
 
         editText = (EditText) findViewById(R.id.postLocation);
-        animal.setLocation(editText.getText().toString());
+        animal.put("location", editText.getText().toString());
 
         //TODO add picture and type
         //editText = (TextView) findViewById(R.id.postType);

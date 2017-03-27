@@ -33,14 +33,17 @@ public class Profile extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Intent intentHome = new Intent(Profile.this, MainActivity.class);
+                    finish();
                     startActivity(intentHome);
                     return true;
                 case R.id.navigation_listings:
                     Intent intentListings = new Intent(Profile.this, Listings.class);
+                    finish();
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
                     Intent intentAnimals = new Intent(Profile.this, MainActivity.class);
+                    finish();
                     startActivity(intentAnimals);
                     return true;
 //                case R.id.navigation_map:
@@ -53,12 +56,11 @@ public class Profile extends AppCompatActivity {
     };
 
 
+    FirebaseDatabase mDatabase;
+    DatabaseReference ref;
     SharedPreferences sharedPreferences;
 
     String animalID;
-    String name;
-    String location;
-
 
     TextView nameView;
     TextView colorView;
@@ -69,7 +71,7 @@ public class Profile extends AppCompatActivity {
     TextView emailView;
     TextView typeView;
 
-    NewAnimal animal;
+    Map<String, String> animal;
 
 
     @Override
@@ -80,19 +82,33 @@ public class Profile extends AppCompatActivity {
         sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
         animalID = sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed to retrieve animal ID");
 
-        final FirebaseDatabase mDatabase = DatabaseUtils.getDatabase();
-        DatabaseReference ref = mDatabase.getReference().child("server").child("animals").child(animalID);
+        mDatabase = DatabaseUtils.getDatabase();
+        ref = mDatabase.getReference().child("server").child("animals").child(animalID);
+
+        nameView = (TextView) findViewById(R.id.profileName);
+        colorView = (TextView) findViewById(R.id.profileColor);
+        dateView = (TextView) findViewById(R.id.profileDate);
+        descView = (TextView) findViewById(R.id.profileDescription);
+        locationView = (TextView) findViewById(R.id.profileLocation);
+        phoneView = (TextView) findViewById(R.id.profilePhone);
+        emailView = (TextView) findViewById(R.id.profileEmail);
 
 
-//        final CountDownLatch latch = new CountDownLatch(2);
+
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    animal = (NewAnimal) dataSnapshot.getValue();
+                animal = (Map<String, String>) dataSnapshot.getValue();
 
-                }
+                nameView.setText(animal.get("name"));
+                colorView.setText(animal.get("color"));
+                dateView.setText(animal.get("date"));
+                descView.setText(animal.get("description"));
+                locationView.setText(animal.get("location"));
+                phoneView.setText(animal.get("phone"));
+                emailView.setText(animal.get("email"));
+
             }
 
             @Override
@@ -101,13 +117,6 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-        nameView = (TextView) findViewById(R.id.profileName);
-        nameView.setText(animal.getName());
-
-
-
-        //TextView textView = (TextView) findViewById(R.id.profileTest);
-        //textView.setText(sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed"));
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
