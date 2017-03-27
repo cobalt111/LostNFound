@@ -24,6 +24,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
+import static android.content.Intent.EXTRA_TEXT;
+
 public class Profile extends AppCompatActivity {
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -61,6 +63,7 @@ public class Profile extends AppCompatActivity {
     SharedPreferences sharedPreferences;
 
     String animalID;
+    String lastUsedKey;
 
     TextView nameView;
     TextView colorView;
@@ -79,8 +82,11 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        Intent intent = getIntent();
+        lastUsedKey = intent.getStringExtra(EXTRA_TEXT);
+
         sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-        animalID = sharedPreferences.getString("com.example.tim.lostnfound.animal_id", "Failed to retrieve animal ID");
+        animalID = sharedPreferences.getString("com.example.tim.lostnfound." + lastUsedKey, "Failed to retrieve animal ID");
 
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals").child(animalID);

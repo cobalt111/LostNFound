@@ -74,7 +74,7 @@
         <activity
             android:name=".Listings"
             android:exported="true" />
-        <activity android:name=".maptest"></activity>
+        <activity android:name=".YourPets"></activity>
     </application>
 
 </manifest>

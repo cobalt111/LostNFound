@@ -70,16 +70,34 @@ public class Post extends AppCompatActivity {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
 
+    private String prefKeyOne;
+    private String prefKeyTwo;
+    private String prefKeyThree;
+    private String prefKeyFour;
+    private String prefKeyFive;
+
+    private String lastUsedKey;
+
+    private boolean[] usedKeys;
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        database = DatabaseUtils.getDatabase();
-        ref = database.getReference("server");
+        // to keep track of which keys are taken by lost animals
+        usedKeys = new boolean[5];
+        prefKeyOne = "prefKeyOne";
+        prefKeyTwo = "prefKeyTwo";
+        prefKeyThree = "prefKeyThree";
+        prefKeyFour = "prefKeyFour";
+        prefKeyFive = "prefKeyFive";
 
         sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
+        database = DatabaseUtils.getDatabase();
+        ref = database.getReference("server");
 
 
         Button picButton = (Button) findViewById(R.id.postPictureButton);
@@ -96,15 +114,17 @@ public class Post extends AppCompatActivity {
             public void onClick(View v){
 
                 String animalID = onSubmitAnimal();
+                lastUsedKey = assignKey(animalID);
 
-                editor.putString("com.example.tim.lostnfound.animal_id", animalID);
-                editor.commit();
+                if (lastUsedKey != null) {
+                    editor.commit();
+                } else System.out.println("All keys are taken");
 
                 Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
                 toast.show();
 
                 Intent intent = new Intent(Post.this, Profile.class);
-                intent.putExtra(EXTRA_TEXT, animalID);
+                intent.putExtra(EXTRA_TEXT, lastUsedKey);
                 finish();
                 startActivity(intent);
 
@@ -155,13 +175,36 @@ public class Post extends AppCompatActivity {
         return newAnimalRef.getKey();
     }
 
+    private int determineUnusedKey(boolean[] boolArr){
+        int index = 0;
+        for (boolean current : boolArr) {
+            if (!current) {
+                return index;
+            } else index++;
+        } return 5;
+    }
 
-
-
-
-
-
-
+    private String assignKey(String animalID) {
+        switch (determineUnusedKey(usedKeys)) {
+            case 0:
+                editor.putString("com.example.tim.lostnfound." + prefKeyOne, animalID);
+                return prefKeyOne;
+            case 1:
+                editor.putString("com.example.tim.lostnfound." + prefKeyTwo, animalID);
+                return prefKeyTwo;
+            case 2:
+                editor.putString("com.example.tim.lostnfound." + prefKeyThree, animalID);
+                return prefKeyThree;
+            case 3:
+                editor.putString("com.example.tim.lostnfound." + prefKeyFour, animalID);
+                return prefKeyFour;
+            case 4:
+                editor.putString("com.example.tim.lostnfound." + prefKeyFive, animalID);
+                return prefKeyFive;
+            default:
+                return null;
+        }
+    }
 
 
 
