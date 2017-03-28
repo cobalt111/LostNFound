@@ -38,14 +38,17 @@ public class Listings extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Intent intentHome = new Intent(Listings.this, MainActivity.class);
+                    finish();
                     startActivity(intentHome);
                     return true;
                 case R.id.navigation_listings:
                     Intent intentListings = new Intent(Listings.this, Listings.class);
+                    finish();
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
-                    Intent intentAnimals = new Intent(Listings.this, MainActivity.class);
+                    Intent intentAnimals = new Intent(Listings.this, YourPets.class);
+                    finish();
                     startActivity(intentAnimals);
                     return true;
 //                case R.id.navigation_map:
@@ -60,9 +63,11 @@ public class Listings extends AppCompatActivity {
 
     FirebaseDatabase mDatabase;
     DatabaseReference ref;
-    SharedPreferences sharedPreferences;
-    Map<String, String> animal;
-    ArrayList<String> animalArrayList;
+//    SharedPreferences sharedPreferences;
+    HashMap<String, String> animal;
+    ArrayList<HashMap<String, String>> animalArrayList;
+    String key;
+    ArrayList<String> nameArrayList;
     ListView listView;
 
 
@@ -81,18 +86,19 @@ public class Listings extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.listview);
         animalArrayList = new ArrayList<>();
+        nameArrayList = new ArrayList<>();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()){
-                    animal = (Map<String, String>) animalDatabaseEntry.getValue();
-                    animalArrayList.add(animal.get("name"));
-
+                    animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+                    animalArrayList.add(animal);
+                    nameArrayList.add(animal.get("name"));
                 }
 
-                ArrayAdapter adapter = new ArrayAdapter(Listings.this, android.R.layout.simple_selectable_list_item, animalArrayList);
+                ArrayAdapter adapter = new ArrayAdapter(Listings.this, android.R.layout.simple_list_item_1, nameArrayList);
                 listView.setAdapter(adapter);
             }
 
@@ -106,20 +112,23 @@ public class Listings extends AppCompatActivity {
 
 
         final Intent intent = new Intent(this, Profile.class);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
-                                    int position, long id) {
-                final String item = (String) parent.getItemAtPosition(position);
+                                    final int position, long id) {
+//                final String item = (String) parent.getItemAtPosition(position);
 
                 view.animate().setDuration(2000).alpha(0)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 //TODO pass the ID to the other activity
-//                                intent.putExtra(EXTRA_TEXT, view.);
-//                                startActivity(intent);
+                                animal = animalArrayList.get(position);
+                                intent.putExtra(EXTRA_TEXT, animal);
+                                finish();
+                                startActivity(intent);
 
                             }
                         });
