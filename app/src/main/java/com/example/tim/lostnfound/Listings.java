@@ -63,7 +63,6 @@ public class Listings extends AppCompatActivity {
 
     FirebaseDatabase mDatabase;
     DatabaseReference ref;
-//    SharedPreferences sharedPreferences;
     HashMap<String, String> animal;
     ArrayList<HashMap<String, String>> animalArrayList;
     ArrayList<String> nameArrayList;
@@ -108,19 +107,16 @@ public class Listings extends AppCompatActivity {
 
 
         final Intent intent = new Intent(this, Profile.class);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     final int position, long id) {
-//                final String item = (String) parent.getItemAtPosition(position);
 
                 view.animate().setDuration(100).alpha(0)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                //TODO pass the ID to the other activity
                                 animal = animalArrayList.get(position);
                                 intent.putExtra(EXTRA_TEXT, animal.get("key"));
                                 finish();

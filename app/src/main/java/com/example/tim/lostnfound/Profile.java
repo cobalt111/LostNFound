@@ -61,7 +61,6 @@ public class Profile extends AppCompatActivity {
 
     FirebaseDatabase mDatabase;
     DatabaseReference ref;
-    SharedPreferences sharedPreferences;
 
     String animalID;
 
@@ -84,9 +83,6 @@ public class Profile extends AppCompatActivity {
 
         Intent intent = getIntent();
         animalID = intent.getStringExtra(EXTRA_TEXT);
-
-//        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-//        animalID = sharedPreferences.getString("com.example.tim.lostnfound." + lastUsedKey, "Failed to retrieve animal ID");
 
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals").child(animalID);

@@ -86,12 +86,11 @@ public class YourPets extends AppCompatActivity {
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                //TODO pass the ID to the other activity
+
                                 HashMap<String, String> animal = intentList.get(position);
                                 intent.putExtra(EXTRA_TEXT, animal.get("key"));
                                 finish();
                                 startActivity(intent);
-
                             }
                         });
             }

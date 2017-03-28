@@ -11,8 +11,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 
@@ -25,6 +28,7 @@ import java.io.File;
 import java.io.IOException;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -66,13 +70,18 @@ public class Post extends AppCompatActivity {
     };
 
 
-    FirebaseDatabase database;
+    private FirebaseDatabase database;
     private DatabaseReference ref;
 
 
-    LinkedList<HashMap<String, String>> yourAnimalList;
 
+    private LinkedList<HashMap<String, String>> yourAnimalList;
 
+    private EditText editText;
+    private Spinner dropdown;
+    private Button picButton;
+    private String typeSelection;
+    private Button submitButton;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +89,37 @@ public class Post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
-
-
         yourAnimalList = FileUtils.readFromFile(file);
-
-
 
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");
 
 
-        Button picButton = (Button) findViewById(R.id.postPictureButton);
+
+
+
+
+
+        // dropdown type selection spinner
+        dropdown = (Spinner) findViewById(R.id.post_type_spinner);
+        final String[] typesList = {"Dog", "Cat", "Hamster/Guinea Pig", "Mouse/Rat", "Bird", "Snake/Lizard", "Ferret", "Other"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropdown.setAdapter(adapter);
+        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                typeSelection = typesList[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                typeSelection = null;
+            }
+        });
+
+        // button to add picture?
+        picButton = (Button) findViewById(R.id.postPictureButton);
         picButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -98,8 +127,10 @@ public class Post extends AppCompatActivity {
             }
         });
 
-        Button submitButton = (Button) findViewById(R.id.postSubmit);
 
+
+        // submit button
+        submitButton = (Button) findViewById(R.id.postSubmit);
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -127,7 +158,7 @@ public class Post extends AppCompatActivity {
 
     private String onSubmitAnimal () {
 
-        EditText editText;
+
         HashMap<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
@@ -152,9 +183,9 @@ public class Post extends AppCompatActivity {
         editText = (EditText) findViewById(R.id.postLocation);
         animal.put("location", editText.getText().toString());
 
-        //TODO add picture and type
-        //editText = (TextView) findViewById(R.id.postType);
-        //animal.setType(textView.getText().toString());
+        animal.put("type", typeSelection);
+
+        //TODO add picture functionality?
 
 
         DatabaseReference newAnimalRef = animalRef.push();

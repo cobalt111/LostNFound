@@ -16,14 +16,17 @@ public class Search extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Intent intentHome = new Intent(Search.this, MainActivity.class);
+                    finish();
                     startActivity(intentHome);
                     return true;
                 case R.id.navigation_listings:
                     Intent intentListings = new Intent(Search.this, Listings.class);
+                    finish();
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
                     Intent intentAnimals = new Intent(Search.this, MainActivity.class);
+                    finish();
                     startActivity(intentAnimals);
                     return true;
 //                case R.id.navigation_map:

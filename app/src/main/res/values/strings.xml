@@ -15,13 +15,13 @@
     <string name="post_description" />
     <string name="post_type" />
     <string name="post_picture">Picture</string>
-    <string name="post_hint_name">Name</string>
-    <string name="post_hint_color">Color</string>
-    <string name="post_hint_date">Date Lost</string>
-    <string name="post_hint_location">Last Location</string>
-    <string name="post_hint_phone">Phone</string>
-    <string name="post_hint_email">Email</string>
-    <string name="post_hint_description">Extra Info</string>
+    <string name="post_hint_name">Animal\'s name</string>
+    <string name="post_hint_color">Animal\'s color</string>
+    <string name="post_hint_date">Date lost</string>
+    <string name="post_hint_location">Last known location</string>
+    <string name="post_hint_phone">Your phone</string>
+    <string name="post_hint_email">Your email</string>
+    <string name="post_hint_description">Extra info</string>
     <string name="post_pic_button">Add Pic</string>
 
     <string name="post_submit">Submit</string>
