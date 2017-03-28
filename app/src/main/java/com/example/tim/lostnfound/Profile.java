@@ -64,14 +64,15 @@ public class Profile extends AppCompatActivity {
 
     String animalID;
 
-    TextView nameView;
-    TextView colorView;
-    TextView dateView;
-    TextView descView;
-    TextView locationView;
-    TextView phoneView;
-    TextView emailView;
-    TextView typeView;
+    private TextView nameView;
+    private TextView colorView;
+    private TextView dateView;
+    private TextView descView;
+    private TextView locationView;
+    private TextView phoneView;
+    private TextView emailView;
+    private TextView foundView;
+    private TextView typeView;
 
     HashMap<String, String> animal;
 
@@ -94,6 +95,8 @@ public class Profile extends AppCompatActivity {
         locationView = (TextView) findViewById(R.id.profileLocation);
         phoneView = (TextView) findViewById(R.id.profilePhone);
         emailView = (TextView) findViewById(R.id.profileEmail);
+        foundView = (TextView) findViewById(R.id.profileFound);
+        typeView = (TextView) findViewById(R.id.profileType);
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -108,6 +111,8 @@ public class Profile extends AppCompatActivity {
                 locationView.setText(animal.get("location"));
                 phoneView.setText(animal.get("phone"));
                 emailView.setText(animal.get("email"));
+                foundView.setText(animal.get("found"));
+                typeView.setText(animal.get("type"));
 
             }
 

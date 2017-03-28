@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -77,11 +78,19 @@ public class Post extends AppCompatActivity {
 
     private LinkedList<HashMap<String, String>> yourAnimalList;
 
-    private EditText editText;
     private Spinner dropdown;
     private Button picButton;
     private String typeSelection;
     private Button submitButton;
+
+    private EditText nameView;
+    private EditText colorView;
+    private EditText dateView;
+    private EditText descView;
+    private EditText locationView;
+    private EditText phoneView;
+    private EditText emailView;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,10 +103,13 @@ public class Post extends AppCompatActivity {
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");
 
-
-
-
-
+        nameView = (EditText) findViewById(R.id.postName);
+        colorView = (EditText) findViewById(R.id.postColor);
+        dateView = (EditText) findViewById(R.id.postDate);
+        emailView = (EditText) findViewById(R.id.postEmail);
+        descView = (EditText) findViewById(R.id.postDescription);
+        phoneView = (EditText) findViewById(R.id.postPhone);
+        locationView = (EditText) findViewById(R.id.postLocation);
 
 
         // dropdown type selection spinner
@@ -137,7 +149,6 @@ public class Post extends AppCompatActivity {
 
                 String animalID = onSubmitAnimal();
 
-
                 Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
                 toast.show();
 
@@ -158,35 +169,20 @@ public class Post extends AppCompatActivity {
 
     private String onSubmitAnimal () {
 
-
         HashMap<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
-        editText = (EditText) findViewById(R.id.postName);
-        animal.put("name", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postColor);
-        animal.put("color", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postDate);
-        animal.put("date", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postEmail);
-        animal.put("email", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postDescription);
-        animal.put("description", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postPhone);
-        animal.put("phone", editText.getText().toString());
-
-        editText = (EditText) findViewById(R.id.postLocation);
-        animal.put("location", editText.getText().toString());
-
+        animal.put("name", nameView.getText().toString());
+        animal.put("color", colorView.getText().toString());
+        animal.put("date", dateView.getText().toString());
+        animal.put("email", emailView.getText().toString());
+        animal.put("description", descView.getText().toString());
+        animal.put("phone", phoneView.getText().toString());
+        animal.put("location", locationView.getText().toString());
         animal.put("type", typeSelection);
+        animal.put("found", "Not Found");
 
         //TODO add picture functionality?
-
 
         DatabaseReference newAnimalRef = animalRef.push();
         animal.put("key", newAnimalRef.getKey());
@@ -194,7 +190,6 @@ public class Post extends AppCompatActivity {
 
         yourAnimalList.add(animal);
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
-
         FileUtils.writeToFile(yourAnimalList, file);
 
         return newAnimalRef.getKey();

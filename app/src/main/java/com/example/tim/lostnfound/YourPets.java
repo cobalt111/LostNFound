@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.tim.lostnfound.FileUtils;
 
@@ -63,15 +64,21 @@ public class YourPets extends AppCompatActivity {
 
         LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
         final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
-
-
-        listView = (ListView) findViewById(R.id.listview);
         ArrayList<String> yourAnimalArrayList = new ArrayList<>();
 
 
-        for (HashMap<String, String> animal : animalLinkedList) {
-            yourAnimalArrayList.add(animal.get("name"));
+        listView = (ListView) findViewById(R.id.listview);
+
+        if (animalLinkedList.size() == 0) {
+            Toast toast = Toast.makeText(getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
+            toast.show();
+        } else {
+            for (HashMap<String, String> animal : animalLinkedList) {
+                yourAnimalArrayList.add(animal.get("name"));
+            }
         }
+
+
 
         ArrayAdapter adapter = new ArrayAdapter(YourPets.this, android.R.layout.simple_list_item_1, yourAnimalArrayList);
         listView.setAdapter(adapter);
