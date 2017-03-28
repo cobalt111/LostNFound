@@ -1,9 +1,8 @@
 package com.example.tim.lostnfound;
 
 
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -18,15 +17,18 @@ import android.widget.Toast;
 
 
 import com.google.firebase.database.DatabaseReference;
-import com.example.tim.lostnfound.DatabaseUtils;
+import com.example.tim.lostnfound.FileUtils;
 import com.google.firebase.database.FirebaseDatabase;
+
 
 import java.io.File;
 import java.io.IOException;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+
 
 import static android.content.Intent.EXTRA_TEXT;
 import static android.widget.Toast.LENGTH_LONG;
@@ -67,34 +69,22 @@ public class Post extends AppCompatActivity {
     FirebaseDatabase database;
     private DatabaseReference ref;
 
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
 
-    private String prefKeyOne;
-    private String prefKeyTwo;
-    private String prefKeyThree;
-    private String prefKeyFour;
-    private String prefKeyFive;
+    LinkedList<HashMap<String, String>> yourAnimalList;
 
-    private String lastUsedKey;
 
-    private boolean[] usedKeys;
 
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        // to keep track of which keys are taken by lost animals
-        usedKeys = new boolean[5];
-        prefKeyOne = "prefKeyOne";
-        prefKeyTwo = "prefKeyTwo";
-        prefKeyThree = "prefKeyThree";
-        prefKeyFour = "prefKeyFour";
-        prefKeyFive = "prefKeyFive";
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
 
-        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
+
+        yourAnimalList = FileUtils.readFromFile(file);
+
+
 
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");
@@ -115,17 +105,13 @@ public class Post extends AppCompatActivity {
             public void onClick(View v){
 
                 String animalID = onSubmitAnimal();
-                lastUsedKey = assignKey(animalID);
 
-                if (lastUsedKey != null) {
-                    editor.commit();
-                } else System.out.println("All keys are taken");
 
                 Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
                 toast.show();
 
                 Intent intent = new Intent(Post.this, Profile.class);
-                intent.putExtra(EXTRA_TEXT, lastUsedKey);
+                intent.putExtra(EXTRA_TEXT, animalID);
                 finish();
                 startActivity(intent);
 
@@ -142,7 +128,7 @@ public class Post extends AppCompatActivity {
     private String onSubmitAnimal () {
 
         EditText editText;
-        Map<String, String> animal = new HashMap<>();
+        HashMap<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
         editText = (EditText) findViewById(R.id.postName);
@@ -170,42 +156,20 @@ public class Post extends AppCompatActivity {
         //editText = (TextView) findViewById(R.id.postType);
         //animal.setType(textView.getText().toString());
 
+
         DatabaseReference newAnimalRef = animalRef.push();
+        animal.put("key", newAnimalRef.getKey());
         newAnimalRef.setValue(animal);
+
+        yourAnimalList.add(animal);
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
+
+        FileUtils.writeToFile(yourAnimalList, file);
 
         return newAnimalRef.getKey();
     }
 
-    private int determineUnusedKey(boolean[] boolArr){
-        int index = 0;
-        for (boolean current : boolArr) {
-            if (!current) {
-                return index;
-            } else index++;
-        } return 5;
-    }
 
-    private String assignKey(String animalID) {
-        switch (determineUnusedKey(usedKeys)) {
-            case 0:
-                editor.putString("com.example.tim.lostnfound." + prefKeyOne, animalID);
-                return prefKeyOne;
-            case 1:
-                editor.putString("com.example.tim.lostnfound." + prefKeyTwo, animalID);
-                return prefKeyTwo;
-            case 2:
-                editor.putString("com.example.tim.lostnfound." + prefKeyThree, animalID);
-                return prefKeyThree;
-            case 3:
-                editor.putString("com.example.tim.lostnfound." + prefKeyFour, animalID);
-                return prefKeyFour;
-            case 4:
-                editor.putString("com.example.tim.lostnfound." + prefKeyFive, animalID);
-                return prefKeyFive;
-            default:
-                return null;
-        }
-    }
 
 
 
@@ -269,3 +233,84 @@ public class Post extends AppCompatActivity {
 
 
 }
+
+
+// old code
+
+
+//    private String prefKeyOne;
+//    private String prefKeyTwo;
+//    private String prefKeyThree;
+//    private String prefKeyFour;
+//    private String prefKeyFive;
+//    private String lastUsedKey;
+//
+//    private boolean[] usedKeys;
+//    SharedPreferences sharedPreferences;
+//    SharedPreferences.Editor editor;
+
+//                editor.putString("com.example.tim.lostnfound., animalID);
+//                editor.commit();
+//                } else System.out.println("All keys are taken");
+
+
+//        File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "animal_key_list.txt");
+//        file1.getParentFile().mkdirs();
+//        try {
+//            int permissionCheck = ContextCompat.checkSelfPermission(Post.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
+//                if (!file1.createNewFile()) {
+//                    Log.i("Test", "This file is already exist: " + file1.getAbsolutePath());
+//                }
+//            }
+//
+//            FileOutputStream fileOutputStream = new FileOutputStream(file1);
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+//
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+// to keep track of which keys are taken by lost animals
+//        usedKeys = new boolean[5];
+//        prefKeyOne = "prefKeyOne";
+//        prefKeyTwo = "prefKeyTwo";
+//        prefKeyThree = "prefKeyThree";
+//        prefKeyFour = "prefKeyFour";
+//        prefKeyFive = "prefKeyFive";
+
+//        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
+//        editor = sharedPreferences.edit();
+
+
+//    private int determineUnusedKey(boolean[] boolArr){
+//        int index = 0;
+//        for (boolean current : boolArr) {
+//            if (!current) {
+//                return index;
+//            } else index++;
+//        } return 5;
+//    }
+//
+//    private String assignKey(String animalID) {
+//        switch (determineUnusedKey(usedKeys)) {
+//            case 0:
+//                return prefKeyOne;
+//            case 1:
+//                editor.putString("com.example.tim.lostnfound." + prefKeyTwo, animalID);
+//                return prefKeyTwo;
+//            case 2:
+//                editor.putString("com.example.tim.lostnfound." + prefKeyThree, animalID);
+//                return prefKeyThree;
+//            case 3:
+//                editor.putString("com.example.tim.lostnfound." + prefKeyFour, animalID);
+//                return prefKeyFour;
+//            case 4:
+//                editor.putString("com.example.tim.lostnfound." + prefKeyFive, animalID);
+//                return prefKeyFive;
+//            default:
+//                return null;
+//        }
+//    }

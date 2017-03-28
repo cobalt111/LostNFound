@@ -66,7 +66,6 @@ public class Listings extends AppCompatActivity {
 //    SharedPreferences sharedPreferences;
     HashMap<String, String> animal;
     ArrayList<HashMap<String, String>> animalArrayList;
-    String key;
     ArrayList<String> nameArrayList;
     ListView listView;
 
@@ -76,14 +75,10 @@ public class Listings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listings);
 
-
-        //TODO get the list of animals
-
-
-
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
 
+        // just using namearraylist for the time being
         listView = (ListView) findViewById(R.id.listview);
         animalArrayList = new ArrayList<>();
         nameArrayList = new ArrayList<>();
@@ -111,6 +106,7 @@ public class Listings extends AppCompatActivity {
 
 
 
+
         final Intent intent = new Intent(this, Profile.class);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,13 +116,13 @@ public class Listings extends AppCompatActivity {
                                     final int position, long id) {
 //                final String item = (String) parent.getItemAtPosition(position);
 
-                view.animate().setDuration(2000).alpha(0)
+                view.animate().setDuration(100).alpha(0)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 //TODO pass the ID to the other activity
                                 animal = animalArrayList.get(position);
-                                intent.putExtra(EXTRA_TEXT, animal);
+                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
                                 finish();
                                 startActivity(intent);
 

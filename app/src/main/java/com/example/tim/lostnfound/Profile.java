@@ -21,6 +21,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -44,7 +45,7 @@ public class Profile extends AppCompatActivity {
                     startActivity(intentListings);
                     return true;
                 case R.id.navigation_animals:
-                    Intent intentAnimals = new Intent(Profile.this, MainActivity.class);
+                    Intent intentAnimals = new Intent(Profile.this, YourPets.class);
                     finish();
                     startActivity(intentAnimals);
                     return true;
@@ -63,7 +64,6 @@ public class Profile extends AppCompatActivity {
     SharedPreferences sharedPreferences;
 
     String animalID;
-    String lastUsedKey;
 
     TextView nameView;
     TextView colorView;
@@ -74,7 +74,7 @@ public class Profile extends AppCompatActivity {
     TextView emailView;
     TextView typeView;
 
-    Map<String, String> animal;
+    HashMap<String, String> animal;
 
 
     @Override
@@ -83,10 +83,10 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
-        lastUsedKey = intent.getStringExtra(EXTRA_TEXT);
+        animalID = intent.getStringExtra(EXTRA_TEXT);
 
-        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-        animalID = sharedPreferences.getString("com.example.tim.lostnfound." + lastUsedKey, "Failed to retrieve animal ID");
+//        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
+//        animalID = sharedPreferences.getString("com.example.tim.lostnfound." + lastUsedKey, "Failed to retrieve animal ID");
 
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals").child(animalID);
@@ -103,7 +103,7 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                animal = (Map<String, String>) dataSnapshot.getValue();
+                animal = (HashMap<String, String>) dataSnapshot.getValue();
 
                 nameView.setText(animal.get("name"));
                 colorView.setText(animal.get("color"));
