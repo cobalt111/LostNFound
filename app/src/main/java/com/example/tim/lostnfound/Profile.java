@@ -9,7 +9,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -59,10 +62,13 @@ public class Profile extends AppCompatActivity {
     };
 
 
-    FirebaseDatabase mDatabase;
-    DatabaseReference ref;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
 
-    String animalID;
+    private String animalID;
+    private HashMap<String, String> animalFound;
+    private HashMap<String, String> animal;
+
 
     private TextView nameView;
     private TextView colorView;
@@ -71,10 +77,11 @@ public class Profile extends AppCompatActivity {
     private TextView locationView;
     private TextView phoneView;
     private TextView emailView;
-    private TextView foundView;
+    private TextView statusView;
     private TextView typeView;
 
-    HashMap<String, String> animal;
+    private Button foundButton;
+
 
 
     @Override
@@ -95,24 +102,34 @@ public class Profile extends AppCompatActivity {
         locationView = (TextView) findViewById(R.id.profileLocation);
         phoneView = (TextView) findViewById(R.id.profilePhone);
         emailView = (TextView) findViewById(R.id.profileEmail);
-        foundView = (TextView) findViewById(R.id.profileFound);
+        statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
+        foundButton = (Button) findViewById(R.id.profileFoundButton);
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 animal = (HashMap<String, String>) dataSnapshot.getValue();
+                animalFound = animal;
+                String name = animal.get("name");
 
-                nameView.setText(animal.get("name"));
+                if (animal.get("name").equals("")){
+                    nameView.setText(animal.get("type"));
+                } else {
+                    nameView.setText(animal.get("name"));
+                    typeView.setText(animal.get("type"));
+
+                }
+
                 colorView.setText(animal.get("color"));
                 dateView.setText(animal.get("date"));
                 descView.setText(animal.get("description"));
                 locationView.setText(animal.get("location"));
                 phoneView.setText(animal.get("phone"));
                 emailView.setText(animal.get("email"));
-                foundView.setText(animal.get("found"));
-                typeView.setText(animal.get("type"));
+                statusView.setText(animal.get("found"));
+
 
             }
 
@@ -121,6 +138,19 @@ public class Profile extends AppCompatActivity {
                     Log.d("DEBUG", "Failure");
             }
         });
+
+        foundButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animalFound.put("found", "Found");
+                ref.setValue(animalFound);
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Animal listed as found!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);

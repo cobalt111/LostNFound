@@ -17,18 +17,13 @@ import android.content.Context;
 
 class FileUtils {
 
+    final static String listOfYourPetsFile = "animal_key_list.txt";
 
-//    static File createFile(){
-//        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), "animal_key_list.txt");
-//        try{
-//            file.createNewFile();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } return file;
-//    }
 
     static void writeToFile(LinkedList<HashMap<String, String>> linkedList, File file) {
         try {
+            file.delete();
+            file.createNewFile();
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
@@ -59,14 +54,49 @@ class FileUtils {
         return linkedList;
     }
 
-    static void resetFile(File file) {
+    static void removeAnimalFromFile(HashMap<String, String> animal, File file) {
         try {
-            file.delete();
-            file.createNewFile();
+            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
+            linkedList.remove(animal);
+            writeToFile(linkedList, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    static void setAnimalInFileToFound (HashMap<String, String> animal, File file) {
+        try {
+            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
+            linkedList.remove(animal);
+            animal.put("found", "Found");
+            linkedList.add(animal);
+            writeToFile(linkedList, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    static void hideAnimalInFile (HashMap<String, String> animal, File file) {
+        try {
+            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
+            linkedList.remove(animal);
+            animal.put("hidden", "true");
+            linkedList.add(animal);
+            writeToFile(linkedList, file);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //    static File createFile(){
+//        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), "animal_key_list.txt");
+//        try{
+//            file.createNewFile();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        } return file;
+//    }
 
 //    static void printContents(File file) {
 //        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();

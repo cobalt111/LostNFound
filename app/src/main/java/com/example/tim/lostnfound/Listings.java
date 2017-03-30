@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.*;
@@ -60,13 +64,45 @@ public class Listings extends AppCompatActivity {
 
     };
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.listings_options_menu, menu);
+        return true;
+    }
 
-    FirebaseDatabase mDatabase;
-    DatabaseReference ref;
-    HashMap<String, String> animal;
-    ArrayList<HashMap<String, String>> animalArrayList;
-    ArrayList<String> nameArrayList;
-    ListView listView;
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.lost_animals:
+                String lostFilter = "Lost";
+                Intent lostFilterIntent = new Intent(this, Listings.class);
+                lostFilterIntent.putExtra("filter", lostFilter);
+                finish();
+                startActivity(lostFilterIntent);
+                return true;
+            case R.id.found_animals:
+                String foundFilter = "Found";
+                Intent foundFilterIntent = new Intent(this, Listings.class);
+                foundFilterIntent.putExtra("filter", foundFilter);
+                finish();
+                startActivity(foundFilterIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+
+
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
+    private HashMap<String, String> animal;
+    private ArrayList<HashMap<String, String>> animalArrayList;
+    private ArrayList<String> nameArrayList;
+    private ListView listView;
+    private String userIntention;
+    private Query query;
 
 
     @Override
@@ -74,53 +110,67 @@ public class Listings extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_listings);
 
+        Intent intent = getIntent();
+        if (intent.hasExtra("filter")) {
+            userIntention = intent.getStringExtra("filter");
+        }
+
+
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
+        query = ref;
 
         // just using namearraylist for the time being
         listView = (ListView) findViewById(R.id.listview);
         animalArrayList = new ArrayList<>();
         nameArrayList = new ArrayList<>();
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
+        if (userIntention != null) {
+            query = ref.orderByChild("found").equalTo(userIntention);
+        }
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()){
+
+                for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
                     animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
                     animalArrayList.add(animal);
-                    nameArrayList.add(animal.get("name"));
+
+                    if (animal.get("name").equals("")) {
+                        nameArrayList.add(animal.get("type"));
+                    } else nameArrayList.add(animal.get("name"));
+
                 }
+
 
                 ArrayAdapter adapter = new ArrayAdapter(Listings.this, android.R.layout.simple_list_item_1, nameArrayList);
                 listView.setAdapter(adapter);
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d("DEBUG", "Failure");
+
             }
         });
 
 
-
-
-
-        final Intent intent = new Intent(this, Profile.class);
+        final Intent listIntent = new Intent(this, Profile.class);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, final View view,
                                     final int position, long id) {
 
-                view.animate().setDuration(100).alpha(0)
+                view.animate().setDuration(0).alpha(1)
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
                                 animal = animalArrayList.get(position);
-                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
-                                finish();
-                                startActivity(intent);
+                                listIntent.putExtra(EXTRA_TEXT, animal.get("key"));
+                                startActivity(listIntent);
 
                             }
                         });
@@ -133,3 +183,76 @@ public class Listings extends AppCompatActivity {
 
     }
 }
+
+
+//                switch (userIntention) {
+//                        case ("lost"):
+//                        for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+//                        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+//
+//        if (animal.get("found").equals("lost")) {
+//        animalArrayList.add(animal);
+//
+//        if (animal.get("name").equals("")) {
+//        nameArrayList.add(animal.get("type"));
+//        } else nameArrayList.add(animal.get("name"));
+//        }
+//        }
+//        case ("found"):
+//        for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+//        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+//
+//        if (animal.get("found").equals("found")) {
+//        animalArrayList.add(animal);
+//
+//        if (animal.get("name").equals("")) {
+//        nameArrayList.add(animal.get("type"));
+//        } else nameArrayList.add(animal.get("name"));
+//        }
+//        }
+//default:
+//        for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+//        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+//        animalArrayList.add(animal);
+//
+//
+//        if (animal.get("name").equals("")) {
+//        nameArrayList.add(animal.get("type"));
+//        } else nameArrayList.add(animal.get("name"));
+//        }
+//        }
+
+
+
+
+//        }
+//        else {
+//            query.addListenerForSingleValueEvent(new ValueEventListener() {
+//
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+//                        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+//                        animalArrayList.add(animal);
+//
+//                        if (animal.get("name").equals("")) {
+//                            nameArrayList.add(animal.get("type"));
+//                        } else nameArrayList.add(animal.get("name"));
+//                    }
+//
+//
+//                    ArrayAdapter adapter = new ArrayAdapter(Listings.this, android.R.layout.simple_list_item_1, nameArrayList);
+//                    listView.setAdapter(adapter);
+//
+//                }
+//
+//
+//
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Log.d("DEBUG", "Failure");
+//                }
+//            });
+//        }

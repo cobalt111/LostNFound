@@ -60,17 +60,20 @@ public class YourPets extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_pets);
 
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
-
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
         final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
         ArrayList<String> yourAnimalArrayList = new ArrayList<>();
 
 
+        // check to see if an animal has been found
+        checkIfFound(animalLinkedList, file);
+
+
         listView = (ListView) findViewById(R.id.listview);
 
         if (animalLinkedList.size() == 0) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "Your list of animals is empty!", Toast.LENGTH_LONG);
             toast.show();
         } else {
             for (HashMap<String, String> animal : animalLinkedList) {
@@ -96,7 +99,6 @@ public class YourPets extends AppCompatActivity {
 
                                 HashMap<String, String> animal = intentList.get(position);
                                 intent.putExtra(EXTRA_TEXT, animal.get("key"));
-                                finish();
                                 startActivity(intent);
                             }
                         });
@@ -109,4 +111,24 @@ public class YourPets extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
+
+    private void checkIfFound(LinkedList<HashMap<String, String>> animalLinkedList, File file) {
+        for (HashMap<String, String> currentAnimal : animalLinkedList) {
+            if (currentAnimal.get("found") != null && currentAnimal.get("notified") != null){
+                if (currentAnimal.get("found").equals("Found") && currentAnimal.get("notified").equals("false")){
+                    Toast toast = Toast.makeText(getApplicationContext(), "One of your lost pets has been found!", Toast.LENGTH_LONG);
+                    toast.show();
+
+                    currentAnimal.put("notified", "true");
+
+                    Intent foundAnimalIntent = new Intent(YourPets.this, Profile.class);
+                    foundAnimalIntent.putExtra(EXTRA_TEXT, currentAnimal.get("key"));
+                    startActivity(foundAnimalIntent);
+                }
+
+            }
+
+        }
+    }
+
 }

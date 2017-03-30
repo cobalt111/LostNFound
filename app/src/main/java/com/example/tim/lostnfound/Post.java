@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -74,13 +75,13 @@ public class Post extends AppCompatActivity {
     private FirebaseDatabase database;
     private DatabaseReference ref;
 
-
-
     private LinkedList<HashMap<String, String>> yourAnimalList;
 
-    private Spinner dropdown;
+    private Spinner typeDropdown;
+    private Spinner statusDropdown;
     private Button picButton;
     private String typeSelection;
+    private String statusSelection;
     private Button submitButton;
 
     private EditText nameView;
@@ -96,6 +97,13 @@ public class Post extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+//        Intent intent = getIntent();
+//        if (intent.getStringExtra("status") == "lost") {
+//            userPostIntention = "lost";
+//        } else if (intent.getStringExtra("status") == "found") {
+//            userPostIntention = "found";
+//        } else userPostIntention = null;
 
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
         yourAnimalList = FileUtils.readFromFile(file);
@@ -113,15 +121,33 @@ public class Post extends AppCompatActivity {
 
 
         // dropdown type selection spinner
-        dropdown = (Spinner) findViewById(R.id.post_type_spinner);
+        typeDropdown = (Spinner) findViewById(R.id.post_type_spinner);
         final String[] typesList = {"Dog", "Cat", "Hamster/Guinea Pig", "Mouse/Rat", "Bird", "Snake/Lizard", "Ferret", "Other"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropdown.setAdapter(adapter);
-        dropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        typeDropdown.setAdapter(typeAdapter);
+        typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 typeSelection = typesList[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                typeSelection = null;
+            }
+        });
+
+        // dropdown status selection spinner
+        statusDropdown = (Spinner) findViewById(R.id.post_status_spinner);
+        final String[] statusList = {"Lost", "Found"};
+        ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, statusList);
+        statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        statusDropdown.setAdapter(statusAdapter);
+        statusDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                statusSelection = statusList[position];
             }
 
             @Override
@@ -180,7 +206,12 @@ public class Post extends AppCompatActivity {
         animal.put("phone", phoneView.getText().toString());
         animal.put("location", locationView.getText().toString());
         animal.put("type", typeSelection);
-        animal.put("found", "Not Found");
+        animal.put("found", statusSelection);
+
+        if (statusSelection == "Found") {
+            animal.put("notified", "true");
+        } else animal.put("notified", "false");
+
 
         //TODO add picture functionality?
 
