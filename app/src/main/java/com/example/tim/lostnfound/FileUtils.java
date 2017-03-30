@@ -54,21 +54,24 @@ class FileUtils {
         return linkedList;
     }
 
-    static void removeAnimalFromFile(HashMap<String, String> animal, File file) {
+    static void replaceAnimalAsFound(HashMap<String, String> animal, File file) {
         try {
             LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
             linkedList.remove(animal);
+            animal.put("found", animal.get("found"));
+            animal.put("notified", "false");
+            linkedList.add(animal);
             writeToFile(linkedList, file);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    static void setAnimalInFileToFound (HashMap<String, String> animal, File file) {
+    static void setNotifiedToTrue (HashMap<String, String> animal, File file) {
         try {
             LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
             linkedList.remove(animal);
-            animal.put("found", "Found");
+            animal.put("notified", "true");
             linkedList.add(animal);
             writeToFile(linkedList, file);
         } catch (Exception e) {
