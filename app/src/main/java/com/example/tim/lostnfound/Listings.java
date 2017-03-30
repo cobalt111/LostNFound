@@ -87,6 +87,12 @@ public class Listings extends AppCompatActivity {
                 finish();
                 startActivity(foundFilterIntent);
                 return true;
+            case R.id.all_animals:
+                String noFilter = null;
+                Intent noFilterIntent = new Intent(this, Listings.class);
+                noFilterIntent.putExtra("filter", noFilter);
+                finish();
+                startActivity(noFilterIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -120,7 +126,7 @@ public class Listings extends AppCompatActivity {
         ref = mDatabase.getReference().child("server").child("animals");
         query = ref;
 
-        // just using namearraylist for the time being
+        // just using namearraylist for the time being, will probably change to two line adapter
         listView = (ListView) findViewById(R.id.listview);
         animalArrayList = new ArrayList<>();
         nameArrayList = new ArrayList<>();

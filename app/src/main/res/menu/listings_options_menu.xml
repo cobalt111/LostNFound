@@ -9,4 +9,8 @@
         android:icon="@drawable/ic_dashboard_black_24dp"
         android:title="Found Animals" />
 
+    <item android:id="@+id/all_animals"
+        android:icon="@drawable/ic_dashboard_black_24dp"
+        android:title="All Animals" />
+
 </menu>
