@@ -88,21 +88,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-        FirebaseDatabase mDatabase = DatabaseUtils.getDatabase();
-
-        setContentView(R.layout.activity_main);
-
-        button = (Button) findViewById(R.id.mainPostButton);
-
-        button = (Button) findViewById(R.id.mainButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Post.class);
-                startActivity(intent);
-            }
-        });
-
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
 
@@ -136,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
         FileUtils.writeToFile(animalLinkedList, file);
 
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // Create the adapter that will return a fragment for each of the three
