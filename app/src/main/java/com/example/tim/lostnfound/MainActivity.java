@@ -12,10 +12,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.TextView;
-import com.example.tim.lostnfound.DatabaseUtils;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -47,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+
+
+
+
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
+    private Query query;
+    private HashMap<String, String> animal;
     private Button button;
 
     /**
@@ -71,22 +89,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main_activity);
 
         FirebaseDatabase mDatabase = DatabaseUtils.getDatabase();
-        /*
+
         setContentView(R.layout.activity_main);
 
         button = (Button) findViewById(R.id.mainPostButton);
 
+        button = (Button) findViewById(R.id.mainButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Post.class);
+                Intent intent = new Intent(MainActivity.this, Post.class);
                 startActivity(intent);
             }
         });
 
-        */
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+        LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
 
-        //mTextMessage = (TextView) findViewById(R.id.message);
+        mDatabase = DatabaseUtils.getDatabase();
+        ref = mDatabase.getReference().child("server").child("animals");
+
+        for (final HashMap<String, String> listAnimal : animalLinkedList) {
+            query = ref.child(listAnimal.get("key"));
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+                        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
+                            listAnimal.put("found", animal.get("found"));
+                            listAnimal.put("notified", "false");
+                        }
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        FileUtils.writeToFile(animalLinkedList, file);
+
+
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 

@@ -28,6 +28,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <Button
+                android:id="@+id/mainButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="183dp"
+                android:text="@string/main_post_button" />
+
         </RelativeLayout>
     </FrameLayout>
 
@@ -37,6 +46,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="?android:attr/windowBackground"
-        app:menu="@menu/navigation" />
+        app:menu="@menu/navigation" >
+
+    </android.support.design.widget.BottomNavigationView>
 
 </LinearLayout>

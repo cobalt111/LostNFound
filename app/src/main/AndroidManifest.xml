@@ -8,7 +8,7 @@
          location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
@@ -46,12 +46,6 @@
             android:name=".Profile"
             android:exported="true" />
         <activity
-            android:name=".Search"
-            android:exported="true" />
-        <activity
-            android:name=".Results"
-            android:exported="true" />
-        <activity
             android:name=".Post"
             android:exported="true" />
         <!--
@@ -72,8 +66,9 @@
         <activity
             android:name=".Listings"
             android:exported="true" />
-        <activity android:name=".YourPets"
-            android:exported="true"/>
+        <activity
+            android:name=".YourPets"
+            android:exported="true" />
     </application>
 
 </manifest>

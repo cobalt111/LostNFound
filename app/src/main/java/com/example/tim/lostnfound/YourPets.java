@@ -13,6 +13,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.tim.lostnfound.FileUtils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -53,24 +59,71 @@ public class YourPets extends AppCompatActivity {
     };
 
 
-    ListView listView;
+    private ListView listView;
+    private FirebaseDatabase mDatabase;
+    private DatabaseReference ref;
+    private Query query;
+    private HashMap<String, String> animal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_your_pets);
 
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
+        mDatabase = DatabaseUtils.getDatabase();
+        ref = mDatabase.getReference().child("server").child("animals");
 
+        final File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
-        final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
+        final Intent ifFoundAnimalIntent = new Intent(this, Profile.class);
         ArrayList<String> yourAnimalArrayList = new ArrayList<>();
+
+
+        for (final HashMap<String, String> listAnimal : animalLinkedList) {
+            query = ref.child(listAnimal.get("key"));
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+//                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+                        animal = (HashMap<String, String>) dataSnapshot.getValue();
+                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found") && listAnimal.get("notified").equals("false")) {
+
+                            FileUtils.replaceAnimalAsFound(listAnimal, file);
+
+                            Toast toast = Toast.makeText(getApplicationContext(), "One of your lost pets has been found!", Toast.LENGTH_LONG);
+                            toast.show();
+
+                            FileUtils.setNotifiedToTrue(listAnimal, file);
+
+                            ifFoundAnimalIntent.putExtra(EXTRA_TEXT, listAnimal.get("key"));
+                            finish();
+                            startActivity(ifFoundAnimalIntent);
+
+//                        }
+
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+        }
+
+
+
+//        FileUtils.writeToFile(animalLinkedList, file);
+
+        // check to see if an animal has been found
+//        checkIfFound(animalLinkedList, file);
 
 
         listView = (ListView) findViewById(R.id.listview);
 
         if (animalLinkedList.size() == 0) {
-            Toast toast = Toast.makeText(getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), "Your list of animals is empty!", Toast.LENGTH_LONG);
             toast.show();
         } else {
             for (HashMap<String, String> animal : animalLinkedList) {
@@ -83,6 +136,7 @@ public class YourPets extends AppCompatActivity {
         ArrayAdapter adapter = new ArrayAdapter(YourPets.this, android.R.layout.simple_list_item_1, yourAnimalArrayList);
         listView.setAdapter(adapter);
 
+        final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
         final Intent intent = new Intent(this, Profile.class);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -96,7 +150,6 @@ public class YourPets extends AppCompatActivity {
 
                                 HashMap<String, String> animal = intentList.get(position);
                                 intent.putExtra(EXTRA_TEXT, animal.get("key"));
-                                finish();
                                 startActivity(intent);
                             }
                         });
@@ -109,4 +162,24 @@ public class YourPets extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
+
+//    private void checkIfFound(LinkedList<HashMap<String, String>> animalLinkedList, File file) {
+//        for (HashMap<String, String> currentAnimal : animalLinkedList) {
+//            if (currentAnimal.get("found") != null && currentAnimal.get("notified") != null){
+//                if (currentAnimal.get("found").equals("Found") && currentAnimal.get("notified").equals("false")){
+//                    Toast toast = Toast.makeText(getApplicationContext(), "One of your lost pets has been found!", Toast.LENGTH_LONG);
+//                    toast.show();
+//
+//                    currentAnimal.put("notified", "true");
+//
+//                    Intent foundAnimalIntent = new Intent(YourPets.this, Profile.class);
+//                    foundAnimalIntent.putExtra(EXTRA_TEXT, currentAnimal.get("key"));
+//                    startActivity(foundAnimalIntent);
+//                }
+//
+//            }
+//
+//        }
+//    }
+
 }
