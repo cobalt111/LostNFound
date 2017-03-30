@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference ref;
     private Query query;
     private HashMap<String, String> animal;
-    private Button foundButton;
+    private Button button;
 
 
     @Override
@@ -71,12 +71,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        foundButton = (Button) findViewById(R.id.mainFoundButton);
-        foundButton.setOnClickListener(new View.OnClickListener() {
+        button = (Button) findViewById(R.id.mainButton);
+        button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, Post.class);
-                finish();
                 startActivity(intent);
             }
         });

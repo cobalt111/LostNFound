@@ -29,7 +29,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/mainLostButton"
+                android:id="@+id/mainButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -37,14 +37,6 @@
                 android:layout_marginTop="183dp"
                 android:text="@string/main_post_button" />
 
-            <Button
-                android:id="@+id/mainFoundButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/mainLostButton"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="66dp"
-                android:text="Button" />
         </RelativeLayout>
     </FrameLayout>
 
