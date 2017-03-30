@@ -46,12 +46,6 @@
             android:name=".Profile"
             android:exported="true" />
         <activity
-            android:name=".Search"
-            android:exported="true" />
-        <activity
-            android:name=".Results"
-            android:exported="true" />
-        <activity
             android:name=".Post"
             android:exported="true" />
         <!--

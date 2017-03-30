@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
     private Query query;
     private HashMap<String, String> animal;
     private Button foundButton;
-    private Button lostButton;
-
 
 
     @Override
@@ -114,20 +112,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         FileUtils.writeToFile(animalLinkedList, file);
-
-
-
-//        lostButton = (Button) findViewById(R.id.mainLostButton);
-//        foundButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, Post.class);
-//                intent.putExtra("status", "lost");
-//                finish();
-//                startActivity(intent);
-//            }
-//        });
-
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
