@@ -63,7 +63,10 @@ public class YourPets extends AppCompatActivity {
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
     private Query query;
+    private File file;
     private HashMap<String, String> animal;
+    private LinkedList<HashMap<String, String>> animalLinkedList;
+    private ArrayList<String> yourAnimalArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,35 +76,30 @@ public class YourPets extends AppCompatActivity {
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
 
-        final File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-        LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
+        file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+        animalLinkedList = FileUtils.readFromFile(file);
+        yourAnimalArrayList = new ArrayList<>();
+
         final Intent ifFoundAnimalIntent = new Intent(this, Profile.class);
-        ArrayList<String> yourAnimalArrayList = new ArrayList<>();
-
-
         for (final HashMap<String, String> listAnimal : animalLinkedList) {
             query = ref.child(listAnimal.get("key"));
             query.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-//                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
-                        animal = (HashMap<String, String>) dataSnapshot.getValue();
-                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found") && listAnimal.get("notified").equals("false")) {
+                    animal = (HashMap<String, String>) dataSnapshot.getValue();
+                    if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found") && listAnimal.get("notified").equals("false")) {
 
-                            FileUtils.replaceAnimalAsFound(listAnimal, file);
+                        FileUtils.replaceAnimalAsFound(listAnimal, file);
 
-                            Toast toast = Toast.makeText(getApplicationContext(), "One of your lost pets has been found!", Toast.LENGTH_LONG);
-                            toast.show();
+                        Toast toast = Toast.makeText(getApplicationContext(), "One of your lost pets has been found!", Toast.LENGTH_LONG);
+                        toast.show();
 
-                            FileUtils.setNotifiedToTrue(listAnimal, file);
+                        FileUtils.setNotifiedToTrue(listAnimal, file);
 
-                            ifFoundAnimalIntent.putExtra(EXTRA_TEXT, listAnimal.get("key"));
-                            finish();
-                            startActivity(ifFoundAnimalIntent);
-
-//                        }
-
+                        ifFoundAnimalIntent.putExtra(EXTRA_TEXT, listAnimal.get("key"));
+                        finish();
+                        startActivity(ifFoundAnimalIntent);
 
                     }
                 }
@@ -111,14 +109,6 @@ public class YourPets extends AppCompatActivity {
                 }
             });
         }
-
-
-
-//        FileUtils.writeToFile(animalLinkedList, file);
-
-        // check to see if an animal has been found
-//        checkIfFound(animalLinkedList, file);
-
 
         listView = (ListView) findViewById(R.id.listview);
 
@@ -130,7 +120,6 @@ public class YourPets extends AppCompatActivity {
                 yourAnimalArrayList.add(animal.get("name"));
             }
         }
-
 
 
         ArrayAdapter adapter = new ArrayAdapter(YourPets.this, android.R.layout.simple_list_item_1, yourAnimalArrayList);
@@ -163,6 +152,11 @@ public class YourPets extends AppCompatActivity {
 
     }
 
+
+}
+
+
+
 //    private void checkIfFound(LinkedList<HashMap<String, String>> animalLinkedList, File file) {
 //        for (HashMap<String, String> currentAnimal : animalLinkedList) {
 //            if (currentAnimal.get("found") != null && currentAnimal.get("notified") != null){
@@ -181,5 +175,3 @@ public class YourPets extends AppCompatActivity {
 //
 //        }
 //    }
-
-}

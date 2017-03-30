@@ -80,17 +80,17 @@ class FileUtils {
 
     }
 
-    static void hideAnimalInFile (HashMap<String, String> animal, File file) {
-        try {
-            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
-            linkedList.remove(animal);
-            animal.put("hidden", "true");
-            linkedList.add(animal);
-            writeToFile(linkedList, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    static void hideAnimalInFile (HashMap<String, String> animal, File file) {
+//        try {
+//            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
+//            linkedList.remove(animal);
+//            animal.put("hidden", "true");
+//            linkedList.add(animal);
+//            writeToFile(linkedList, file);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     //    static File createFile(){
 //        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), "animal_key_list.txt");

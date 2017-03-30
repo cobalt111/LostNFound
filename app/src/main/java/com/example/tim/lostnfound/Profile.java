@@ -79,7 +79,6 @@ public class Profile extends AppCompatActivity {
     private TextView emailView;
     private TextView statusView;
     private TextView typeView;
-
     private Button foundButton;
 
 
@@ -90,7 +89,9 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
         Intent intent = getIntent();
-        animalID = intent.getStringExtra(EXTRA_TEXT);
+        if (intent.hasExtra(EXTRA_TEXT)) {
+            animalID = intent.getStringExtra(EXTRA_TEXT);
+        }
 
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals").child(animalID);
