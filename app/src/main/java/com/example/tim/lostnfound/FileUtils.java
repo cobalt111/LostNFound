@@ -20,6 +20,15 @@ class FileUtils {
     final static String listOfYourPetsFile = "animal_key_list.txt";
 
 
+        static void createFile(){
+        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+        try{
+            file.createNewFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     static void writeToFile(LinkedList<HashMap<String, String>> linkedList, File file) {
         try {
             file.delete();
@@ -38,18 +47,24 @@ class FileUtils {
 
     static LinkedList<HashMap<String, String>> readFromFile(File file) {
         LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
-            linkedList = (LinkedList<HashMap<String, String>>) objectInputStream.readObject();
+        if (file.exists()){
+            try {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
-            fileInputStream.close();
-            objectInputStream.close();
+                linkedList = (LinkedList<HashMap<String, String>>) objectInputStream.readObject();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                fileInputStream.close();
+                objectInputStream.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            createFile();
         }
+
 
         return linkedList;
     }
@@ -92,14 +107,7 @@ class FileUtils {
 //        }
 //    }
 
-    //    static File createFile(){
-//        final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), "animal_key_list.txt");
-//        try{
-//            file.createNewFile();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } return file;
-//    }
+
 
 //    static void printContents(File file) {
 //        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();

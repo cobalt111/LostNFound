@@ -61,7 +61,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Map"
+            android:name=".AnimalMap"
             android:label="@string/title_activity_map" />
         <activity
             android:name=".Listings"
