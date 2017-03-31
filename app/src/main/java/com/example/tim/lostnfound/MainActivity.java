@@ -1,5 +1,6 @@
 package com.example.tim.lostnfound;
 
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,9 +8,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -26,9 +30,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListingsFragment.OnMenuItemSelectedListener {
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -57,6 +62,45 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
+    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.listings_options_menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+//        switch (item.getItemId()) {
+//            case R.id.lost_animals:
+//                mViewPager.getAdapter().notifyDataSetChanged();
+//                return true;
+//            case R.id.found_animals:
+//                mSectionsPagerAdapter.notifyDataSetChanged();
+//                return true;
+//            case R.id.all_animals:
+//                mSectionsPagerAdapter.notifyDataSetChanged();
+//                return true;
+//
+//        }
+        return false;
+    }
+
+    @Override
+    public void onMenuItemSelected(String filter) {
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+//        ViewPager mPager = (ViewPager) findViewById(R.id.container);
+//        FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) mPager.getAdapter();
+//        ListingsFragment listingsFragment = (ListingsFragment) adapter.instantiateItem(mPager, mPager.getCurrentItem());
+//        Bundle lostBundle = new Bundle();
+//        lostBundle.putString("filter", filter);
+//        listingsFragment.setArguments(lostBundle);
+//        android.support.v4.app.FragmentTransaction lostTransaction = getSupportFragmentManager().beginTransaction();
+//        lostTransaction.replace(mViewPager.getCurrentItem(), listingsFragment);
+//        lostTransaction.commit();
+
+    }
+
 
 
 
@@ -65,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference ref;
     private Query query;
     private HashMap<String, String> animal;
-    private Button button;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -121,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
         FileUtils.writeToFile(animalLinkedList, file);
 
 
-        final BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
         // Create the adapter that will return a fragment for each of the three
@@ -164,11 +207,16 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+
+//        @Override
+//        public int getItemPosition(Object object){
+//            return POSITION_NONE;
+//        }
 
         @Override
         public Fragment getItem(int position) {
