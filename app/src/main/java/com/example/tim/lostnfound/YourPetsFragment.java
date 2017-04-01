@@ -1,5 +1,6 @@
 package com.example.tim.lostnfound;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,7 +14,11 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -36,7 +41,7 @@ public class YourPetsFragment extends Fragment {
     }
 
     private ListView listView;
-    private ArrayList<String> yourAnimalArrayList;
+    private LinkedList<String> yourAnimalLinkedList;
     private LinkedList<HashMap<String, String>> animalLinkedList;
 
     @Override
@@ -44,70 +49,82 @@ public class YourPetsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
 
-        FileUtils.createFile();
-        File file = new File(getActivity().getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
 
+        FileUtils.createFile();
+        File file = new File(getContext().getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         animalLinkedList = FileUtils.readFromFile(file);
         final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
 
-        yourAnimalArrayList = new ArrayList<>();
+        yourAnimalLinkedList = new LinkedList<>();
 
         listView = (ListView) rootView.findViewById(R.id.listview);
 
         for (HashMap<String, String> animal : animalLinkedList) {
-            yourAnimalArrayList.add(animal.get("name"));
+            yourAnimalLinkedList.add(animal.get("name"));
         }
 
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, yourAnimalArrayList);
+        ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, yourAnimalLinkedList);
         listView.setAdapter(adapter);
-//
-//        final Intent intent = new Intent(getActivity(), Profile.class);
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, final View view,
-//                                    final int position, long id) {
-//                view.animate().setDuration(100).alpha(0)
-//                        .withEndAction(new Runnable() {
-//                            @Override
-//                            public void run() {
-//
-//                                HashMap<String, String> animal = intentList.get(position);
-//                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
-//                                //finish();
-//                                startActivity(intent);
-//                            }
-//                        });
-//            }
-//
-//        });
 
-//        final Intent listIntent = new Intent(getContext(), Profile.class);
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, final View view,
-//                                    final int position, long id) {
-//
-//                view.animate().setDuration(0).alpha(1)
-//                        .withEndAction(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                animal = animalArrayList.get(position);
-//                                listIntent.putExtra(EXTRA_TEXT, animal.get("key"));
-//                                startActivity(listIntent);
-//
-//                            }
-//                        });
-//            }
-//
-//        });
+        final Intent intent = new Intent(getActivity(), Profile.class);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> parent, final View view,
+                                    final int position, long id) {
+                view.animate().setDuration(0).alpha(1)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                HashMap<String, String> animal = intentList.get(position);
+                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
+                                //finish();
+                                startActivity(intent);
+                            }
+                        });
+            }
+
+        });
 
 
         return rootView;
     }
 
+//    public static void saveToFile(String filename, LinkedList<HashMap<String, String>> linkedList, Context context) {
+//
+//        FileOutputStream fileOutputStream;
+//        try {
+//            fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+//
+//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+//            objectOutputStream.writeObject(linkedList);
+//            objectOutputStream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
+//    private static LinkedList<HashMap<String,String>> readFromFile(String filename, Context context) {
+//        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();
+//
+//        FileInputStream fileInputStream;
+//        try {
+//            fileInputStream = context.openFileInput(filename);
+//
+//
+//            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+//            linkedList = (LinkedList<HashMap<String,String>>) objectInputStream.readObject();
+//            objectInputStream.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        return linkedList;
+//
+//    }
 
 
 

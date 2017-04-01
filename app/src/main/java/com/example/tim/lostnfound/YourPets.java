@@ -21,7 +21,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -66,7 +66,7 @@ public class YourPets extends AppCompatActivity {
     private File file;
     private HashMap<String, String> animal;
     private LinkedList<HashMap<String, String>> animalLinkedList;
-    private ArrayList<String> yourAnimalArrayList;
+    private LinkedList<String> yourAnimalLinkedList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class YourPets extends AppCompatActivity {
 
         file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         animalLinkedList = FileUtils.readFromFile(file);
-        yourAnimalArrayList = new ArrayList<>();
+        yourAnimalLinkedList = new LinkedList<>();
 
         final Intent ifFoundAnimalIntent = new Intent(this, Profile.class);
         for (final HashMap<String, String> listAnimal : animalLinkedList) {
@@ -117,12 +117,12 @@ public class YourPets extends AppCompatActivity {
             toast.show();
         } else {
             for (HashMap<String, String> animal : animalLinkedList) {
-                yourAnimalArrayList.add(animal.get("name"));
+                yourAnimalLinkedList.add(animal.get("name"));
             }
         }
 
 
-        ArrayAdapter adapter = new ArrayAdapter(YourPets.this, android.R.layout.simple_list_item_1, yourAnimalArrayList);
+        ArrayAdapter adapter = new ArrayAdapter(YourPets.this, android.R.layout.simple_list_item_1, yourAnimalLinkedList);
         listView.setAdapter(adapter);
 
         final LinkedList<HashMap<String, String>> intentList = animalLinkedList;

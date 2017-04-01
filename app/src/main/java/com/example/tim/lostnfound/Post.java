@@ -29,11 +29,10 @@ import java.io.File;
 import java.io.IOException;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 
 import static android.content.Intent.EXTRA_TEXT;
@@ -102,9 +101,9 @@ public class Post extends AppCompatActivity {
         setContentView(R.layout.activity_post);
 
 
-
-//        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-//        yourAnimalList = FileUtils.readFromFile(file);
+        FileUtils.createFile();
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+        yourAnimalList = FileUtils.readFromFile(file);
 
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");

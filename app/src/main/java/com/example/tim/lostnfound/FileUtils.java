@@ -1,8 +1,5 @@
 package com.example.tim.lostnfound;
 
-
-import android.app.Activity;
-import android.content.Context;
 import android.os.Environment;
 
 import java.io.File;
@@ -10,10 +7,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedList;
-import android.content.Context;
+import java.util.HashMap;
 
 class FileUtils {
 
@@ -73,7 +68,7 @@ class FileUtils {
         try {
             LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
             linkedList.remove(animal);
-            animal.put("found", animal.get("found"));
+            animal.put("found", "Found");
             animal.put("notified", "false");
             linkedList.add(animal);
             writeToFile(linkedList, file);
@@ -97,7 +92,7 @@ class FileUtils {
 
 //    static void hideAnimalInFile (HashMap<String, String> animal, File file) {
 //        try {
-//            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
+//            linkedList<Animal> linkedList = readFromFile(file);
 //            linkedList.remove(animal);
 //            animal.put("hidden", "true");
 //            linkedList.add(animal);
@@ -110,7 +105,7 @@ class FileUtils {
 
 
 //    static void printContents(File file) {
-//        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();
+//        linkedList<Animal> linkedList = new linkedList<>();
 //
 //        createFile();
 //        linkedList = readFromFile(file);

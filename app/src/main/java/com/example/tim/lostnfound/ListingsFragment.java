@@ -1,6 +1,7 @@
 package com.example.tim.lostnfound;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -23,8 +24,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import static android.content.Intent.EXTRA_TEXT;
 
@@ -67,8 +73,8 @@ public class ListingsFragment extends Fragment {
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
     private HashMap<String, String> animal;
-    private ArrayList<HashMap<String, String>> animalArrayList;
-    private ArrayList<String> nameArrayList;
+    private LinkedList<HashMap<String, String>> animalLinkedList;
+    private LinkedList<String> nameLinkedList;
     private ListView listView;
     private Query query;
     private String userIntention;
@@ -79,16 +85,17 @@ public class ListingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_listings, container, false);
 
-
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
 
         // just using namearraylist for the time being, will probably change to two line adapter
         listView = (ListView) rootView.findViewById(R.id.listview);
-        animalArrayList = new ArrayList<>();
-        nameArrayList = new ArrayList<>();
+
 
         adapter = queryDatabaseForData(userIntention);
+
+
+
 
 
         final Intent listIntent = new Intent(getContext(), Profile.class);
@@ -102,7 +109,7 @@ public class ListingsFragment extends Fragment {
                         .withEndAction(new Runnable() {
                             @Override
                             public void run() {
-                                animal = animalArrayList.get(position);
+                                animal = animalLinkedList.get(position);
                                 listIntent.putExtra(EXTRA_TEXT, animal.get("key"));
                                 startActivity(listIntent);
 
@@ -122,30 +129,28 @@ public class ListingsFragment extends Fragment {
     private ArrayAdapter queryDatabaseForData (String intention) {
 
         query = ref;
-        animalArrayList = new ArrayList<>();
-        nameArrayList = new ArrayList<>();
+        animalLinkedList = new LinkedList<>();
+        nameLinkedList = new LinkedList<>();
 
         if (intention != null) {
             query = ref.orderByChild("found").equalTo(intention);
         }
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
                     animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
-                    animalArrayList.add(animal);
+                    animalLinkedList.add(animal);
 
                     if (animal.get("name").equals("")) {
-                        nameArrayList.add(animal.get("type"));
-                    } else nameArrayList.add(animal.get("name"));
+                        nameLinkedList.add(animal.get("type"));
+                    } else nameLinkedList.add(animal.get("name"));
 
                 }
 
-                adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, nameArrayList);
+                adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, nameLinkedList);
                 listView.setAdapter(adapter);
-
 
             }
 
@@ -184,6 +189,41 @@ public class ListingsFragment extends Fragment {
     }
 
 
+    private static void saveToFile(String filename, LinkedList<HashMap<String, String>> linkedList, Context context) {
+
+        FileOutputStream fileOutputStream;
+        try {
+            fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
+
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(linkedList);
+            objectOutputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private static LinkedList<HashMap<String,String>> readFromFile(String filename, Context context) {
+        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();
+
+        FileInputStream fileInputStream;
+        try {
+            fileInputStream = context.openFileInput(filename);
+
+
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            linkedList = (LinkedList<HashMap<String,String>>) objectInputStream.readObject();
+            objectInputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return linkedList;
+
+    }
+
 }
 
 
@@ -193,8 +233,8 @@ public class ListingsFragment extends Fragment {
 //
 //        // just using namearraylist for the time being
 //        listView = (ListView) rootView.findViewById(R.id.listview);
-//        animalArrayList = new ArrayList<>();
-//        nameArrayList = new ArrayList<>();
+//        animalLinkedList = new LinkedList<>();
+//        nameLinkedList = new LinkedList<>();
 //
 //        ref.addListenerForSingleValueEvent(new ValueEventListener() {
 //
@@ -202,11 +242,11 @@ public class ListingsFragment extends Fragment {
 //            public void onDataChange(DataSnapshot dataSnapshot) {
 //                for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()){
 //                    animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
-//                    animalArrayList.add(animal);
-//                    nameArrayList.add(animal.get("name"));
+//                    animalLinkedList.add(animal);
+//                    nameLinkedList.add(animal.get("name"));
 //                }
 //
-//                ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, nameArrayList);
+//                ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, nameLinkedList);
 //                listView.setAdapter(adapter);
 //            }
 //

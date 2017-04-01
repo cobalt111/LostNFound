@@ -28,7 +28,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -63,42 +63,32 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     };
 
-    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.listings_options_menu, menu);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-//        switch (item.getItemId()) {
-//            case R.id.lost_animals:
-//                mViewPager.getAdapter().notifyDataSetChanged();
-//                return true;
-//            case R.id.found_animals:
-//                mSectionsPagerAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.all_animals:
-//                mSectionsPagerAdapter.notifyDataSetChanged();
-//                return true;
+//    public boolean onCreateOptionsMenu(Menu menu) {
+////        MenuInflater menuInflater = getMenuInflater();
+////        menuInflater.inflate(R.menu.listings_options_menu, menu);
+//        return true;
+//    }
 //
-//        }
-        return false;
-    }
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//
+////        switch (item.getItemId()) {
+////            case R.id.lost_animals:
+////                mViewPager.getAdapter().notifyDataSetChanged();
+////                return true;
+////            case R.id.found_animals:
+////                mSectionsPagerAdapter.notifyDataSetChanged();
+////                return true;
+////            case R.id.all_animals:
+////                mSectionsPagerAdapter.notifyDataSetChanged();
+////                return true;
+////
+////        }
+//        return false;
+//    }
 
     @Override
     public void onMenuItemSelected(String filter) {
 
-        mSectionsPagerAdapter.notifyDataSetChanged();
-//        ViewPager mPager = (ViewPager) findViewById(R.id.container);
-//        FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) mPager.getAdapter();
-//        ListingsFragment listingsFragment = (ListingsFragment) adapter.instantiateItem(mPager, mPager.getCurrentItem());
-//        Bundle lostBundle = new Bundle();
-//        lostBundle.putString("filter", filter);
-//        listingsFragment.setArguments(lostBundle);
-//        android.support.v4.app.FragmentTransaction lostTransaction = getSupportFragmentManager().beginTransaction();
-//        lostTransaction.replace(mViewPager.getCurrentItem(), listingsFragment);
-//        lostTransaction.commit();
 
     }
 
@@ -109,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
     private Query query;
+    private LinkedList<HashMap<String, String>> animalLinkedList;
     private HashMap<String, String> animal;
 
     /**
@@ -132,14 +123,13 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-//        Intent mainIntent = getIntent();
-//        if (mainIntent != null){
-//            mainIntent.getExtras();
-//        }
-
-
+        FileUtils.createFile();
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-        LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
+
+        animalLinkedList = FileUtils.readFromFile(file);
+
+
+
 
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
@@ -150,12 +140,10 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
-                        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
-                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
-                            listAnimal.put("found", animal.get("found"));
-                            listAnimal.put("notified", "false");
-                        }
+                    animal = (HashMap<String, String>) dataSnapshot.getValue();
+                    if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
+                        listAnimal.put("found", animal.get("found"));
+                        listAnimal.put("notified", "false");
                     }
                 }
 
