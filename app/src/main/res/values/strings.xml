@@ -13,7 +13,7 @@
     <string name="post_date" />
     <string name="post_phone" />
     <string name="post_description" />
-    <string name="post_type" />
+    <string name="post_type">Animal type</string>
     <string name="post_picture">Picture</string>
     <string name="post_hint_name">Animal\'s name</string>
     <string name="post_hint_color">Animal\'s color</string>

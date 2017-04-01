@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -131,6 +132,12 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+//        Intent mainIntent = getIntent();
+//        if (mainIntent != null){
+//            mainIntent.getExtras();
+//        }
+
+
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
 
@@ -149,8 +156,6 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
                             listAnimal.put("found", animal.get("found"));
                             listAnimal.put("notified", "false");
                         }
-
-
                     }
                 }
 
@@ -184,6 +189,16 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
             @Override
             public void onPageSelected(int position) {
+                if (position == 2) {
+
+                    File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+                    LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
+
+                    if (animalLinkedList.size() == 0) {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                }
 
             }
 

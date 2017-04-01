@@ -20,7 +20,7 @@ class FileUtils {
     final static String listOfYourPetsFile = "animal_key_list.txt";
 
 
-        static void createFile(){
+    static void createFile(){
         final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         try{
             file.createNewFile();

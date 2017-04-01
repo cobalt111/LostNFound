@@ -42,34 +42,37 @@ import static android.widget.Toast.LENGTH_LONG;
 
 public class Post extends AppCompatActivity {
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    Intent intentHome = new Intent(Post.this, MainActivity.class);
-                    finish();
-                    startActivity(intentHome);
-                    return true;
-                case R.id.navigation_listings:
-                    Intent intentListings = new Intent(Post.this, Listings.class);
-                    finish();
-                    startActivity(intentListings);
-                    return true;
-                case R.id.navigation_animals:
-                    Intent intentAnimals = new Intent(Post.this, YourPets.class);
-                    finish();
-                    startActivity(intentAnimals);
-                    return true;
-//                case R.id.navigation_map:
-//                    mTextMessage.setText(R.string.nav_map);
+//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+//
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//            switch (item.getItemId()) {
+//                case R.id.navigation_home:
+//                    Intent intentHome = new Intent(Post.this, MainActivity.class);
+//                    intentHome.putExtra("page", 0);
+//                    finish();
+//                    startActivity(intentHome);
 //                    return true;
-            }
-            return false;
-        }
-
-    };
+//                case R.id.navigation_listings:
+//                    Intent intentListings = new Intent(Post.this, MainActivity.class);
+//                    intentListings.putExtra("page", 1);
+//                    finish();
+//                    startActivity(intentListings);
+//                    return true;
+//                case R.id.navigation_animals:
+//                    Intent intentAnimals = new Intent(Post.this, MainActivity.class);
+//                    intentAnimals.putExtra("page", 2);
+//                    finish();
+//                    startActivity(intentAnimals);
+//                    return true;
+////                case R.id.navigation_map:
+////                    mTextMessage.setText(R.string.nav_map);
+////                    return true;
+//            }
+//            return false;
+//        }
+//
+//    };
 
 
     private FirebaseDatabase database;
@@ -98,15 +101,10 @@ public class Post extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-//        Intent intent = getIntent();
-//        if (intent.getStringExtra("status") == "lost") {
-//            userPostIntention = "lost";
-//        } else if (intent.getStringExtra("status") == "found") {
-//            userPostIntention = "found";
-//        } else userPostIntention = null;
 
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
-        yourAnimalList = FileUtils.readFromFile(file);
+
+//        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+//        yourAnimalList = FileUtils.readFromFile(file);
 
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");
@@ -152,7 +150,7 @@ public class Post extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                typeSelection = null;
+                statusSelection = null;
             }
         });
 
@@ -186,8 +184,8 @@ public class Post extends AppCompatActivity {
             }
         });
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
     }
 
@@ -208,7 +206,7 @@ public class Post extends AppCompatActivity {
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
-        if (statusSelection == "Found") {
+        if (statusSelection.equals("Found")) {
             animal.put("notified", "true");
         } else animal.put("notified", "false");
 
@@ -220,7 +218,7 @@ public class Post extends AppCompatActivity {
         newAnimalRef.setValue(animal);
 
         yourAnimalList.add(animal);
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
+        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         FileUtils.writeToFile(yourAnimalList, file);
 
         return newAnimalRef.getKey();
@@ -231,35 +229,35 @@ public class Post extends AppCompatActivity {
 
 
 
-    // for taking the pictures
-    static final int REQUEST_IMAGE_CAPTURE = 1;
-
-    private void dispatchTakePictureIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-        }
-    }
-
-
-    // for saving the image with a new filename
-    String mCurrentPhotoPath;
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
+//    // for taking the pictures
+//    static final int REQUEST_IMAGE_CAPTURE = 1;
+//
+//    private void dispatchTakePictureIntent() {
+//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//        }
+//    }
+//
+//
+//    // for saving the image with a new filename
+//    String mCurrentPhotoPath;
+//
+//    private File createImageFile() throws IOException {
+//        // Create an image file name
+//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+//        String imageFileName = "JPEG_" + timeStamp + "_";
+//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+//        File image = File.createTempFile(
+//                imageFileName,  /* prefix */
+//                ".jpg",         /* suffix */
+//                storageDir      /* directory */
+//        );
+//
+//        // Save a file: path for use with ACTION_VIEW intents
+//        mCurrentPhotoPath = image.getAbsolutePath();
+//        return image;
+//    }
 
 //    // to display the image
 //    private void setPic() {

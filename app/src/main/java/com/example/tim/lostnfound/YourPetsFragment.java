@@ -3,6 +3,7 @@ package com.example.tim.lostnfound;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,59 +35,80 @@ public class YourPetsFragment extends Fragment {
         return fragment;
     }
 
-    ListView listView;
+    private ListView listView;
+    private ArrayList<String> yourAnimalArrayList;
+    private LinkedList<HashMap<String, String>> animalLinkedList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
 
-        File file = new File(getActivity().getExternalFilesDir(null).getAbsolutePath(), "animal_key_list.txt");
+        FileUtils.createFile();
+        File file = new File(getActivity().getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
 
-        LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
+        animalLinkedList = FileUtils.readFromFile(file);
         final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
-        ArrayList<String> yourAnimalArrayList = new ArrayList<>();
 
+        yourAnimalArrayList = new ArrayList<>();
 
         listView = (ListView) rootView.findViewById(R.id.listview);
 
-        if (animalLinkedList.size() == 0) {
-            Toast toast = Toast.makeText(getActivity().getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
-            toast.show();
-        } else {
-            for (HashMap<String, String> animal : animalLinkedList) {
-                yourAnimalArrayList.add(animal.get("name"));
-            }
+        for (HashMap<String, String> animal : animalLinkedList) {
+            yourAnimalArrayList.add(animal.get("name"));
         }
-
-
 
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, yourAnimalArrayList);
         listView.setAdapter(adapter);
+//
+//        final Intent intent = new Intent(getActivity(), Profile.class);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, final View view,
+//                                    final int position, long id) {
+//                view.animate().setDuration(100).alpha(0)
+//                        .withEndAction(new Runnable() {
+//                            @Override
+//                            public void run() {
+//
+//                                HashMap<String, String> animal = intentList.get(position);
+//                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
+//                                //finish();
+//                                startActivity(intent);
+//                            }
+//                        });
+//            }
+//
+//        });
 
-        final Intent intent = new Intent(getActivity(), Profile.class);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//        final Intent listIntent = new Intent(getContext(), Profile.class);
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, final View view,
+//                                    final int position, long id) {
+//
+//                view.animate().setDuration(0).alpha(1)
+//                        .withEndAction(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                animal = animalArrayList.get(position);
+//                                listIntent.putExtra(EXTRA_TEXT, animal.get("key"));
+//                                startActivity(listIntent);
+//
+//                            }
+//                        });
+//            }
+//
+//        });
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    final int position, long id) {
-                view.animate().setDuration(100).alpha(0)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                HashMap<String, String> animal = intentList.get(position);
-                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
-                                //finish();
-                                startActivity(intent);
-                            }
-                        });
-            }
-
-        });
 
         return rootView;
     }
+
+
+
 
 
 }
