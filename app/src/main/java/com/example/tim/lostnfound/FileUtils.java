@@ -90,31 +90,7 @@ class FileUtils {
 
     }
 
-//    static void hideAnimalInFile (HashMap<String, String> animal, File file) {
-//        try {
-//            linkedList<Animal> linkedList = readFromFile(file);
-//            linkedList.remove(animal);
-//            animal.put("hidden", "true");
-//            linkedList.add(animal);
-//            writeToFile(linkedList, file);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
 
-
-
-//    static void printContents(File file) {
-//        linkedList<Animal> linkedList = new linkedList<>();
-//
-//        createFile();
-//        linkedList = readFromFile(file);
-//
-//
-//        for (HashMap<String, String> animal : linkedList) {
-//            System.out.println(Arrays.asList(animal));
-//        }
-//    }
 
 
 }
