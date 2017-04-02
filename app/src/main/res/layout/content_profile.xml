@@ -115,4 +115,13 @@
         android:layout_centerVertical="true"
         android:text="Button" />
 
+    <Button
+        android:id="@+id/profileFindLocationButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/profileFoundButton"
+        android:layout_below="@+id/profileFoundButton"
+        android:layout_marginTop="35dp"
+        android:text="Button" />
+
 </RelativeLayout>

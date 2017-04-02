@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,40 +33,41 @@ import static android.content.Intent.EXTRA_TEXT;
 
 public class Profile extends AppCompatActivity {
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    Intent intentHome = new Intent(Profile.this, MainActivity.class);
-                    finish();
-                    startActivity(intentHome);
-                    return true;
-                case R.id.navigation_listings:
-                    Intent intentListings = new Intent(Profile.this, Listings.class);
-                    finish();
-                    startActivity(intentListings);
-                    return true;
-                case R.id.navigation_animals:
-                    Intent intentAnimals = new Intent(Profile.this, YourPets.class);
-                    finish();
-                    startActivity(intentAnimals);
-                    return true;
-//                case R.id.navigation_map:
-//                    mTextMessage.setText(R.string.nav_map);
+//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
+//
+//        @Override
+//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//            switch (item.getItemId()) {
+//                case R.id.navigation_home:
+//                    Intent intentHome = new Intent(Profile.this, MainActivity.class);
+//                    finish();
+//                    startActivity(intentHome);
 //                    return true;
-            }
-            return false;
-        }
-
-    };
+//                case R.id.navigation_listings:
+//                    Intent intentListings = new Intent(Profile.this, Listings.class);
+//                    finish();
+//                    startActivity(intentListings);
+//                    return true;
+//                case R.id.navigation_animals:
+//                    Intent intentAnimals = new Intent(Profile.this, YourPets.class);
+//                    finish();
+//                    startActivity(intentAnimals);
+//                    return true;
+////                case R.id.navigation_map:
+////                    mTextMessage.setText(R.string.nav_map);
+////                    return true;
+//            }
+//            return false;
+//        }
+//
+//    };
 
 
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
 
     private String animalID;
+
     private HashMap<String, String> animalFound;
     private HashMap<String, String> animal;
 
@@ -153,7 +155,23 @@ public class Profile extends AppCompatActivity {
 
 
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+//        Intent resumeIntent = getIntent();
+//        Bundle resumeBundle;
+
+
+//        if (resumeIntent.hasExtra("latlng")){
+//            resumeBundle = resumeIntent.getBundleExtra("latlng");
+//            locationLatLng = resumeBundle.getParcelable("latlng");
+//            Log.d("DEBUG", "resumeintent");
+//
+//
+//        }
+//
+//        Log.d("DEBUG", "Failure to resume");
+
+//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
+
+
 }

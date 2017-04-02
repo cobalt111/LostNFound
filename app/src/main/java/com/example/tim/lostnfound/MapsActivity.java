@@ -16,8 +16,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private Marker animalLocation;
-    private String animalID;
+    private String addingMarker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +47,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(flint).title("Welcome to Flint"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(flint, 13));
 
-//        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(mMarker.getPosition(), 14));
+
+        Intent intent = getIntent();
+        if (intent.hasExtra("adding")) {
+            addingMarker = intent.getStringExtra("adding");
+        }
 
 
+        if (addingMarker.equals("adding")) {
+            // Setting a click event handler for the map
+            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+
+                @Override
+                public void onMapClick(LatLng latLng) {
+
+                    // Creating a marker
+                    MarkerOptions markerOptions = new MarkerOptions();
+
+                    // Setting the position for the marker
+                    markerOptions.position(latLng);
+
+                    // Setting the title for the marker.
+                    // This will be displayed on taping the marker
+//                    markerOptions.title();
+
+                    // Clears the previously touched position
+                    mMap.clear();
+
+                    // Animating to the touched position
+                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+
+                    // Placing a marker on the touched position
+                    mMap.addMarker(markerOptions);
 
 
+                    Intent startProfileIntent = new Intent(MapsActivity.this, Profile.class);
+
+                    startProfileIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("latlng", latLng);
+
+                    startProfileIntent.putExtra("latlng", bundle);
 
 
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                // get animal ID from the marker
+                    finish();
+                    startActivity(startProfileIntent);
 
+                }
+            });
+        } else {
 
-                Intent intent = new Intent(MapsActivity.this, Profile.class);
-                intent.putExtra(Intent.EXTRA_TEXT, animalID);
-
-                startActivity(intent);
-                return true;
-            }
-        });
-
-
-
+        }
     }
 }
