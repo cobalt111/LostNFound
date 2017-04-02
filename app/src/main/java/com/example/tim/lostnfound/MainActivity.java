@@ -1,6 +1,5 @@
 package com.example.tim.lostnfound;
 
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,16 +7,14 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.FragmentStatePagerAdapter;
+
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
+
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -28,10 +25,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.File;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
+
 
 
 public class MainActivity extends AppCompatActivity implements ListingsFragment.OnMenuItemSelectedListener {
@@ -130,6 +127,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
+
 //        Intent mainIntent = getIntent();
 //        if (mainIntent != null){
 //            mainIntent.getExtras();
@@ -194,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
                     LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
 
                     if (animalLinkedList.size() == 0) {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Your list of lost animals is empty!", Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(getApplicationContext(), "Your list of animals is empty!", Toast.LENGTH_LONG);
                         toast.show();
                     }
                 }

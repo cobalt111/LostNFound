@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.example.tim.lostnfound"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 22
         multiDexEnabled true
         versionCode 1
         versionName "1.0"

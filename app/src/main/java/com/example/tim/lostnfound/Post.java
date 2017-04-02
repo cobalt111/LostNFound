@@ -42,7 +42,9 @@ import java.util.HashMap;
 
 
 import static android.content.Intent.EXTRA_TEXT;
+import static android.location.LocationManager.GPS_PROVIDER;
 import static android.widget.Toast.LENGTH_LONG;
+import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
 
 
 public class Post extends AppCompatActivity implements LocationListener {
@@ -108,14 +110,14 @@ public class Post extends AppCompatActivity implements LocationListener {
         setContentView(R.layout.activity_post);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
 
-        location = locationManager.getLastKnownLocation(locationManager.GPS_PROVIDER);
+        location = locationManager.getLastKnownLocation(GPS_PROVIDER);
 
         Log.d("location", "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
 
         LocationAddress locationAddress = new LocationAddress();
-        locationAddress.getAddressFromLocation(location.getLatitude(), location.getLongitude(),
+        getAddressFromLocation(location.getLatitude(), location.getLongitude(),
                 getApplicationContext(), new GeocoderHandler());
 
         FileUtils.createFile();
@@ -219,6 +221,8 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("description", descView.getText().toString());
         animal.put("phone", phoneView.getText().toString());
         animal.put("location", locationView.getText().toString());
+        animal.put("latitude", Double.toString(location.getLatitude()));
+        animal.put("longitude", Double.toString(location.getLongitude()));
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
