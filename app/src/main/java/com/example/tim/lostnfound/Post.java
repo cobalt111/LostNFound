@@ -205,6 +205,7 @@ public class Post extends AppCompatActivity {
         animal.put("description", descView.getText().toString());
         animal.put("phone", phoneView.getText().toString());
         animal.put("location", locationView.getText().toString());
+        animal.put("map_location", )
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
