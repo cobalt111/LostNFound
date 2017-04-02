@@ -31,7 +31,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
     private LinkedList<HashMap<String, String>> animalLinkedList;
-    private LinkedList<String> nameLinkedList;
+//    private LinkedList<String> nameLinkedList;
     private HashMap<String, String> animal;
 
 
@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         ref = mDatabase.getReference().child("server").child("animals");
 
         animalLinkedList = new LinkedList<>();
-        nameLinkedList = new LinkedList<>();
+//        nameLinkedList = new LinkedList<>();
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -81,10 +81,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
                     animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
                     animalLinkedList.add(animal);
-
-                    if (animal.get("name").equals("")) {
-                        nameLinkedList.add(animal.get("type"));
-                    } else nameLinkedList.add(animal.get("name"));
+//
+//                    if (animal.get("name").equals("")) {
+//                        nameLinkedList.add(animal.get("type"));
+//                    } else nameLinkedList.add(animal.get("name"));
 
                 }
 
@@ -162,7 +162,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String animalID = marker.getSnippet();
         profileIntent.putExtra(Intent.EXTRA_TEXT, animalID);
 
-        finish();
         startActivity(profileIntent);
 
         return true;

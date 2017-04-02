@@ -172,15 +172,15 @@ public class Post extends AppCompatActivity implements LocationListener {
             }
         });
 
-        // button to add picture?
-        picButton = (Button) findViewById(R.id.postPictureButton);
-        picButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v){
-                //TODO add picture functionality
-            }
-        });
-
+//        // button to add picture?
+//        picButton = (Button) findViewById(R.id.postPictureButton);
+//        picButton.setOnClickListener(new View.OnClickListener(){
+//            @Override
+//            public void onClick(View v){
+//                //TODO add picture functionality
+//            }
+//        });
+//
 
 
         // submit button
@@ -244,7 +244,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         return newAnimalRef.getKey();
     }
 
-    private class GeocoderHandler extends Handler {
+    private static class GeocoderHandler extends Handler {
         @Override
         public void handleMessage(Message message) {
             String locationAddress;

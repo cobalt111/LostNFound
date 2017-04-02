@@ -219,16 +219,25 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+//        mViewPager.setAdapter(null);
+//        mViewPager.setAdapter(mSectionsPagerAdapter);
+    }
+
     private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
-//        @Override
-//        public int getItemPosition(Object object){
-//            return POSITION_NONE;
-//        }
+        @Override
+        public int getItemPosition(Object object){
+            return POSITION_NONE;
+        }
 
         @Override
         public Fragment getItem(int position) {
