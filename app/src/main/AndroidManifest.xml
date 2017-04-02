@@ -58,17 +58,17 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyCOCvGOn2L1XP-5eb179Ywb9AZQYc4liIg" />
 
-        <activity
-            android:name=".AnimalMap"
-            android:label="@string/title_activity_map" />
         <activity
             android:name=".Listings"
             android:exported="true" />
         <activity
             android:name=".YourPets"
             android:exported="true" />
+        <activity
+            android:name=".MapsActivity"
+            android:label="Map" />
     </application>
 
 </manifest>
