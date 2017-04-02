@@ -105,40 +105,8 @@ public class Profile extends AppCompatActivity {
         emailView = (TextView) findViewById(R.id.profileEmail);
         statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
+
         foundButton = (Button) findViewById(R.id.profileFoundButton);
-
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                animal = (HashMap<String, String>) dataSnapshot.getValue();
-                animalFound = animal;
-                String name = animal.get("name");
-
-                if (animal.get("name").equals("")){
-                    nameView.setText(animal.get("type"));
-                } else {
-                    nameView.setText(animal.get("name"));
-                    typeView.setText(animal.get("type"));
-
-                }
-
-                colorView.setText(animal.get("color"));
-                dateView.setText(animal.get("date"));
-                descView.setText(animal.get("description"));
-                locationView.setText(animal.get("location"));
-                phoneView.setText(animal.get("phone"));
-                emailView.setText(animal.get("email"));
-                statusView.setText(animal.get("found"));
-
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                    Log.d("DEBUG", "Failure");
-            }
-        });
 
         foundButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,6 +118,72 @@ public class Profile extends AppCompatActivity {
                 toast.show();
             }
         });
+
+
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                animal = (HashMap<String, String>) dataSnapshot.getValue();
+                animalFound = animal;
+                String name = animal.get("name");
+
+                if (animal.get("name").equals("")){
+                    nameView.setText("(none listed)");
+                } else {
+                    nameView.setText(animal.get("name"));
+                }
+
+                if (animal.get("color").equals("")){
+                    colorView.setText("(none listed)");
+                } else {
+                    colorView.setText(animal.get("color"));
+                }
+                Log.d("DEBUG" ,animal.get("color"));
+
+                if (animal.get("date").equals("")){
+                    dateView.setText("(none listed)");
+                } else {
+                    dateView.setText(animal.get("date"));
+                }
+
+                if (animal.get("description").equals("")){
+                    descView.setText("(none listed)");
+                } else {
+                    descView.setText(animal.get("description"));
+                }
+
+                if (animal.get("location").equals("")){
+                    locationView.setText("(none listed)");
+                } else {
+                    locationView.setText(animal.get("location"));
+                }
+
+                if (animal.get("phone").equals("")){
+                    phoneView.setText("(none listed)");
+                } else {
+                    phoneView.setText(animal.get("phone"));
+                }
+
+                if (animal.get("email").equals("")){
+                    emailView.setText("(none listed)");
+                } else {
+                    emailView.setText(animal.get("email"));
+                }
+
+                typeView.setText(animal.get("type"));
+
+                statusView.setText(animal.get("found"));
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                    Log.d("DEBUG", "Failure");
+            }
+        });
+
 
 
 

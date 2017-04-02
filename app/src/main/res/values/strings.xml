@@ -13,10 +13,11 @@
     <string name="post_date" />
     <string name="post_phone" />
     <string name="post_description" />
-    <string name="post_type">Animal type</string>
+    <string name="post_type">Animal type:  </string>
+    <string name="post_status">Status: </string>
     <string name="post_picture">Picture</string>
     <string name="post_hint_name">Animal\'s name</string>
-    <string name="post_hint_color">Animal\'s color</string>
+    <string name="post_hint_color">Animal\'s color/appearance</string>
     <string name="post_hint_date">Date lost</string>
     <string name="post_hint_location">Last known location</string>
     <string name="post_hint_phone">Your phone</string>
@@ -26,15 +27,14 @@
 
     <string name="post_submit">Submit</string>
     <string name="main_post_button">Post an Animal</string>
-    <string name="profile_phone">Phone</string>
-    <string name="profile_email">Email</string>
-    <string name="profile_description">Extra Info</string>
-    <string name="profile_picture">Picture</string>
-    <string name="profile_name">Name</string>
-    <string name="profile_type">Dog</string>
-    <string name="profile_color">Color</string>
-    <string name="profile_location">Location</string>
-    <string name="profile_date">Date</string>
-    <string name="title_activity_maps">Map</string>
+    <string name="profile_phone"></string>
+    <string name="profile_email"></string>
+    <string name="profile_description"></string>
+    <string name="profile_picture"></string>
+    <string name="profile_name"></string>
+    <string name="profile_type"></string>
+    <string name="profile_color"></string>
+    <string name="profile_location"></string>
+    <string name="profile_date"></string>
 
 </resources>

@@ -224,6 +224,16 @@ public class ListingsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        listView.setAdapter(null);
+        adapter = queryDatabaseForData(userIntention);
+        listView.setAdapter(adapter);
+
+    }
+
 }
 
 

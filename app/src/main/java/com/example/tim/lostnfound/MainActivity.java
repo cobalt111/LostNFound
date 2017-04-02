@@ -142,29 +142,30 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         mDatabase = DatabaseUtils.getDatabase();
         ref = mDatabase.getReference().child("server").child("animals");
 
-        for (final HashMap<String, String> listAnimal : animalLinkedList) {
-            query = ref.child(listAnimal.get("key"));
-            query.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+        if (animalLinkedList.size() != 0) {
+            for (final HashMap<String, String> listAnimal : animalLinkedList) {
+                query = ref.child(listAnimal.get("key"));
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-//                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
-                    animal = (HashMap<String, String>) dataSnapshot.getValue();
-                    if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
-                        listAnimal.put("found", animal.get("found"));
-                        listAnimal.put("notified", "false");
-//                        }
+                        animal = (HashMap<String, String>) dataSnapshot.getValue();
+                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
+                            listAnimal.put("found", animal.get("found"));
+                            listAnimal.put("notified", "false");
+                        }
                     }
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
+                    }
+                });
+            }
+
+            FileUtils.writeToFile(animalLinkedList, file);
         }
 
-        FileUtils.writeToFile(animalLinkedList, file);
 
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
