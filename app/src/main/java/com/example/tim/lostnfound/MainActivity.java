@@ -96,16 +96,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
     @Override
     public void onMenuItemSelected(String filter) {
 
-        mSectionsPagerAdapter.notifyDataSetChanged();
-//        ViewPager mPager = (ViewPager) findViewById(R.id.container);
-//        FragmentStatePagerAdapter adapter = (FragmentStatePagerAdapter) mPager.getAdapter();
-//        ListingsFragment listingsFragment = (ListingsFragment) adapter.instantiateItem(mPager, mPager.getCurrentItem());
-//        Bundle lostBundle = new Bundle();
-//        lostBundle.putString("filter", filter);
-//        listingsFragment.setArguments(lostBundle);
-//        android.support.v4.app.FragmentTransaction lostTransaction = getSupportFragmentManager().beginTransaction();
-//        lostTransaction.replace(mViewPager.getCurrentItem(), listingsFragment);
-//        lostTransaction.commit();
+
 
     }
 
@@ -157,12 +148,12 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
-                        animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
-                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
-                            listAnimal.put("found", animal.get("found"));
-                            listAnimal.put("notified", "false");
-                        }
+//                    for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
+                    animal = (HashMap<String, String>) dataSnapshot.getValue();
+                    if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
+                        listAnimal.put("found", animal.get("found"));
+                        listAnimal.put("notified", "false");
+//                        }
                     }
                 }
 
