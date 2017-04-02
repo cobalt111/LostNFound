@@ -1,6 +1,5 @@
 package com.example.tim.lostnfound;
 
-import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,9 +9,10 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
     private String addingMarker;
@@ -41,61 +41,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         Log.d("map", "map is ready");
-
+        mMap.setOnMarkerClickListener(this);
         LatLng flint = new LatLng(43.012527, -83.687456);
         mMap.addMarker(new MarkerOptions().position(flint).title("Welcome to Flint"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(flint, 13));
-        addingMarker = "";
 
-        Intent intent = getIntent();
-        if (intent.hasExtra("adding")) {
-            addingMarker = intent.getStringExtra("adding");
-        }
+        //get current location
 
+    }
 
-        if (addingMarker.equals("adding")) {
-            // Setting a click event handler for the map
-            mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-                @Override
-                public void onMapClick(LatLng latLng) {
-
-                    // Creating a marker
-                    MarkerOptions markerOptions = new MarkerOptions();
-
-                    // Setting the position for the marker
-                    markerOptions.position(latLng);
-
-                    // Setting the title for the marker.
-                    // This will be displayed on taping the marker
-//                    markerOptions.title();
-
-                    // Clears the previously touched position
-                    mMap.clear();
-
-                    // Animating to the touched position
-                    mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-
-                    // Placing a marker on the touched position
-                    mMap.addMarker(markerOptions);
-
-
-                    Intent startProfileIntent = new Intent(MapsActivity.this, Profile.class);
-
-                    startProfileIntent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("latlng", latLng);
-
-                    startProfileIntent.putExtra("latlng", bundle);
-
-
-                    finish();
-                    startActivity(startProfileIntent);
-
-                }
-            });
-        } else {
-
-        }
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Log.d("marker", marker.getTitle());
+        return true;
     }
 }
