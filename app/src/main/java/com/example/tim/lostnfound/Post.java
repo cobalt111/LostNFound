@@ -82,7 +82,6 @@ public class Post extends AppCompatActivity {
 
     private Spinner typeDropdown;
     private Spinner statusDropdown;
-    private Button locationButton;
     private String typeSelection;
     private String statusSelection;
     private Button submitButton;
