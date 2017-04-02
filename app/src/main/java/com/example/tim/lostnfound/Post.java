@@ -79,10 +79,11 @@ public class Post extends AppCompatActivity {
 
     private Spinner typeDropdown;
     private Spinner statusDropdown;
-    private Button picButton;
+    private Button locationButton;
     private String typeSelection;
     private String statusSelection;
     private Button submitButton;
+    private String mapLocation;
 
     private EditText nameView;
     private EditText colorView;
@@ -156,12 +157,11 @@ public class Post extends AppCompatActivity {
             }
         });
 
-        // button to add picture?
-        picButton = (Button) findViewById(R.id.postPictureButton);
-        picButton.setOnClickListener(new View.OnClickListener(){
+        locationButton = (Button) findViewById(R.id.postPictureButton);
+        locationButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                //TODO add picture functionality
+
             }
         });
 
@@ -173,15 +173,21 @@ public class Post extends AppCompatActivity {
             @Override
             public void onClick(View v){
 
-                String animalID = onSubmitAnimal();
+                if (mapLocation != null) {
+                    String animalID = onSubmitAnimal();
 
-                Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
-                toast.show();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
+                    toast.show();
 
-                Intent intent = new Intent(Post.this, Profile.class);
-                intent.putExtra(EXTRA_TEXT, animalID);
-                finish();
-                startActivity(intent);
+                    Intent intent = new Intent(Post.this, Profile.class);
+                    intent.putExtra(EXTRA_TEXT, animalID);
+                    finish();
+                    startActivity(intent);
+                } else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "You haven't set a location yet!", LENGTH_LONG);
+                    toast.show();
+                }
+
 
             }
         });
