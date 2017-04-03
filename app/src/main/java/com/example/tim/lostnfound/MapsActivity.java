@@ -101,7 +101,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                     currentOptions.snippet(currentAnimal.get("key"));
                     if (currentAnimal.get("found").equals("Found")) {
-//                        currentOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                         currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_pin_small));
 
                     } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_pin_small));

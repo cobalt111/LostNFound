@@ -213,19 +213,19 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignStart="@+id/profileLostButton"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="20dp"
                 android:background="@android:color/transparent"
-                app:srcCompat="@drawable/list_as_found_small" />
+                app:srcCompat="@drawable/doggy_found" />
 
             <ImageButton
                 android:id="@+id/profileLostButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/list_as_lost"
-                android:layout_marginTop="105dp"
                 android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true" />
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="105dp"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/doggy_lost" />
 
         </RelativeLayout>
 

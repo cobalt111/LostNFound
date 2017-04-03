@@ -16,41 +16,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <ImageView
-                android:id="@+id/imageView4"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                app:srcCompat="@drawable/title_n"
-                android:layout_alignBottom="@+id/imageView2"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="87dp" />
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="200dp"
-                android:layout_height="100dp"
-                app:srcCompat="@drawable/title_found"
-                android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true" />
-
-        </RelativeLayout>
-
         <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="200dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="19dp"
-            app:srcCompat="@drawable/title_lost"
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/title_combined"
+            android:layout_marginTop="49dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
@@ -58,10 +29,10 @@
             android:id="@+id/mainPostButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="103dp"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/post_animal_small"
-            android:layout_alignParentBottom="true"
+            android:layout_marginTop="82dp"
+            android:layout_below="@+id/imageView5"
             android:layout_centerHorizontal="true" />
 
     </RelativeLayout>
