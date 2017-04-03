@@ -3,14 +3,14 @@
 
     <item android:id="@+id/lost_animals"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="Lost Animals" />
+        android:title="View Lost Animals" />
 
     <item android:id="@+id/found_animals"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="Found Animals" />
+        android:title="View Found Animals" />
 
     <item android:id="@+id/all_animals"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        android:title="All Animals" />
+        android:title="View All Animals" />
 
 </menu>
