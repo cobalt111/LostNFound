@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -79,7 +80,8 @@ public class Profile extends AppCompatActivity {
     private TextView emailView;
     private TextView statusView;
     private TextView typeView;
-    private Button foundButton;
+    private ImageButton foundButton;
+    private ImageButton lostButton;
 
 
 
@@ -106,7 +108,7 @@ public class Profile extends AppCompatActivity {
         statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
 
-        foundButton = (Button) findViewById(R.id.profileFoundButton);
+        foundButton = (ImageButton) findViewById(R.id.profileFoundButton);
 
         foundButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +120,22 @@ public class Profile extends AppCompatActivity {
                 toast.show();
             }
         });
+
+
+        lostButton = (ImageButton) findViewById(R.id.profileLostButton);
+
+        lostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                animalFound.put("found", "Lost");
+                ref.setValue(animalFound);
+
+                Toast toast = Toast.makeText(getApplicationContext(), "Animal listed as lost!", Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+
+
 
 
         ref.addListenerForSingleValueEvent(new ValueEventListener() {

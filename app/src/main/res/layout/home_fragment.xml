@@ -42,6 +42,7 @@
                 app:srcCompat="@drawable/title_found"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true" />
+
         </RelativeLayout>
 
         <ImageView
@@ -53,14 +54,16 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
-        <Button
+        <ImageButton
             android:id="@+id/mainPostButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/main_post_button"
-            android:layout_marginBottom="111dp"
+            android:layout_marginBottom="103dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/post_animal_small"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true" />
+
     </RelativeLayout>
 
     <!--  -->

@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import java.util.LinkedList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 
 import static android.content.Intent.EXTRA_TEXT;
@@ -92,7 +94,7 @@ public class Post extends AppCompatActivity implements LocationListener {
     private Button picButton;
     private String typeSelection;
     private String statusSelection;
-    private Button submitButton;
+    private ImageButton submitButton;
 
     private EditText nameView;
     private EditText colorView;
@@ -112,7 +114,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
 
-        location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+        location = getLastKnownLocation();
 
         Log.d("location", "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
 
@@ -184,7 +186,7 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
         // submit button
-        submitButton = (Button) findViewById(R.id.postSubmit);
+        submitButton = (ImageButton) findViewById(R.id.postSubmit);
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
@@ -278,6 +280,23 @@ public class Post extends AppCompatActivity implements LocationListener {
     @Override
     public void onProviderDisabled(String s) {
 
+    }
+
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            Location l = locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
 

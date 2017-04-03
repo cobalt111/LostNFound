@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,9 +10,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true">
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:orientation="vertical">
 
         <!--<TextView
             android:id="@+id/postPicture"
@@ -31,7 +32,8 @@
                 android:id="@+id/postType"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/post_type" />
+                android:text="@string/post_type"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <Spinner
                 android:id="@+id/post_type_spinner"
@@ -51,12 +53,13 @@
                 android:id="@+id/postStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/post_status" />
+                android:text="@string/post_status"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
             <Spinner
                 android:id="@+id/post_status_spinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
 
 
@@ -124,11 +127,20 @@
             android:inputType="textMultiLine"
             android:text="@string/post_description" />
 
-        <Button
-            android:id="@+id/postSubmit"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/post_submit" />
+            android:layout_height="match_parent">
+
+            <ImageButton
+                android:id="@+id/postSubmit"
+                android:layout_width="315dp"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/submit_button_medium"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp" />
+        </RelativeLayout>
 
     </LinearLayout>
 
