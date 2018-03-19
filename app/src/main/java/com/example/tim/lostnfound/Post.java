@@ -4,6 +4,7 @@ package com.example.tim.lostnfound;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -29,6 +30,9 @@ import com.example.tim.lostnfound.LocationAddress;
 import com.google.firebase.database.DatabaseReference;
 import com.example.tim.lostnfound.FileUtils;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import android.os.Handler;
 import android.os.Message;
 
@@ -83,19 +87,25 @@ public class Post extends AppCompatActivity implements LocationListener {
 //
 //    };
 
-
+    // Reference to database
     private FirebaseDatabase database;
     private DatabaseReference ref;
 
+    // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
+    private FirebaseStorage storage;
+    private StorageReference storageReference;
+
+    // Declaring local list of your animals
     private LinkedList<HashMap<String, String>> yourAnimalList;
 
+    // Declaring UI elements
     private Spinner typeDropdown;
     private Spinner statusDropdown;
     private Button picButton;
     private String typeSelection;
     private String statusSelection;
     private ImageButton submitButton;
-
+    private ImageButton selectImageButton;
     private EditText nameView;
     private EditText colorView;
     private EditText dateView;
@@ -104,31 +114,45 @@ public class Post extends AppCompatActivity implements LocationListener {
     private EditText phoneView;
     private EditText emailView;
 
+    // PICK_IMAGE_REQUEST is a request code to switch to the activity for picking images from gallery/camera
+    private final int PICK_IMAGE_REQUEST = 71;
+
+
     protected LocationManager locationManager;
     protected Location location;
+
+
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        // finds current location (lat long coordinates) to place the pin on the map
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
-
         location = getLastKnownLocation();
-
-        Log.d("location", "Latitude:" + location.getLatitude() + ", Longitude:" + location.getLongitude());
-
         LocationAddress locationAddress = new LocationAddress();
         getAddressFromLocation(location.getLatitude(), location.getLongitude(),
                 getApplicationContext(), new GeocoderHandler());
 
+
+
+
+        // Verify local data file exists, and create it if not verified
         FileUtils.createFile();
+
+        // Declare reference to local file
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+
+        // Import animal data from local file
         yourAnimalList = FileUtils.readFromFile(file);
 
+        // Create reference to database
         database = DatabaseUtils.getDatabase();
         ref = database.getReference("server");
 
+        // Initialize UI elements
         nameView = (EditText) findViewById(R.id.postName);
         colorView = (EditText) findViewById(R.id.postColor);
         dateView = (EditText) findViewById(R.id.postDate);
@@ -138,7 +162,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         locationView = (EditText) findViewById(R.id.postLocation);
 
 
-        // dropdown type selection spinner
+        // Initialize dropdown selection spinner for animal type
         typeDropdown = (Spinner) findViewById(R.id.post_type_spinner);
         final String[] typesList = {"Dog", "Cat", "Hamster/Guinea Pig", "Mouse/Rat", "Bird", "Snake/Lizard", "Ferret", "Other"};
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
@@ -156,7 +180,7 @@ public class Post extends AppCompatActivity implements LocationListener {
             }
         });
 
-        // dropdown status selection spinner
+        // Same as above, Initializing dropdown selection spinner for status
         statusDropdown = (Spinner) findViewById(R.id.post_status_spinner);
         final String[] statusList = {"Lost", "Found"};
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, statusList);
@@ -185,17 +209,21 @@ public class Post extends AppCompatActivity implements LocationListener {
 //
 
 
-        // submit button
+        // Initialize submit button and listener
         submitButton = (ImageButton) findViewById(R.id.postSubmit);
         submitButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
+                // Once the submit button is clicked, the onSubmitAnimal method will do the work of submitting the info to the database.
+                // animalID is the database key for animal.
                 String animalID = onSubmitAnimal();
 
+                // TODO add code for submission verification before displaying success toast
                 Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
                 toast.show();
 
+                // Create intent to open profile of submitted animal
                 Intent intent = new Intent(Post.this, Profile.class);
                 intent.putExtra(EXTRA_TEXT, animalID);
                 finish();
@@ -204,18 +232,24 @@ public class Post extends AppCompatActivity implements LocationListener {
             }
         });
 
-//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
     }
 
+    // Implementing method to open the image chooser
+    private void chooseImage() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    }
 
+    // Implementing method to submit animal to database and return its unique key
+    private String onSubmitAnimal() {
 
-    private String onSubmitAnimal () {
-
+        // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
         HashMap<String, String> animal = new HashMap<>();
         DatabaseReference animalRef = ref.child("animals");
 
+        // Collect entered data and add it to the HashMap
         animal.put("name", nameView.getText().toString());
         animal.put("color", colorView.getText().toString());
         animal.put("date", dateView.getText().toString());
@@ -233,18 +267,31 @@ public class Post extends AppCompatActivity implements LocationListener {
         } else animal.put("notified", "false");
 
 
-        //TODO add picture functionality?
+        //TODO add picture functionality
 
+        // Create new key for animal
         DatabaseReference newAnimalRef = animalRef.push();
-        animal.put("key", newAnimalRef.getKey());
+        String key = newAnimalRef.getKey();
+
+        // Add animal's own key to its database entry
+        animal.put("key", key);
+
+        // Add animal to database
         newAnimalRef.setValue(animal);
 
+        // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(animal);
         File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         FileUtils.writeToFile(yourAnimalList, file);
 
-        return newAnimalRef.getKey();
+        return key;
     }
+
+
+
+
+
+
 
     private static class GeocoderHandler extends Handler {
         @Override

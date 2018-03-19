@@ -34,10 +34,6 @@ import java.util.LinkedList;
 
 import static android.content.Intent.EXTRA_TEXT;
 
-/**
- * Created by derekmesecar on 3/30/17.
- */
-
 public class ListingsFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -50,7 +46,7 @@ public class ListingsFragment extends Fragment {
     }
 
     public interface OnMenuItemSelectedListener{
-        public void onMenuItemSelected(String filter);
+        void onMenuItemSelected(String filter);
     }
 
     OnMenuItemSelectedListener onMenuItemSelectedListener;

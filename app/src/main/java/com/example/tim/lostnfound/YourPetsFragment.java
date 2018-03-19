@@ -1,37 +1,27 @@
 package com.example.tim.lostnfound;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.LinkedList;
 import java.util.HashMap;
-import java.util.LinkedList;
 
 import static android.content.Intent.EXTRA_TEXT;
-import static com.example.tim.lostnfound.R.id.container;
 
-/**
- * Created by derekmesecar on 3/30/17.
- */
 
 public class YourPetsFragment extends Fragment {
+
     private static final String ARG_SECTION_NUMBER = "section_number";
 
+    // For fragment switching
     public static YourPetsFragment newInstance(int sectionNumber) {
         YourPetsFragment fragment = new YourPetsFragment();
         Bundle args = new Bundle();
@@ -40,33 +30,51 @@ public class YourPetsFragment extends Fragment {
         return fragment;
     }
 
+    // UI element for listing animals
     private ListView listView;
-    private LinkedList<String> yourAnimalLinkedList;
+
+    // animalLinkedList is used to retrieve the animal data from the data file
     private LinkedList<HashMap<String, String>> animalLinkedList;
+
+    // yourAnimalLinkedList is a list of animal names used to populate the listView with names
+    private LinkedList<String> yourAnimalLinkedList;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
 
-
+        // Verify file exists. If not, create it. Import data from it to animalLinkedList (if any)
         FileUtils.createFile();
         File file = new File(getContext().getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         animalLinkedList = FileUtils.readFromFile(file);
-        final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
+
+
+
 
         yourAnimalLinkedList = new LinkedList<>();
 
         listView = (ListView) rootView.findViewById(R.id.listview);
 
+        // Create LinkedList of every animal in the HashMap to be entered into the following adapter
         for (HashMap<String, String> animal : animalLinkedList) {
             yourAnimalLinkedList.add(animal.get("name"));
         }
 
+        // Enter list of your animals into the adapter and set the adapter to the listView
         ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, yourAnimalLinkedList);
         listView.setAdapter(adapter);
 
+        // If one of the animals is selected, this intent will be used to open its profile
         final Intent intent = new Intent(getActivity(), Profile.class);
+
+        // intentList is used for finding the selected animal key once selected in the listView
+        final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
+
+        // Listener for the listView. The position of the selected animal in the listView corresponds with the position in the intentList
+        // The position is found, and the key of the respective animal is retrieved according to it
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -79,7 +87,6 @@ public class YourPetsFragment extends Fragment {
 
                                 HashMap<String, String> animal = intentList.get(position);
                                 intent.putExtra(EXTRA_TEXT, animal.get("key"));
-                                //finish();
                                 startActivity(intent);
                             }
                         });
@@ -90,42 +97,5 @@ public class YourPetsFragment extends Fragment {
 
         return rootView;
     }
-
-//    public static void saveToFile(String filename, LinkedList<HashMap<String, String>> linkedList, Context context) {
-//
-//        FileOutputStream fileOutputStream;
-//        try {
-//            fileOutputStream = context.openFileOutput(filename, Context.MODE_PRIVATE);
-//
-//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-//            objectOutputStream.writeObject(linkedList);
-//            objectOutputStream.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
-
-//    private static LinkedList<HashMap<String,String>> readFromFile(String filename, Context context) {
-//        LinkedList<HashMap<String, String>> linkedList = new LinkedList<>();
-//
-//        FileInputStream fileInputStream;
-//        try {
-//            fileInputStream = context.openFileInput(filename);
-//
-//
-//            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-//            linkedList = (LinkedList<HashMap<String,String>>) objectInputStream.readObject();
-//            objectInputStream.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        return linkedList;
-//
-//    }
-
-
 
 }

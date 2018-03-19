@@ -90,14 +90,13 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // Retrieve animalID from the intent used to start this instance of Profile
         Intent intent = getIntent();
         if (intent.hasExtra(EXTRA_TEXT)) {
             animalID = intent.getStringExtra(EXTRA_TEXT);
         }
 
-        mDatabase = DatabaseUtils.getDatabase();
-        ref = mDatabase.getReference().child("server").child("animals").child(animalID);
-
+        // Initialize UI elements
         nameView = (TextView) findViewById(R.id.profileName);
         colorView = (TextView) findViewById(R.id.profileColor);
         dateView = (TextView) findViewById(R.id.profileDate);
@@ -108,8 +107,9 @@ public class Profile extends AppCompatActivity {
         statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
 
-        foundButton = (ImageButton) findViewById(R.id.profileFoundButton);
 
+        // Initialize button and listener
+        foundButton = (ImageButton) findViewById(R.id.profileFoundButton);
         foundButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,8 +122,8 @@ public class Profile extends AppCompatActivity {
         });
 
 
+        // Initialize button and listener
         lostButton = (ImageButton) findViewById(R.id.profileLostButton);
-
         lostButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -135,16 +135,19 @@ public class Profile extends AppCompatActivity {
             }
         });
 
+        // Create reference to database
+        mDatabase = DatabaseUtils.getDatabase();
 
+        // Find the particular animal in the database according to the animalID passed in the intent
+        ref = mDatabase.getReference().child("server").child("animals").child(animalID);
 
-
+        // Contact database, retrieve data elements and display them in the appropriate view
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 animal = (HashMap<String, String>) dataSnapshot.getValue();
                 animalFound = animal;
-                String name = animal.get("name");
 
                 if (animal.get("name").equals("")){
                     nameView.setText("(none listed)");
@@ -157,7 +160,6 @@ public class Profile extends AppCompatActivity {
                 } else {
                     colorView.setText(animal.get("color"));
                 }
-                Log.d("DEBUG" ,animal.get("color"));
 
                 if (animal.get("date").equals("")){
                     dateView.setText("(none listed)");
@@ -202,10 +204,5 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-
-
-
-//        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-//        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 }
