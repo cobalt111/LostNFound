@@ -33,33 +33,29 @@ import java.util.LinkedList;
 
 public class MainActivity extends AppCompatActivity implements ListingsFragment.OnMenuItemSelectedListener {
 
-
+    // The BottomNavigationView creates the 3 buttons on the bottom which switch the fragments
+    // between HomeFragment, ListingsFragment, and YourPetsFragment
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                    //Log.d("nav", "home");
                     mViewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_listings:
-                    //Log.d("nav", "listings");
                     mViewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_animals:
-                    //Log.d("nav", "animals");
                     mViewPager.setCurrentItem(2);
                     return true;
-//                case R.id.navigation_map:
-//                    mTextMessage.setText(R.string.nav_map);
-//                    return true;
             }
             return false;
         }
 
     };
 
+    // Basic options menu, this will be overriden by ListingsFragment
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
@@ -68,18 +64,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     public boolean onOptionsItemSelected(MenuItem item) {
 
-//        switch (item.getItemId()) {
-//            case R.id.lost_animals:
-//                mViewPager.getAdapter().notifyDataSetChanged();
-//                return true;
-//            case R.id.found_animals:
-//                mSectionsPagerAdapter.notifyDataSetChanged();
-//                return true;
-//            case R.id.all_animals:
-//                mSectionsPagerAdapter.notifyDataSetChanged();
-//                return true;
-//
-//        }
+
         switch (item.getTitle().toString()) {
             case "Map":
                 startActivity(new Intent(MainActivity.this, MapsActivity.class));

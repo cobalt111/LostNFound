@@ -12,9 +12,10 @@ import java.util.HashMap;
 
 class FileUtils {
 
-    final static String listOfYourPetsFile = "animal_key_list.txt";
+    final static String listOfYourPetsFile = "lostNfound-animal_list.txt";
 
 
+    // Verifies that the file exists, and if not, creates it
     static void createFile(){
         final File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath(), FileUtils.listOfYourPetsFile);
         try{
@@ -24,6 +25,7 @@ class FileUtils {
         }
     }
 
+    // Deletes outdated data and re-writes file with up-to-date data
     static void writeToFile(LinkedList<HashMap<String, String>> linkedList, File file) {
         try {
             file.delete();
@@ -63,34 +65,5 @@ class FileUtils {
 
         return linkedList;
     }
-
-    static void replaceAnimalAsFound(HashMap<String, String> animal, File file) {
-        try {
-            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
-            linkedList.remove(animal);
-            animal.put("found", "Found");
-            animal.put("notified", "false");
-            linkedList.add(animal);
-            writeToFile(linkedList, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void setNotifiedToTrue (HashMap<String, String> animal, File file) {
-        try {
-            LinkedList<HashMap<String, String>> linkedList = readFromFile(file);
-            linkedList.remove(animal);
-            animal.put("notified", "true");
-            linkedList.add(animal);
-            writeToFile(linkedList, file);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
-
 
 }
