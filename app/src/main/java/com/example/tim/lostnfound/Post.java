@@ -4,14 +4,9 @@ package com.example.tim.lostnfound;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Environment;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,22 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.tim.lostnfound.LocationAddress;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.example.tim.lostnfound.FileUtils;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import android.os.Handler;
 import android.os.Message;
 
-import java.io.File;
-import java.io.IOException;
-
-import java.text.SimpleDateFormat;
-import java.util.LinkedList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -55,48 +45,16 @@ import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
 
 public class Post extends AppCompatActivity implements LocationListener {
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    Intent intentHome = new Intent(Post.this, MainActivity.class);
-//                    intentHome.putExtra("page", 0);
-//                    finish();
-//                    startActivity(intentHome);
-//                    return true;
-//                case R.id.navigation_listings:
-//                    Intent intentListings = new Intent(Post.this, MainActivity.class);
-//                    intentListings.putExtra("page", 1);
-//                    finish();
-//                    startActivity(intentListings);
-//                    return true;
-//                case R.id.navigation_animals:
-//                    Intent intentAnimals = new Intent(Post.this, MainActivity.class);
-//                    intentAnimals.putExtra("page", 2);
-//                    finish();
-//                    startActivity(intentAnimals);
-//                    return true;
-////                case R.id.navigation_map:
-////                    mTextMessage.setText(R.string.nav_map);
-////                    return true;
-//            }
-//            return false;
-//        }
-//
-//    };
-
     // Reference to database
     private FirebaseDatabase database;
-    private DatabaseReference ref;
+    private DatabaseReference dataReference;
 
     // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
     // Declaring local list of your animals
-    private LinkedList<HashMap<String, String>> yourAnimalList;
+    private List<String> yourAnimalList;
 
     // Declaring UI elements
     private Spinner typeDropdown;
@@ -120,6 +78,10 @@ public class Post extends AppCompatActivity implements LocationListener {
 
     protected LocationManager locationManager;
     protected Location location;
+    private String editAnimalID;
+    private HashMap<String, String> animal;
+    private boolean isEditInstance;
+
 
 
 
@@ -128,6 +90,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        // TODO handle location based errors
         // finds current location (lat long coordinates) to place the pin on the map
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
@@ -137,20 +100,15 @@ public class Post extends AppCompatActivity implements LocationListener {
                 getApplicationContext(), new GeocoderHandler());
 
 
-
-
         // Verify local data file exists, and create it if not verified
-        FileUtils.createFile();
-
-        // Declare reference to local file
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
+        FileUtils.createFile(getApplicationContext());
 
         // Import animal data from local file
-        yourAnimalList = FileUtils.readFromFile(file);
+        yourAnimalList = FileUtils.readFromFile(getApplicationContext());
 
         // Create reference to database
         database = DatabaseUtils.getDatabase();
-        ref = database.getReference("server");
+        dataReference = DatabaseUtils.getReference(database);
 
         // Initialize UI elements
         nameView = (EditText) findViewById(R.id.postName);
@@ -198,15 +156,80 @@ public class Post extends AppCompatActivity implements LocationListener {
             }
         });
 
-//        // button to add picture?
-//        picButton = (Button) findViewById(R.id.postPictureButton);
-//        picButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View v){
-//                //TODO add picture functionality
-//            }
-//        });
-//
+        // button to add picture?
+        // TODO add picture functionality
+
+
+
+
+
+
+
+
+
+        // Retrieve animalID from the intent used to start this instance of Profile
+        Intent intent = getIntent();
+        // If the intent has a passed animalID, this must be an instance of editing
+        // an existing post rather than normal posting
+        // Because we are editing existing data, the current data is retrieved and is automatically
+        // filled in. The user should edit whatever data elements are incorrect and hit submit.
+        // We want to change the existing listing with the edited data rather than create an entirely
+        // new listing for the same animal (with slightly edited data elements)
+        if (intent.hasExtra("animalID")) {
+            isEditInstance = true;
+            editAnimalID = intent.getStringExtra("animalID");
+
+            // Create reference to database
+//            database = DatabaseUtils.getDatabase();
+
+            // Find the particular animal in the database according to the animalID passed in the intent
+            dataReference = dataReference.child(editAnimalID);
+
+            // Contact database, retrieve data elements and display them in the appropriate view
+            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    animal = (HashMap<String, String>) dataSnapshot.getValue();
+
+                    nameView.setText(animal.get("name"));
+                    colorView.setText(animal.get("color"));
+                    dateView.setText(animal.get("date"));
+                    emailView.setText(animal.get("email"));
+                    descView.setText(animal.get("description"));
+                    phoneView.setText(animal.get("phone"));
+                    locationView.setText(animal.get("location"));
+
+                    typeSelection = animal.get("type");
+                    for (int i = 0; i < typesList.length; i++) {
+                        if (typeSelection.equals(typesList[i])) {
+                            typeDropdown.setSelection(i);
+                            break;
+                        }
+                    }
+
+                    statusSelection = animal.get("found");
+                    for (int i = 0; i < statusList.length; i++) {
+                        if (typeSelection.equals(statusList[i])) {
+                            typeDropdown.setSelection(i);
+                            break;
+                        }
+                    }
+
+
+                }
+
+
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("DEBUG", "Failure");
+                }
+            });
+
+            // TODO retrieve already uploaded picture for editing
+            // TODO finish edit functionality
+        }
 
 
         // Initialize submit button and listener
@@ -215,19 +238,37 @@ public class Post extends AppCompatActivity implements LocationListener {
             @Override
             public void onClick(View v){
 
-                // Once the submit button is clicked, the onSubmitAnimal method will do the work of submitting the info to the database.
-                // animalID is the database key for animal.
-                String animalID = onSubmitAnimal();
+                String animalID;
 
-                // TODO add code for submission verification before displaying success toast
-                Toast toast = Toast.makeText(getApplicationContext(), "Your lost pet has been posted!", LENGTH_LONG);
-                toast.show();
+                if (isEditInstance) {
+
+                    // Once the submit button is clicked, the onEdit method will do the work of editing the info in the database.
+                    // animalID is the database key for animal.
+                    animalID = onEdit(editAnimalID);
+
+                    // TODO add code for submission verification before displaying success toast
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your pet listing has been edited!", LENGTH_LONG);
+                    toast.show();
+
+                } else {
+                    // Once the submit button is clicked, the onSubmitAnimal method will do the work of submitting the info to the database.
+                    // animalID is the database key for animal.
+                    animalID = onSubmit();
+
+                    // TODO add code for submission verification before displaying success toast
+                    Toast toast = Toast.makeText(getApplicationContext(), "Your pet has been posted!", LENGTH_LONG);
+                    toast.show();
+
+                }
+
 
                 // Create intent to open profile of submitted animal
                 Intent intent = new Intent(Post.this, Profile.class);
                 intent.putExtra(EXTRA_TEXT, animalID);
                 finish();
                 startActivity(intent);
+
+
 
             }
         });
@@ -242,12 +283,65 @@ public class Post extends AppCompatActivity implements LocationListener {
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
 
-    // Implementing method to submit animal to database and return its unique key
-    private String onSubmitAnimal() {
+
+    private String onEdit(String editAnimalID) {
+
+        // TODO figure out why editing doesn't work
+
+        // Find the old animal in yourAnimalList and delete it
+        if (yourAnimalList.size() > 0) {
+            for (String animal : yourAnimalList) {
+
+                if (animal.equals(editAnimalID)) {
+                    yourAnimalList.remove(animal);
+                }
+            }
+        }
+
+
 
         // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
-        HashMap<String, String> animal = new HashMap<>();
-        DatabaseReference animalRef = ref.child("animals");
+        HashMap<String, Object> animal = new HashMap<>();
+        DatabaseReference animalRef = dataReference.child(editAnimalID);
+
+        // Collect entered data and add it to the HashMap
+        animal.put("name", nameView.getText().toString());
+        animal.put("color", colorView.getText().toString());
+        animal.put("date", dateView.getText().toString());
+        animal.put("email", emailView.getText().toString());
+        animal.put("description", descView.getText().toString());
+        System.out.println(animal.get("description").toString());
+        animal.put("phone", phoneView.getText().toString());
+        animal.put("location", locationView.getText().toString());
+        animal.put("latitude", Double.toString(location.getLatitude()));
+        animal.put("longitude", Double.toString(location.getLongitude()));
+        animal.put("type", typeSelection);
+        animal.put("found", statusSelection);
+        animal.put("key", editAnimalID);
+
+//        if (statusSelection.equals("Found")) {
+//            animal.put("notified", "true");
+//        } else animal.put("notified", "false");
+        //TODO add picture functionality
+
+
+        // Update database with edited information
+        animalRef.updateChildren(animal);
+
+        // Add animal to local list of animals and save it to the data file
+        yourAnimalList.add(animal.get("key").toString());
+        FileUtils.writeToFile(yourAnimalList, getApplicationContext());
+
+        return animal.get("key").toString();
+    }
+
+
+
+    // Implementing method to submit animal to database and return its unique key
+    private String onSubmit() {
+
+        // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
+        HashMap<String, Object> animal = new HashMap<>();
 
         // Collect entered data and add it to the HashMap
         animal.put("name", nameView.getText().toString());
@@ -262,15 +356,13 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
-        if (statusSelection.equals("Found")) {
-            animal.put("notified", "true");
-        } else animal.put("notified", "false");
-
-
+//        if (statusSelection.equals("Found")) {
+//            animal.put("notified", "true");
+//        } else animal.put("notified", "false");
         //TODO add picture functionality
 
         // Create new key for animal
-        DatabaseReference newAnimalRef = animalRef.push();
+        DatabaseReference newAnimalRef = dataReference.push();
         String key = newAnimalRef.getKey();
 
         // Add animal's own key to its database entry
@@ -280,12 +372,13 @@ public class Post extends AppCompatActivity implements LocationListener {
         newAnimalRef.setValue(animal);
 
         // Add animal to local list of animals and save it to the data file
-        yourAnimalList.add(animal);
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-        FileUtils.writeToFile(yourAnimalList, file);
+        yourAnimalList.add(animal.get("key").toString());
+        FileUtils.writeToFile(yourAnimalList, getApplicationContext());
 
         return key;
     }
+
+
 
 
 
@@ -406,84 +499,3 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
 }
-
-
-// old code
-
-
-//    private String prefKeyOne;
-//    private String prefKeyTwo;
-//    private String prefKeyThree;
-//    private String prefKeyFour;
-//    private String prefKeyFive;
-//    private String lastUsedKey;
-//
-//    private boolean[] usedKeys;
-//    SharedPreferences sharedPreferences;
-//    SharedPreferences.Editor editor;
-
-//                editor.putString("com.example.tim.lostnfound., animalID);
-//                editor.commit();
-//                } else System.out.println("All keys are taken");
-
-
-//        File file1 = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "animal_key_list.txt");
-//        file1.getParentFile().mkdirs();
-//        try {
-//            int permissionCheck = ContextCompat.checkSelfPermission(Post.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-//            if (permissionCheck == PackageManager.PERMISSION_GRANTED) {
-//                if (!file1.createNewFile()) {
-//                    Log.i("Test", "This file is already exist: " + file1.getAbsolutePath());
-//                }
-//            }
-//
-//            FileOutputStream fileOutputStream = new FileOutputStream(file1);
-//            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-//
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
-// to keep track of which keys are taken by lost animals
-//        usedKeys = new boolean[5];
-//        prefKeyOne = "prefKeyOne";
-//        prefKeyTwo = "prefKeyTwo";
-//        prefKeyThree = "prefKeyThree";
-//        prefKeyFour = "prefKeyFour";
-//        prefKeyFive = "prefKeyFive";
-
-//        sharedPreferences = this.getSharedPreferences("com.example.tim.lostnfound", Context.MODE_PRIVATE);
-//        editor = sharedPreferences.edit();
-
-
-//    private int determineUnusedKey(boolean[] boolArr){
-//        int index = 0;
-//        for (boolean current : boolArr) {
-//            if (!current) {
-//                return index;
-//            } else index++;
-//        } return 5;
-//    }
-//
-//    private String assignKey(String animalID) {
-//        switch (determineUnusedKey(usedKeys)) {
-//            case 0:
-//                return prefKeyOne;
-//            case 1:
-//                editor.putString("com.example.tim.lostnfound." + prefKeyTwo, animalID);
-//                return prefKeyTwo;
-//            case 2:
-//                editor.putString("com.example.tim.lostnfound." + prefKeyThree, animalID);
-//                return prefKeyThree;
-//            case 3:
-//                editor.putString("com.example.tim.lostnfound." + prefKeyFour, animalID);
-//                return prefKeyFour;
-//            case 4:
-//                editor.putString("com.example.tim.lostnfound." + prefKeyFive, animalID);
-//                return prefKeyFive;
-//            default:
-//                return null;
-//        }
-//    }

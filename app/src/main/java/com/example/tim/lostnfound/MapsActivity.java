@@ -28,10 +28,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private String addingMarker;
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference ref;
+    private FirebaseDatabase database;
+    private DatabaseReference dataReference;
     private LinkedList<HashMap<String, String>> animalLinkedList;
-//    private LinkedList<String> nameLinkedList;
     private HashMap<String, String> animal;
 
 
@@ -69,22 +68,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.setOnMarkerClickListener(this);
         LatLng flint = new LatLng(43.012527, -83.687456);
 
-        mDatabase = DatabaseUtils.getDatabase();
-        ref = mDatabase.getReference().child("server").child("animals");
+        database = DatabaseUtils.getDatabase();
+        dataReference = DatabaseUtils.getReference(database);
 
         animalLinkedList = new LinkedList<>();
-//        nameLinkedList = new LinkedList<>();
 
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
-                    animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
+                for (DataSnapshot animalDatabase : dataSnapshot.getChildren()) {
+                    animal = (HashMap<String, String>) animalDatabase.getValue();
                     animalLinkedList.add(animal);
-//
-//                    if (animal.get("name").equals("")) {
-//                        nameLinkedList.add(animal.get("type"));
-//                    } else nameLinkedList.add(animal.get("name"));
 
                 }
 

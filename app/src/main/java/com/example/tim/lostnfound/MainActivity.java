@@ -28,7 +28,7 @@ import java.io.File;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements ListingsFragment.OnMenuItemSelectedListener {
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     };
 
-    // Basic options menu, this will be overriden by ListingsFragment
+    // Basic options menu, this will be overridden by ListingsFragment
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu, menu);
@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
     private FirebaseDatabase mDatabase;
     private DatabaseReference ref;
     private Query query;
-    private HashMap<String, String> animal;
+    private HashMap<String, Object> animal;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -112,45 +112,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
 
-
-//        Intent mainIntent = getIntent();
-//        if (mainIntent != null){
-//            mainIntent.getExtras();
-//        }
-
-
-        File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-        LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
-
-        mDatabase = DatabaseUtils.getDatabase();
-        ref = mDatabase.getReference().child("server").child("animals");
-
-        if (animalLinkedList.size() != 0) {
-            for (final HashMap<String, String> listAnimal : animalLinkedList) {
-                query = ref.child(listAnimal.get("key"));
-                query.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        animal = (HashMap<String, String>) dataSnapshot.getValue();
-                        if (!animal.get("found").equals(listAnimal.get("found")) && animal.get("found").equals("Found")) {
-                            listAnimal.put("found", animal.get("found"));
-                            listAnimal.put("notified", "false");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-            }
-
-            FileUtils.writeToFile(animalLinkedList, file);
-        }
-
-
-
+        // initialize nav bar, set listener
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
@@ -173,8 +135,8 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
             public void onPageSelected(int position) {
                 if (position == 2) {
 
-                    File file = new File(getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-                    LinkedList<HashMap<String, String>> animalLinkedList = FileUtils.readFromFile(file);
+                    File file = FileUtils.filePath(getApplicationContext());
+                    List<String> animalLinkedList = FileUtils.readFromFile(getApplicationContext());
 
                     if (animalLinkedList.size() == 0) {
                         Toast toast = Toast.makeText(getApplicationContext(), "Your list of animals is empty!", Toast.LENGTH_LONG);

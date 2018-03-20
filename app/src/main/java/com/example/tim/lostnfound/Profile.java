@@ -67,10 +67,10 @@ public class Profile extends AppCompatActivity {
     private DatabaseReference ref;
 
     private String animalID;
-    private HashMap<String, String> animalFound;
-    private HashMap<String, String> animal;
+    private HashMap<String, Object> animalFound;
+    private HashMap<String, Object> animal;
 
-
+    // Declare UI elements
     private TextView nameView;
     private TextView colorView;
     private TextView dateView;
@@ -80,8 +80,15 @@ public class Profile extends AppCompatActivity {
     private TextView emailView;
     private TextView statusView;
     private TextView typeView;
-    private ImageButton foundButton;
-    private ImageButton lostButton;
+    private ImageButton changeStatusButton;
+
+    // new buttons for capstone
+    private ImageButton removeListingButton;
+    private ImageButton editListingButton;
+
+    // TODO discuss best implementation of "match to other pets" with group
+    private ImageButton matchToLostButton;
+
 
 
 
@@ -109,8 +116,8 @@ public class Profile extends AppCompatActivity {
 
 
         // Initialize button and listener
-        foundButton = (ImageButton) findViewById(R.id.profileFoundButton);
-        foundButton.setOnClickListener(new View.OnClickListener() {
+        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
+        changeStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 animalFound.put("found", "Found");
@@ -121,19 +128,20 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-
         // Initialize button and listener
-        lostButton = (ImageButton) findViewById(R.id.profileLostButton);
-        lostButton.setOnClickListener(new View.OnClickListener() {
+        editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
+        editListingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animalFound.put("found", "Lost");
-                ref.setValue(animalFound);
 
-                Toast toast = Toast.makeText(getApplicationContext(), "Animal listed as lost!", Toast.LENGTH_LONG);
-                toast.show();
+                Intent intent = new Intent(getApplicationContext(), Post.class);
+                intent.putExtra("animalID", animalID);
+                finish();
+                startActivity(intent);
+
             }
         });
+
 
         // Create reference to database
         mDatabase = DatabaseUtils.getDatabase();
@@ -146,63 +154,67 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                animal = (HashMap<String, String>) dataSnapshot.getValue();
+                animal = (HashMap<String, Object>) dataSnapshot.getValue();
                 animalFound = animal;
 
                 if (animal.get("name").equals("")){
                     nameView.setText("(none listed)");
                 } else {
-                    nameView.setText(animal.get("name"));
+                    nameView.setText(animal.get("name").toString());
                 }
 
                 if (animal.get("color").equals("")){
                     colorView.setText("(none listed)");
                 } else {
-                    colorView.setText(animal.get("color"));
+                    colorView.setText(animal.get("color").toString());
                 }
 
                 if (animal.get("date").equals("")){
                     dateView.setText("(none listed)");
                 } else {
-                    dateView.setText(animal.get("date"));
+                    dateView.setText(animal.get("date").toString());
                 }
 
                 if (animal.get("description").equals("")){
                     descView.setText("(none listed)");
                 } else {
-                    descView.setText(animal.get("description"));
+                    descView.setText(animal.get("description").toString());
                 }
 
                 if (animal.get("location").equals("")){
                     locationView.setText("(none listed)");
                 } else {
-                    locationView.setText(animal.get("location"));
+                    locationView.setText(animal.get("location").toString());
                 }
 
                 if (animal.get("phone").equals("")){
                     phoneView.setText("(none listed)");
                 } else {
-                    phoneView.setText(animal.get("phone"));
+                    phoneView.setText(animal.get("phone").toString());
                 }
 
                 if (animal.get("email").equals("")){
                     emailView.setText("(none listed)");
                 } else {
-                    emailView.setText(animal.get("email"));
+                    emailView.setText(animal.get("email").toString());
                 }
 
-                typeView.setText(animal.get("type"));
+                typeView.setText(animal.get("type").toString());
 
-                statusView.setText(animal.get("found"));
+                statusView.setText(animal.get("found").toString());
 
 
             }
+
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                     Log.d("DEBUG", "Failure");
             }
         });
+
+
 
     }
 }
