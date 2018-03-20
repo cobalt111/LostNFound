@@ -3,6 +3,7 @@ package com.example.tim.lostnfound;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +11,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static android.content.Intent.EXTRA_TEXT;
 
@@ -30,14 +39,20 @@ public class YourPetsFragment extends Fragment {
         return fragment;
     }
 
+    private FirebaseDatabase database;
+    private DatabaseReference dataReference;
+
     // UI element for listing animals
     private ListView listView;
+    ArrayAdapter adapter;
 
     // animalLinkedList is used to retrieve the animal data from the data file
-    private LinkedList<HashMap<String, String>> animalLinkedList;
+    private List<String> animalLinkedList;
 
     // yourAnimalLinkedList is a list of animal names used to populate the listView with names
-    private LinkedList<String> yourAnimalLinkedList;
+    private List<String> animalNameLinkedList;
+
+
 
 
 
@@ -45,33 +60,57 @@ public class YourPetsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
-
-        // Verify file exists. If not, create it. Import data from it to animalLinkedList (if any)
-        FileUtils.createFile();
-        File file = new File(getContext().getExternalFilesDir(null).getAbsolutePath(), FileUtils.listOfYourPetsFile);
-        animalLinkedList = FileUtils.readFromFile(file);
-
-
-
-
-        yourAnimalLinkedList = new LinkedList<>();
-
         listView = (ListView) rootView.findViewById(R.id.listview);
 
-        // Create LinkedList of every animal in the HashMap to be entered into the following adapter
-        for (HashMap<String, String> animal : animalLinkedList) {
-            yourAnimalLinkedList.add(animal.get("name"));
+
+        // Verify file exists. If not, create it. Import data from it to animalLinkedList (if any)
+        FileUtils.createFile(getContext());
+        animalLinkedList = FileUtils.readFromFile(getContext());
+        animalNameLinkedList = new LinkedList<>();
+
+
+        if (animalLinkedList.size() > 0) {
+            
+            // Create reference to database
+            database = DatabaseUtils.getDatabase();
+
+            // Find the particular animal in the database according to the animalID
+            dataReference = DatabaseUtils.getReference(database);
+            // Contact database, retrieve data elements and display them in the appropriate view
+            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (String animalID : animalLinkedList) {
+                        animalNameLinkedList.add(dataSnapshot.child(animalID).child("name").getValue().toString());
+                    }
+                    adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, animalNameLinkedList);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.d("DEBUG", "Failure");
+                }
+            });
         }
 
+
         // Enter list of your animals into the adapter and set the adapter to the listView
-        ArrayAdapter adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, yourAnimalLinkedList);
+        if (adapter == null) {
+            adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, animalNameLinkedList);
+        }
         listView.setAdapter(adapter);
+
+
+
 
         // If one of the animals is selected, this intent will be used to open its profile
         final Intent intent = new Intent(getActivity(), Profile.class);
 
         // intentList is used for finding the selected animal key once selected in the listView
-        final LinkedList<HashMap<String, String>> intentList = animalLinkedList;
+        final List<String> intentList = animalLinkedList;
 
         // Listener for the listView. The position of the selected animal in the listView corresponds with the position in the intentList
         // The position is found, and the key of the respective animal is retrieved according to it
@@ -85,8 +124,8 @@ public class YourPetsFragment extends Fragment {
                             @Override
                             public void run() {
 
-                                HashMap<String, String> animal = intentList.get(position);
-                                intent.putExtra(EXTRA_TEXT, animal.get("key"));
+                                String animalID = intentList.get(position);
+                                intent.putExtra(EXTRA_TEXT, animalID);
                                 startActivity(intent);
                             }
                         });

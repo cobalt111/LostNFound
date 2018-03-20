@@ -208,17 +208,19 @@
             android:layout_weight="0.81">
 
             <ImageButton
-                android:id="@+id/profileFoundButton"
+                android:id="@+id/profileChangeButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:layout_alignStart="@+id/profileLostButton"
+                android:layout_alignStart="@+id/profileEditButton"
                 android:layout_marginTop="20dp"
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/doggy_found" />
+                <!-- TODO change this button drawable to represent function -->
+
 
             <ImageButton
-                android:id="@+id/profileLostButton"
+                android:id="@+id/profileEditButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
@@ -226,6 +228,7 @@
                 android:layout_marginTop="105dp"
                 android:background="@android:color/transparent"
                 app:srcCompat="@drawable/doggy_lost" />
+                <!-- TODO change this button drawable to represent function -->
 
         </RelativeLayout>
 
