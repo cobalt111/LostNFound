@@ -89,9 +89,7 @@ public class ListingsFragment extends Fragment {
         // just using namearraylist for the time being, will probably change to two line adapter
         listView = (ListView) rootView.findViewById(R.id.listview);
 
-
         adapter = queryDatabaseForData(userIntention);
-
 
         final Intent listIntent = new Intent(getContext(), Profile.class);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

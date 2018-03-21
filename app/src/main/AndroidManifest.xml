@@ -64,12 +64,12 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_map" />
-        <!--<activity-->
-            <!--android:name=".Listings"-->
-            <!--android:exported="true" />-->
-        <!--<activity-->
-            <!--android:name=".YourPets"-->
-            <!--android:exported="true" />-->
+        <activity android:name=".Search" />
+
+        <service
+            android:name=".NotificationService"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>
