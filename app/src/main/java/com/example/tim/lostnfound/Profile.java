@@ -37,6 +37,7 @@ public class Profile extends AppCompatActivity {
     private DatabaseReference dataReference;
 
     private String animalID;
+    private boolean isOwnedAnimal;
 
     // Declare UI elements
     private TextView nameView;
@@ -63,15 +64,21 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        isOwnedAnimal = false;
+
         database = DatabaseUtils.getDatabase();
         dataReference = DatabaseUtils.getReference(database);
 
 
         // Retrieve animalID from the intent used to start this instance of Profile
         Intent intent = getIntent();
+
         if (intent.hasExtra("animalID")) {
             animalID = intent.getStringExtra("animalID");
+        } else if (intent.hasExtra("userSubmitted")) {
+            isOwnedAnimal = true;
         }
+
 
         // Initialize UI elements
         nameView = (TextView) findViewById(R.id.profileName);
@@ -98,19 +105,26 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-        // Initialize button and listener
-        editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
-        editListingButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // todo separate profile into owned and not owned profiles
+        // show the edit listing button if the listing is created by the user
+        if (isOwnedAnimal) {
 
-                Intent intent = new Intent(getApplicationContext(), Post.class);
-                intent.putExtra("animalID", animalID);
-                finish();
-                startActivity(intent);
+            // Initialize button and listener
+            editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
+            editListingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-            }
-        });
+                    Intent intent = new Intent(getApplicationContext(), Post.class);
+                    intent.putExtra("animalID", animalID);
+                    finish();
+                    startActivity(intent);
+
+                }
+            });
+
+        }
+
 
 
 

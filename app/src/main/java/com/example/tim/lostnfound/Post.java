@@ -224,7 +224,6 @@ public class Post extends AppCompatActivity implements LocationListener {
             });
 
             // TODO retrieve already uploaded picture for editing
-            // TODO finish edit functionality
         }
 
 
@@ -281,7 +280,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
     private String onEdit(String editAnimalID) {
 
-        // TODO figure out why editing doesn't work
 
         // Find the old animal in yourAnimalList and delete it
         if (yourAnimalList.size() > 0) {
@@ -315,10 +313,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         //TODO add picture functionality
 
 
-        // create map with key as key and animal as value so updateChildren() understands it
-        Map<String, Object> mapSubmission = new HashMap<>();
-        mapSubmission.put(editAnimalID, animal);
-
         // Update database with edited information
         dataReference.updateChildren(animal);
 
@@ -350,9 +344,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
-//        if (statusSelection.equals("Found")) {
-//            animal.put("notified", "true");
-//        } else animal.put("notified", "false");
         //TODO add picture functionality
 
         // Create new key for animal
@@ -371,12 +362,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
         return key;
     }
-
-
-
-
-
-
 
 
 

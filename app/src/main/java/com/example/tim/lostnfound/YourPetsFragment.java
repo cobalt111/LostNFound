@@ -57,7 +57,7 @@ public class YourPetsFragment extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
         listView = (ListView) rootView.findViewById(R.id.listview);
@@ -125,7 +125,8 @@ public class YourPetsFragment extends Fragment {
                             public void run() {
 
                                 String animalID = intentList.get(position);
-                                intent.putExtra(EXTRA_TEXT, animalID);
+                                intent.putExtra("animalID", animalID);
+                                intent.putExtra("userSubmitted", "true");
                                 startActivity(intent);
                             }
                         });
