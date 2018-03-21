@@ -33,42 +33,10 @@ import static android.content.Intent.EXTRA_TEXT;
 
 public class Profile extends AppCompatActivity {
 
-//    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-//
-//        @Override
-//        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-//            switch (item.getItemId()) {
-//                case R.id.navigation_home:
-//                    Intent intentHome = new Intent(Profile.this, MainActivity.class);
-//                    finish();
-//                    startActivity(intentHome);
-//                    return true;
-//                case R.id.navigation_listings:
-//                    Intent intentListings = new Intent(Profile.this, Listings.class);
-//                    finish();
-//                    startActivity(intentListings);
-//                    return true;
-//                case R.id.navigation_animals:
-//                    Intent intentAnimals = new Intent(Profile.this, YourPets.class);
-//                    finish();
-//                    startActivity(intentAnimals);
-//                    return true;
-////                case R.id.navigation_map:
-////                    mTextMessage.setText(R.string.nav_map);
-////                    return true;
-//            }
-//            return false;
-//        }
-//
-//    };
-
-
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference ref;
+    private FirebaseDatabase database;
+    private DatabaseReference dataReference;
 
     private String animalID;
-    private HashMap<String, Object> animalFound;
-    private HashMap<String, Object> animal;
 
     // Declare UI elements
     private TextView nameView;
@@ -90,17 +58,19 @@ public class Profile extends AppCompatActivity {
     private ImageButton matchToLostButton;
 
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        database = DatabaseUtils.getDatabase();
+        dataReference = DatabaseUtils.getReference(database);
+
+
         // Retrieve animalID from the intent used to start this instance of Profile
         Intent intent = getIntent();
-        if (intent.hasExtra(EXTRA_TEXT)) {
-            animalID = intent.getStringExtra(EXTRA_TEXT);
+        if (intent.hasExtra("animalID")) {
+            animalID = intent.getStringExtra("animalID");
         }
 
         // Initialize UI elements
@@ -120,8 +90,8 @@ public class Profile extends AppCompatActivity {
         changeStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                animalFound.put("found", "Found");
-                ref.setValue(animalFound);
+
+                dataReference.child(animalID).child("found").setValue("Found");
 
                 Toast toast = Toast.makeText(getApplicationContext(), "Animal listed as found!", Toast.LENGTH_LONG);
                 toast.show();
@@ -143,19 +113,20 @@ public class Profile extends AppCompatActivity {
         });
 
 
-        // Create reference to database
-        mDatabase = DatabaseUtils.getDatabase();
 
         // Find the particular animal in the database according to the animalID passed in the intent
-        ref = mDatabase.getReference().child("server").child("animals").child(animalID);
+        dataReference = dataReference.child(animalID);
 
         // Contact database, retrieve data elements and display them in the appropriate view
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                animal = (HashMap<String, Object>) dataSnapshot.getValue();
-                animalFound = animal;
+
+                @SuppressWarnings("unchecked")
+                HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                // TODO add all these strings to the strings.xml instead
 
                 if (animal.get("name").equals("")){
                     nameView.setText("(none listed)");

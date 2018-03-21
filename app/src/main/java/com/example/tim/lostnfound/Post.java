@@ -35,6 +35,7 @@ import android.os.Message;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 import static android.content.Intent.EXTRA_TEXT;
@@ -53,8 +54,10 @@ public class Post extends AppCompatActivity implements LocationListener {
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
-    // Declaring local list of your animals
+    // Declaring local variables
     private List<String> yourAnimalList;
+    private String editAnimalID;
+    private boolean isEditInstance;
 
     // Declaring UI elements
     private Spinner typeDropdown;
@@ -75,14 +78,8 @@ public class Post extends AppCompatActivity implements LocationListener {
     // PICK_IMAGE_REQUEST is a request code to switch to the activity for picking images from gallery/camera
     private final int PICK_IMAGE_REQUEST = 71;
 
-
     protected LocationManager locationManager;
     protected Location location;
-    private String editAnimalID;
-    private HashMap<String, String> animal;
-    private boolean isEditInstance;
-
-
 
 
 
@@ -126,6 +123,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeDropdown.setAdapter(typeAdapter);
+
         typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -144,6 +142,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         ArrayAdapter<String> statusAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, statusList);
         statusAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         statusDropdown.setAdapter(statusAdapter);
+
         statusDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -169,18 +168,16 @@ public class Post extends AppCompatActivity implements LocationListener {
 
         // Retrieve animalID from the intent used to start this instance of Profile
         Intent intent = getIntent();
+
         // If the intent has a passed animalID, this must be an instance of editing
         // an existing post rather than normal posting
+        // We want to change the existing animal with the entered data rather than create an entirely
+        // new listing for the same animal with slightly edited data elements
         // Because we are editing existing data, the current data is retrieved and is automatically
         // filled in. The user should edit whatever data elements are incorrect and hit submit.
-        // We want to change the existing listing with the edited data rather than create an entirely
-        // new listing for the same animal (with slightly edited data elements)
         if (intent.hasExtra("animalID")) {
             isEditInstance = true;
             editAnimalID = intent.getStringExtra("animalID");
-
-            // Create reference to database
-//            database = DatabaseUtils.getDatabase();
 
             // Find the particular animal in the database according to the animalID passed in the intent
             dataReference = dataReference.child(editAnimalID);
@@ -190,7 +187,9 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    animal = (HashMap<String, String>) dataSnapshot.getValue();
+
+                    @SuppressWarnings("unchecked")
+                    HashMap<String, String> animal = (HashMap<String, String>) dataSnapshot.getValue();
 
                     nameView.setText(animal.get("name"));
                     colorView.setText(animal.get("color"));
@@ -216,10 +215,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                         }
                     }
 
-
                 }
-
-
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
@@ -240,6 +236,7 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 String animalID;
 
+                // find out whether to run the onEdit method or the onSubmit method
                 if (isEditInstance) {
 
                     // Once the submit button is clicked, the onEdit method will do the work of editing the info in the database.
@@ -262,13 +259,11 @@ public class Post extends AppCompatActivity implements LocationListener {
                 }
 
 
-                // Create intent to open profile of submitted animal
+                // Create intent to open profile of submitted/edited animal
                 Intent intent = new Intent(Post.this, Profile.class);
-                intent.putExtra(EXTRA_TEXT, animalID);
+                intent.putExtra("animalID", animalID);
                 finish();
                 startActivity(intent);
-
-
 
             }
         });
@@ -299,10 +294,8 @@ public class Post extends AppCompatActivity implements LocationListener {
         }
 
 
-
-        // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
+        // Declare HashMap to enter animal data into, and declare reference to database to update
         HashMap<String, Object> animal = new HashMap<>();
-        DatabaseReference animalRef = dataReference.child(editAnimalID);
 
         // Collect entered data and add it to the HashMap
         animal.put("name", nameView.getText().toString());
@@ -310,7 +303,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("date", dateView.getText().toString());
         animal.put("email", emailView.getText().toString());
         animal.put("description", descView.getText().toString());
-        System.out.println(animal.get("description").toString());
         animal.put("phone", phoneView.getText().toString());
         animal.put("location", locationView.getText().toString());
         animal.put("latitude", Double.toString(location.getLatitude()));
@@ -319,14 +311,16 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("found", statusSelection);
         animal.put("key", editAnimalID);
 
-//        if (statusSelection.equals("Found")) {
-//            animal.put("notified", "true");
-//        } else animal.put("notified", "false");
+
         //TODO add picture functionality
 
 
+        // create map with key as key and animal as value so updateChildren() understands it
+        Map<String, Object> mapSubmission = new HashMap<>();
+        mapSubmission.put(editAnimalID, animal);
+
         // Update database with edited information
-        animalRef.updateChildren(animal);
+        dataReference.updateChildren(animal);
 
         // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(animal.get("key").toString());

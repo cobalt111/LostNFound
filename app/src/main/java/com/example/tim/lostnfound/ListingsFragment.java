@@ -105,7 +105,7 @@ public class ListingsFragment extends Fragment {
                             @Override
                             public void run() {
                                 animal = animalLinkedList.get(position);
-                                listIntent.putExtra(EXTRA_TEXT, animal.get("key"));
+                                listIntent.putExtra("animalID", animal.get("key"));
                                 startActivity(listIntent);
 
                             }
