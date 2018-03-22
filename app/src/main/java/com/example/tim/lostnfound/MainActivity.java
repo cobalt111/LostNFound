@@ -78,18 +78,9 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
     @Override
     public void onMenuItemSelected(String filter) {
 
-
-
     }
 
 
-
-
-
-    private FirebaseDatabase mDatabase;
-    private DatabaseReference ref;
-    private Query query;
-    private HashMap<String, Object> animal;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -135,7 +126,6 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
             public void onPageSelected(int position) {
                 if (position == 2) {
 
-                    File file = FileUtils.filePath(getApplicationContext());
                     List<String> animalLinkedList = FileUtils.readFromFile(getApplicationContext());
 
                     if (animalLinkedList.size() == 0) {

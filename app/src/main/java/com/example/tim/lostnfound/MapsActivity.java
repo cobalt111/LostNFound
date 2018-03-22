@@ -28,7 +28,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private String addingMarker;
-    private FirebaseDatabase database;
     private DatabaseReference dataReference;
     private LinkedList<HashMap<String, String>> animalLinkedList;
     private HashMap<String, String> animal;
@@ -63,13 +62,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-
-        Log.d("map", "map is ready");
         mMap.setOnMarkerClickListener(this);
         LatLng flint = new LatLng(43.012527, -83.687456);
 
-        database = DatabaseUtils.getDatabase();
-        dataReference = DatabaseUtils.getReference(database);
+        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
 
         animalLinkedList = new LinkedList<>();
 

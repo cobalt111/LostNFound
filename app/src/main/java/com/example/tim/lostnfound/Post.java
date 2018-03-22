@@ -47,7 +47,6 @@ import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
 public class Post extends AppCompatActivity implements LocationListener {
 
     // Reference to database
-    private FirebaseDatabase database;
     private DatabaseReference dataReference;
 
     // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
@@ -104,8 +103,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         yourAnimalList = FileUtils.readFromFile(getApplicationContext());
 
         // Create reference to database
-        database = DatabaseUtils.getDatabase();
-        dataReference = DatabaseUtils.getReference(database);
+        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
 
         // Initialize UI elements
         nameView = (EditText) findViewById(R.id.postName);

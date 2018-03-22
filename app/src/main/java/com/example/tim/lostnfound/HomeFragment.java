@@ -10,7 +10,6 @@ import android.widget.ImageButton;
 
 public class HomeFragment extends Fragment {
 
-    private ImageButton button;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
@@ -27,7 +26,7 @@ public class HomeFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.home_fragment, container, false);
 
-        button = (ImageButton) rootView.findViewById(R.id.mainPostButton);
+        ImageButton button = (ImageButton) rootView.findViewById(R.id.mainPostButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
