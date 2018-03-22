@@ -39,13 +39,12 @@ public class ListingsFragment extends Fragment {
 
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    private FirebaseDatabase mDatabase;
     private DatabaseReference dataReference;
+
     private HashMap<String, String> animal;
     private LinkedList<HashMap<String, String>> animalLinkedList;
     private LinkedList<String> nameLinkedList;
     private ListView listView;
-    private Query query;
     private String userIntention;
     private ArrayAdapter adapter;
 
@@ -83,8 +82,7 @@ public class ListingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_listings, container, false);
 
-        mDatabase = DatabaseUtils.getDatabase();
-        dataReference = DatabaseUtils.getReference(mDatabase);
+        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
 
         // just using namearraylist for the time being, will probably change to two line adapter
         listView = (ListView) rootView.findViewById(R.id.listview);
@@ -121,7 +119,7 @@ public class ListingsFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private ArrayAdapter queryDatabaseForData (String intention) {
 
-        query = dataReference;
+        Query query = dataReference;
         animalLinkedList = new LinkedList<>();
         nameLinkedList = new LinkedList<>();
 

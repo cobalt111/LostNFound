@@ -15,9 +15,7 @@ class FileUtils {
 
     private final static String STORAGE_FILENAME = "lostNfound-animal_list.txt";
 
-    // TODO figure out how to serve up the file functions properly
-
-    static File filePath(Context context){
+    private static File filePath(Context context){
         return new File(context.getFilesDir(), FileUtils.STORAGE_FILENAME);
     }
 
@@ -75,7 +73,7 @@ class FileUtils {
     }
 
 
-
+    @SuppressWarnings("unchecked")
     static List<String> readFromFile(Context context) {
 
         List<String> list = new ArrayList<>();

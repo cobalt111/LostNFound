@@ -1,37 +1,23 @@
 package com.example.tim.lostnfound;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.example.tim.lostnfound.DatabaseUtils;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-
 import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
 
-import static android.content.Intent.EXTRA_TEXT;
-
-public class Profile extends AppCompatActivity {
+public class YourPetsProfile extends AppCompatActivity {
 
     private DatabaseReference dataReference;
 
@@ -61,7 +47,7 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_your_pets_profile);
 
         isOwnedAnimal = false;
 
@@ -88,8 +74,7 @@ public class Profile extends AppCompatActivity {
         typeView = (TextView) findViewById(R.id.profileType);
 
 
-        // TODO fix buttons to reflect Profile button usage
-
+        // TODO fix buttons to reflect YourPetsProfile button usage
 
         // Initialize button and listener
         changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);

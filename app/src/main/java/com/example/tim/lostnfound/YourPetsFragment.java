@@ -14,16 +14,10 @@ import android.widget.ListView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.File;
 import java.util.LinkedList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static android.content.Intent.EXTRA_TEXT;
 
 
 public class YourPetsFragment extends Fragment {
@@ -39,17 +33,16 @@ public class YourPetsFragment extends Fragment {
         return fragment;
     }
 
-    private FirebaseDatabase database;
     private DatabaseReference dataReference;
 
     // UI element for listing animals
     private ListView listView;
-    ArrayAdapter adapter;
+    private ArrayAdapter adapter;
 
     // animalLinkedList is used to retrieve the animal data from the data file
     private List<String> animalLinkedList;
 
-    // yourAnimalLinkedList is a list of animal names used to populate the listView with names
+    // animalNameLinkedList is a list of animal names used to populate the listView with names
     private List<String> animalNameLinkedList;
 
 
@@ -68,14 +61,14 @@ public class YourPetsFragment extends Fragment {
         animalLinkedList = FileUtils.readFromFile(getContext());
         animalNameLinkedList = new LinkedList<>();
 
-
+        // The objective of this code block is to retrieve name of every animal in animalLinkedList
+        // so that the animalNameLinkedList will have the names to fill the adapter with
         if (animalLinkedList.size() > 0) {
             
             // Create reference to database
-            database = DatabaseUtils.getDatabase();
-
             // Find the particular animal in the database according to the animalID
-            dataReference = DatabaseUtils.getReference(database);
+            dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
+
             // Contact database, retrieve data elements and display them in the appropriate view
             dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -104,16 +97,12 @@ public class YourPetsFragment extends Fragment {
         listView.setAdapter(adapter);
 
 
+        // If one of the animals is selected from the list, this intent will be used to open its profile
+        final Intent intent = new Intent(getActivity(), YourPetsProfile.class);
 
-
-        // If one of the animals is selected, this intent will be used to open its profile
-        final Intent intent = new Intent(getActivity(), Profile.class);
-
-        // intentList is used for finding the selected animal key once selected in the listView
-        final List<String> intentList = animalLinkedList;
-
-        // Listener for the listView. The position of the selected animal in the listView corresponds with the position in the intentList
-        // The position is found, and the key of the respective animal is retrieved according to it
+        // Listener for the listView. The position of the selected animal in the listView corresponds
+        // with the position in the intentList. The position is found in the list, the key of the
+        // respective animal is retrieved, and the key is added to the intent
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -124,7 +113,7 @@ public class YourPetsFragment extends Fragment {
                             @Override
                             public void run() {
 
-                                String animalID = intentList.get(position);
+                                String animalID = animalLinkedList.get(position);
                                 intent.putExtra("animalID", animalID);
                                 intent.putExtra("userSubmitted", "true");
                                 startActivity(intent);
