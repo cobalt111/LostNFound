@@ -78,11 +78,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
 
+                MarkerOptions currentOptions = new MarkerOptions();
                 for (HashMap<String, String> currentAnimal : animalLinkedList) {
 
-                    MarkerOptions currentOptions = new MarkerOptions();
-                    LatLng currentLatLng = new LatLng(Double.parseDouble(currentAnimal.get("latitude")),
-                            Double.parseDouble(currentAnimal.get("longitude")));
+
+                    LatLng currentLatLng = new LatLng(  Double.parseDouble(currentAnimal.get("latitude")),
+                                                        Double.parseDouble(currentAnimal.get("longitude")));
 
                     currentOptions.position(currentLatLng);
                     if (currentAnimal.get("name").equals("")) {
@@ -149,7 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         Intent profileIntent = new Intent(MapsActivity.this, Profile.class);
         String animalID = marker.getSnippet();
-        profileIntent.putExtra(Intent.EXTRA_TEXT, animalID);
+        profileIntent.putExtra("animalID", animalID);
 
         startActivity(profileIntent);
 

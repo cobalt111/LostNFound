@@ -132,23 +132,14 @@
             android:layout_height="match_parent">
 
             <ImageButton
-                android:id="@+id/postImage"
+                android:id="@+id/searchSubmit"
                 android:layout_width="315dp"
                 android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/submit_button_medium"
                 android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/submit_button_medium" />
-
-
-            <ImageButton
-                android:id="@+id/postSubmit"
-                android:layout_width="315dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:background="@android:color/transparent"
-                app:srcCompat="@drawable/submit_button_medium" />
+                android:layout_marginTop="15dp" />
         </RelativeLayout>
 
     </LinearLayout>

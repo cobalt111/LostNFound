@@ -40,23 +40,18 @@ public class Search extends AppCompatActivity implements LocationListener {
     // Reference to database
     private DatabaseReference dataReference;
 
-    // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
-    private FirebaseStorage storage;
-    private StorageReference storageReference;
+
 
     // Declaring local variables
     private List<String> yourAnimalList;
-    private String editAnimalID;
-    private boolean isEditInstance;
+
 
     // Declaring UI elements
     private Spinner typeDropdown;
     private Spinner statusDropdown;
-    private Button picButton;
     private String typeSelection;
     private String statusSelection;
-    private ImageButton submitButton;
-    private ImageButton selectImageButton;
+    private ImageButton searchButton;
     private EditText nameView;
     private EditText colorView;
     private EditText dateView;
@@ -65,13 +60,16 @@ public class Search extends AppCompatActivity implements LocationListener {
     private EditText phoneView;
     private EditText emailView;
 
-    // PICK_IMAGE_REQUEST is a request code to switch to the activity for picking images from gallery/camera
-    private final int PICK_IMAGE_REQUEST = 71;
+
 
     protected LocationManager locationManager;
     protected Location location;
 
 
+    @Override
+    public void onBackPressed() {
+        getFragmentManager().popBackStackImmediate();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,15 +81,11 @@ public class Search extends AppCompatActivity implements LocationListener {
         locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
         location = getLastKnownLocation();
         LocationAddress locationAddress = new LocationAddress();
-        getAddressFromLocation(location.getLatitude(), location.getLongitude(),
-                getApplicationContext(), new GeocoderHandler());
+        getAddressFromLocation( location.getLatitude(),
+                                location.getLongitude(),
+                                getApplicationContext(),
+                                new GeocoderHandler());
 
-
-        // Verify local data file exists, and create it if not verified
-        FileUtils.createFile(getApplicationContext());
-
-        // Import animal data from local file
-        yourAnimalList = FileUtils.readFromFile(getApplicationContext());
 
         // Create reference to database
         dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
@@ -108,7 +102,15 @@ public class Search extends AppCompatActivity implements LocationListener {
 
         // Initialize dropdown selection spinner for animal type
         typeDropdown = (Spinner) findViewById(R.id.post_type_spinner);
-        final String[] typesList = {"Dog", "Cat", "Hamster/Guinea Pig", "Mouse/Rat", "Bird", "Snake/Lizard", "Ferret", "Other"};
+        final String[] typesList = {"Dog",
+                                    "Cat",
+                                    "Hamster/Guinea Pig",
+                                    "Mouse/Rat",
+                                    "Bird",
+                                    "Snake/Lizard",
+                                    "Ferret",
+                                    "Other"
+        };
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Search.this, android.R.layout.simple_spinner_item, typesList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeDropdown.setAdapter(typeAdapter);
@@ -148,209 +150,47 @@ public class Search extends AppCompatActivity implements LocationListener {
         // TODO add picture functionality
 
 
-
-
-
-
-
-
-
-        // Retrieve animalID from the intent used to start this instance of Profile
-        Intent intent = getIntent();
-
-        // If the intent has a passed animalID, this must be an instance of editing
-        // an existing post rather than normal posting
-        // We want to change the existing animal with the entered data rather than create an entirely
-        // new listing for the same animal with slightly edited data elements
-        // Because we are editing existing data, the current data is retrieved and is automatically
-        // filled in. The user should edit whatever data elements are incorrect and hit submit.
-        if (intent.hasExtra("animalID")) {
-            isEditInstance = true;
-            editAnimalID = intent.getStringExtra("animalID");
-
-            // Find the particular animal in the database according to the animalID passed in the intent
-            dataReference = dataReference.child(editAnimalID);
-
-            // Contact database, retrieve data elements and display them in the appropriate view
-            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
-
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    @SuppressWarnings("unchecked")
-                    HashMap<String, String> animal = (HashMap<String, String>) dataSnapshot.getValue();
-
-                    nameView.setText(animal.get("name"));
-                    colorView.setText(animal.get("color"));
-                    dateView.setText(animal.get("date"));
-                    emailView.setText(animal.get("email"));
-                    descView.setText(animal.get("description"));
-                    phoneView.setText(animal.get("phone"));
-                    locationView.setText(animal.get("location"));
-
-                    typeSelection = animal.get("type");
-                    for (int i = 0; i < typesList.length; i++) {
-                        if (typeSelection.equals(typesList[i])) {
-                            typeDropdown.setSelection(i);
-                            break;
-                        }
-                    }
-
-                    statusSelection = animal.get("found");
-                    for (int i = 0; i < statusList.length; i++) {
-                        if (typeSelection.equals(statusList[i])) {
-                            typeDropdown.setSelection(i);
-                            break;
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("DEBUG", "Failure");
-                }
-            });
-
-            // TODO retrieve already uploaded picture for editing
-        }
-
-
         // Initialize submit button and listener
-        submitButton = (ImageButton) findViewById(R.id.postSubmit);
-        submitButton.setOnClickListener(new View.OnClickListener(){
+        searchButton = (ImageButton) findViewById(R.id.searchSubmit);
+        searchButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
 
-                String animalID;
-
-                // find out whether to run the onEdit method or the onSubmit method
-                if (isEditInstance) {
-
-                    // Once the submit button is clicked, the onEdit method will do the work of editing the info in the database.
-                    // animalID is the database key for animal.
-                    animalID = onEdit(editAnimalID);
-
-                    // TODO add code for submission verification before displaying success toast
-                    Toast toast = Toast.makeText(getApplicationContext(), "Your pet listing has been edited!", LENGTH_LONG);
-                    toast.show();
-
-                } else {
-                    // Once the submit button is clicked, the onSubmitAnimal method will do the work of submitting the info to the database.
-                    // animalID is the database key for animal.
-                    animalID = onSubmit();
-
-                    // TODO add code for submission verification before displaying success toast
-                    Toast toast = Toast.makeText(getApplicationContext(), "Your pet has been posted!", LENGTH_LONG);
-                    toast.show();
-
-                }
 
 
-                // Create intent to open profile of submitted/edited animal
-                Intent intent = new Intent(Search.this, Profile.class);
-                intent.putExtra("animalID", animalID);
-                finish();
-                startActivity(intent);
 
             }
         });
 
     }
 
-    // Implementing method to open the image chooser
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
-
-    private String onEdit(String editAnimalID) {
-
-
-        // Find the old animal in yourAnimalList and delete it
-        if (yourAnimalList.size() > 0) {
-            for (String animal : yourAnimalList) {
-
-                if (animal.equals(editAnimalID)) {
-                    yourAnimalList.remove(animal);
-                }
-            }
-        }
-
-
-        // Declare HashMap to enter animal data into, and declare reference to database to update
-        HashMap<String, Object> animal = new HashMap<>();
-
-        // Collect entered data and add it to the HashMap
-        animal.put("name", nameView.getText().toString());
-        animal.put("color", colorView.getText().toString());
-        animal.put("date", dateView.getText().toString());
-        animal.put("email", emailView.getText().toString());
-        animal.put("description", descView.getText().toString());
-        animal.put("phone", phoneView.getText().toString());
-        animal.put("location", locationView.getText().toString());
-        animal.put("latitude", Double.toString(location.getLatitude()));
-        animal.put("longitude", Double.toString(location.getLongitude()));
-        animal.put("type", typeSelection);
-        animal.put("found", statusSelection);
-        animal.put("key", editAnimalID);
-
-
-        //TODO add picture functionality
-
-
-        // Update database with edited information
-        dataReference.updateChildren(animal);
-
-        // Add animal to local list of animals and save it to the data file
-        yourAnimalList.add(animal.get("key").toString());
-        FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
-        return animal.get("key").toString();
-    }
-
-
 
     // Implementing method to submit animal to database and return its unique key
-    private String onSubmit() {
-
-        // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
-        HashMap<String, Object> animal = new HashMap<>();
-
-        // Collect entered data and add it to the HashMap
-        animal.put("name", nameView.getText().toString());
-        animal.put("color", colorView.getText().toString());
-        animal.put("date", dateView.getText().toString());
-        animal.put("email", emailView.getText().toString());
-        animal.put("description", descView.getText().toString());
-        animal.put("phone", phoneView.getText().toString());
-        animal.put("location", locationView.getText().toString());
-        animal.put("latitude", Double.toString(location.getLatitude()));
-        animal.put("longitude", Double.toString(location.getLongitude()));
-        animal.put("type", typeSelection);
-        animal.put("found", statusSelection);
-
-        //TODO add picture functionality
-
-        // Create new key for animal
-        DatabaseReference newAnimalRef = dataReference.push();
-        String key = newAnimalRef.getKey();
-
-        // Add animal's own key to its database entry
-        animal.put("key", key);
-
-        // Add animal to database
-        newAnimalRef.setValue(animal);
-
-        // Add animal to local list of animals and save it to the data file
-        yourAnimalList.add(animal.get("key").toString());
-        FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
-        return key;
-    }
+//    private Intent onSubmit() {
+//
+//        // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
+//        HashMap<String, Object> animal = new HashMap<>();
+//
+//        // Collect entered data and add it to the HashMap
+//        animal.put("name", nameView.getText().toString());
+//        animal.put("color", colorView.getText().toString());
+//        animal.put("date", dateView.getText().toString());
+//        animal.put("email", emailView.getText().toString());
+//        animal.put("description", descView.getText().toString());
+//        animal.put("phone", phoneView.getText().toString());
+//        animal.put("location", locationView.getText().toString());
+//        animal.put("latitude", Double.toString(location.getLatitude()));
+//        animal.put("longitude", Double.toString(location.getLongitude()));
+//        animal.put("type", typeSelection);
+//        animal.put("found", statusSelection);
+//
+//        //TODO add picture functionality
+//
+//
+//        Intent searchResultsIntent = new Intent(getApplicationContext(), ListingsFragment.class);
+//
+//        return ;
+//    }
 
 
 
