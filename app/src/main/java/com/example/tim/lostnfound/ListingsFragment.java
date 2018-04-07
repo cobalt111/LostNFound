@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -28,9 +31,11 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import static android.content.Intent.EXTRA_TEXT;
 
@@ -45,6 +50,9 @@ public class ListingsFragment extends Fragment {
     private LinkedList<HashMap<String, String>> animalLinkedList;
     private LinkedList<String> nameLinkedList;
     private ListView listView;
+    private RecyclerView recyclerView;
+    private RecyclerView.LayoutManager layoutManager;
+    private ListingsAdapter listingsAdapter;
     private String userIntention;
     private ArrayAdapter adapter;
 
@@ -84,32 +92,35 @@ public class ListingsFragment extends Fragment {
 
         dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
 
-        // just using namearraylist for the time being, will probably change to two line adapter
-        listView = (ListView) rootView.findViewById(R.id.listview);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
+        recyclerView.setAdapter(listingsAdapter);
 
-        adapter = queryDatabaseForData(userIntention);
+        recyclerView.setHasFixedSize(true);
+        layoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        final Intent listIntent = new Intent(getContext(), Profile.class);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        listingsAdapter = queryDatabaseForData(userIntention);
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> parent, final View view,
-                                    final int position, long id) {
+            public void onClick(View view, int position) {
 
-                view.animate().setDuration(0).alpha(1)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                animal = animalLinkedList.get(position);
-                                listIntent.putExtra("animalID", animal.get("key"));
-                                startActivity(listIntent);
+                Intent openProfileIntent = new Intent(getActivity(), Profile.class);
+                openProfileIntent.putExtra("animalID", listingsAdapter.animalList
+                                                                            .get(position)
+                                                                            .get("key"));
 
-                            }
-                        });
+                startActivity(openProfileIntent);
+
             }
 
-        });
+            @Override
+            public void onLongClick(View view, int position) {
 
+            }
+
+        }));
 
         setHasOptionsMenu(true);
 
@@ -117,40 +128,39 @@ public class ListingsFragment extends Fragment {
     }
 
     @SuppressWarnings("unchecked")
-    private ArrayAdapter queryDatabaseForData (String intention) {
+    private ListingsAdapter queryDatabaseForData (String intention) {
 
         Query query = dataReference;
-        animalLinkedList = new LinkedList<>();
-        nameLinkedList = new LinkedList<>();
 
         if (intention != null) {
             query = dataReference.orderByChild("found").equalTo(intention);
         }
 
+
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                List<HashMap<String, String>> animalList = new ArrayList<>();
+
                 for (DataSnapshot animalDatabaseEntry : dataSnapshot.getChildren()) {
                     animal = (HashMap<String, String>) animalDatabaseEntry.getValue();
-                    animalLinkedList.add(animal);
 
-                    if (animal.get("name").equals("")) {
-                        nameLinkedList.add(animal.get("type"));
-                    } else nameLinkedList.add(animal.get("name"));
+                    animalList.add(animal);
 
                 }
-
-                adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_1, nameLinkedList);
-                listView.setAdapter(adapter);
-
+                listingsAdapter = new ListingsAdapter(animalList);
+                recyclerView.setAdapter(listingsAdapter);
             }
+
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        return adapter;
+        return listingsAdapter;
     }
 
 
@@ -165,15 +175,15 @@ public class ListingsFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.lost_animals:
                 userIntention = "Lost";
-                adapter = queryDatabaseForData(userIntention);
+                listingsAdapter = queryDatabaseForData(userIntention);
                 return true;
             case R.id.found_animals:
                 userIntention = "Found";
-                adapter = queryDatabaseForData(userIntention);
+                listingsAdapter = queryDatabaseForData(userIntention);
                 return true;
             case R.id.all_animals:
                 userIntention = null;
-                adapter = queryDatabaseForData(userIntention);
+                listingsAdapter = queryDatabaseForData(userIntention);
                 return true;
         }
         return false;

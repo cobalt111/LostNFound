@@ -3,10 +3,24 @@ package com.example.tim.lostnfound;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.ExifInterface;
+import android.media.Image;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,17 +36,27 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.tim.lostnfound.LocationAddress;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import android.os.Handler;
 import android.os.Message;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +81,14 @@ public class Post extends AppCompatActivity implements LocationListener {
     private List<String> yourAnimalList;
     private String editAnimalID;
     private boolean isEditInstance;
+    private boolean isImagePicked;
+    private Bitmap imageBmp;
+    private Uri imageUri;
 
     // Declaring UI elements
     private Spinner typeDropdown;
     private Spinner statusDropdown;
-    private Button picButton;
+    private ImageButton picButton;
     private String typeSelection;
     private String statusSelection;
     private ImageButton submitButton;
@@ -74,8 +101,10 @@ public class Post extends AppCompatActivity implements LocationListener {
     private EditText phoneView;
     private EditText emailView;
 
-    // PICK_IMAGE_REQUEST is a request code to switch to the activity for picking images from gallery/camera
-    private final int PICK_IMAGE_REQUEST = 71;
+    //  REQUEST_IMAGE_CAPTURE is a request code to switch to the activity for picking images from gallery/camera
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private static final int GALLERY_REQUEST = 2;
+
 
     protected LocationManager locationManager;
     protected Location location;
@@ -89,7 +118,13 @@ public class Post extends AppCompatActivity implements LocationListener {
         // TODO handle location based errors
         // finds current location (lat long coordinates) to place the pin on the map
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        } else {
+            locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
+        }
+
         location = getLastKnownLocation();
         LocationAddress locationAddress = new LocationAddress();
         getAddressFromLocation(location.getLatitude(), location.getLongitude(),
@@ -105,6 +140,9 @@ public class Post extends AppCompatActivity implements LocationListener {
         // Create reference to database
         dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
 
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+
         // Initialize UI elements
         nameView = (EditText) findViewById(R.id.postName);
         colorView = (EditText) findViewById(R.id.postColor);
@@ -114,14 +152,54 @@ public class Post extends AppCompatActivity implements LocationListener {
         phoneView = (EditText) findViewById(R.id.postPhone);
         locationView = (EditText) findViewById(R.id.postLocation);
 
+        isImagePicked = false;
+
+
+        // button to open camera and take picture
+        picButton = (ImageButton) findViewById(R.id.postImage);
+        picButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final CharSequence[] items = {"Take Photo", "Choose from Library", "Cancel"};
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(Post.this);
+                builder.setTitle("Add Photo");
+                builder.setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int item) {
+
+                        if (items[item].equals("Take Photo")) {
+                            isImagePicked = true;
+                            dispatchTakePictureIntent();
+                        } else if (items[item].equals("Choose from Library")) {
+                            isImagePicked = true;
+                            Intent galleryIntent = new Intent(Intent.ACTION_PICK,
+                                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            startActivityForResult(galleryIntent, GALLERY_REQUEST);
+                        } else if (items[item].equals("Cancel")) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
+                builder.show();
+
+            }
+        });
 
         // Initialize dropdown selection spinner for animal type
         typeDropdown = (Spinner) findViewById(R.id.post_type_spinner);
-        final String[] typesList = {"Dog", "Cat", "Hamster/Guinea Pig", "Mouse/Rat", "Bird", "Snake/Lizard", "Ferret", "Other"};
+        final String[] typesList = {"Dog",
+                                    "Cat",
+                                    "Hamster/Guinea Pig",
+                                    "Mouse/Rat",
+                                    "Bird",
+                                    "Snake/Lizard",
+                                    "Ferret",
+                                    "Other"
+        };
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeDropdown.setAdapter(typeAdapter);
-
         typeDropdown.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -152,15 +230,6 @@ public class Post extends AppCompatActivity implements LocationListener {
                 statusSelection = null;
             }
         });
-
-        // button to add picture?
-        // TODO add picture functionality
-
-
-
-
-
-
 
 
 
@@ -256,7 +325,8 @@ public class Post extends AppCompatActivity implements LocationListener {
                 }
 
 
-                // Create intent to open profile of submitted/edited animal
+                // Create
+                // to open profile of submitted/edited animal
                 Intent intent = new Intent(Post.this, Profile.class);
                 intent.putExtra("animalID", animalID);
                 finish();
@@ -267,13 +337,67 @@ public class Post extends AppCompatActivity implements LocationListener {
 
     }
 
-    // Implementing method to open the image chooser
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Bundle extras = data.getExtras();
+
+            imageBmp = (Bitmap) extras.get("data");
+
+            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+            String imageFileName = "JPEG_" + timeStamp + "_";
+            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            try {
+                File image = File.createTempFile(
+
+                        imageFileName,  /* prefix */
+                        ".jpg",         /* suffix */
+                        storageDir      /* directory */
+                );
+                picButton.setImageURI(Uri.parse(image.getAbsolutePath()));
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // TODO figure out how to represent picked image on post activity
+//            mImageView.setImageBitmap(imageBitmap);
+
+        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
+
+            imageUri = data.getData();
+            picButton.setImageURI(imageUri);
+
+        }
     }
+
+
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
+//            // Create the File where the photo should go
+//            File photoFile = null;
+//            try {
+//                photoFile = createImageFile();
+//            } catch (IOException ex) {
+//                ex.printStackTrace();
+//            }
+//            // Continue only if the File was successfully created
+//            if (photoFile != null) {
+//                Uri photoURI = FileProvider.getUriForFile(this,
+//                        "com.example.android.fileprovider",
+//                        photoFile);
+//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+//
+
+                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//            }
+        }
+    }
+
 
 
     private String onEdit(String editAnimalID) {
@@ -342,10 +466,11 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
-        //TODO add picture functionality
+
+
 
         // Create new key for animal
-        DatabaseReference newAnimalRef = dataReference.push();
+        final DatabaseReference newAnimalRef = dataReference.push();
         String key = newAnimalRef.getKey();
 
         // Add animal's own key to its database entry
@@ -353,6 +478,65 @@ public class Post extends AppCompatActivity implements LocationListener {
 
         // Add animal to database
         newAnimalRef.setValue(animal);
+
+        //TODO add picture functionality
+        if (isImagePicked) {
+
+            if (imageBmp != null) {
+                StorageReference animalStorageRef = storageReference.child("server")
+                                                                    .child("animals")
+                                                                    .child("images")
+                                                                    .child("thumb/" + key);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+
+                UploadTask uploadTask = animalStorageRef.putBytes(data);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri imageURL = taskSnapshot.getDownloadUrl();
+
+                        newAnimalRef.child("thumbURL").setValue(imageURL.toString());
+
+                    }
+                });
+
+            } else if (imageUri != null) {
+
+                StorageReference animalStorageRef = storageReference.child("server")
+                                                                    .child("animals")
+                                                                    .child("images")
+                                                                    .child("thumb/" + key);
+
+                UploadTask uploadTask = animalStorageRef.putFile(imageUri);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri imageURL = taskSnapshot.getDownloadUrl();
+
+                        newAnimalRef.child("thumbURL").setValue(imageURL.toString());
+
+                    }
+                });
+
+            } else Log.d("Image", "Unable to submit image reference");
+
+
+        }
 
         // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(animal.get("key").toString());
@@ -404,7 +588,16 @@ public class Post extends AppCompatActivity implements LocationListener {
         List<String> providers = locationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
-            Location l = locationManager.getLastKnownLocation(provider);
+            Location l = null;
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+                l = locationManager.getLastKnownLocation(provider);
+            }
+
+
+
             if (l == null) {
                 continue;
             }
@@ -415,63 +608,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         }
         return bestLocation;
     }
-
-
-//    // for taking the pictures
-//    static final int REQUEST_IMAGE_CAPTURE = 1;
-//
-//    private void dispatchTakePictureIntent() {
-//        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//        }
-//    }
-//
-//
-//    // for saving the image with a new filename
-//    String mCurrentPhotoPath;
-//
-//    private File createImageFile() throws IOException {
-//        // Create an image file name
-//        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-//        String imageFileName = "JPEG_" + timeStamp + "_";
-//        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-//        File image = File.createTempFile(
-//                imageFileName,  /* prefix */
-//                ".jpg",         /* suffix */
-//                storageDir      /* directory */
-//        );
-//
-//        // Save a file: path for use with ACTION_VIEW intents
-//        mCurrentPhotoPath = image.getAbsolutePath();
-//        return image;
-//    }
-
-//    // to display the image
-//    private void setPic() {
-//        // Get the dimensions of the View
-//        int targetW = mImageView.getWidth();
-//        int targetH = mImageView.getHeight();
-//
-//        // Get the dimensions of the bitmap
-//        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-//        bmOptions.inJustDecodeBounds = true;
-//        BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        int photoW = bmOptions.outWidth;
-//        int photoH = bmOptions.outHeight;
-//
-//        // Determine how much to scale down the image
-//        int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
-//
-//        // Decode the image file into a Bitmap sized to fill the View
-//        bmOptions.inJustDecodeBounds = false;
-//        bmOptions.inSampleSize = scaleFactor;
-//        bmOptions.inPurgeable = true;
-//
-//        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
-//        mImageView.setImageBitmap(bitmap);
-//    }
-
 
 
 

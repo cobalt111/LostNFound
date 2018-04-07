@@ -78,11 +78,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
 
+                MarkerOptions currentOptions = new MarkerOptions();
                 for (HashMap<String, String> currentAnimal : animalLinkedList) {
 
-                    MarkerOptions currentOptions = new MarkerOptions();
-                    LatLng currentLatLng = new LatLng(Double.parseDouble(currentAnimal.get("latitude")),
-                            Double.parseDouble(currentAnimal.get("longitude")));
+
+                    LatLng currentLatLng = new LatLng(  Double.parseDouble(currentAnimal.get("latitude")),
+                                                        Double.parseDouble(currentAnimal.get("longitude")));
 
                     currentOptions.position(currentLatLng);
                     if (currentAnimal.get("name").equals("")) {
@@ -120,36 +121,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-
-
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-//                PackageManager.PERMISSION_GRANTED &&
-//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-//                        PackageManager.PERMISSION_GRANTED) {
-//            googleMap.setMyLocationEnabled(true);
-//            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-//        } else {
-//            ActivityCompat.requestPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION, TAG_CODE_PERMISSION_LOCATION);
-//        }
-
-        //get current location
-
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//
-//
-//            }
-//        });
-
-
-
     @Override
     public boolean onMarkerClick(Marker marker) {
 
         Intent profileIntent = new Intent(MapsActivity.this, Profile.class);
         String animalID = marker.getSnippet();
-        profileIntent.putExtra(Intent.EXTRA_TEXT, animalID);
+        profileIntent.putExtra("animalID", animalID);
 
         startActivity(profileIntent);
 
