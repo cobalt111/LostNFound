@@ -121,30 +121,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
 
-
-
-//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
-//                PackageManager.PERMISSION_GRANTED &&
-//                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
-//                        PackageManager.PERMISSION_GRANTED) {
-//            googleMap.setMyLocationEnabled(true);
-//            googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-//        } else {
-//            ActivityCompat.requestPermissions(this, Manifest.permission.ACCESS_FINE_LOCATION, TAG_CODE_PERMISSION_LOCATION);
-//        }
-
-        //get current location
-
-//        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-//            @Override
-//            public boolean onMarkerClick(Marker marker) {
-//
-//
-//            }
-//        });
-
-
-
     @Override
     public boolean onMarkerClick(Marker marker) {
 

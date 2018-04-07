@@ -33,18 +33,12 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
             typeView = (TextView) view.findViewById(R.id.listingsTypeView);
             imageView = (ImageView) view.findViewById(R.id.listingsImageView);
         }
-
-
-
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public ListingsAdapter(List<HashMap<String, String>> dataset) {
         animalList = dataset;
     }
-
-
-
 
 
     // Create new views (invoked by the layout manager)
@@ -65,8 +59,16 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         // - replace the contents of the view with that element
         HashMap<String, String> animal = animalList.get(position);
 
-        holder.nameView.setText(animal.get("name"));
-        holder.typeView.setText(animal.get("type"));
+        String name = animal.get("name");
+        String type = animal.get("type");
+        String color = animal.get("color");
+        String colType = color + " " + type;
+        if (name != null && color != null) {
+            holder.nameView.setText(animal.get("name"));
+            holder.typeView.setText(animal.get(colType));
+        } else if (color != null){
+            holder.nameView.setText(colType);
+        } else holder.nameView.setText(type);
 
         Picasso.get()
                 .load(animal.get("thumbURL"))
