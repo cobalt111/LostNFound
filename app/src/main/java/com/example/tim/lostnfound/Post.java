@@ -244,7 +244,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         // new listing for the same animal with slightly edited data elements
         // Because we are editing existing data, the current data is retrieved and is automatically
         // filled in. The user should edit whatever data elements are incorrect and hit submit.
-        if (intent.hasExtra("animalID")) {
+        if (intent.hasExtra("editInstance") && intent.getStringExtra("editInstance").equals("true")) {
             isEditInstance = true;
             editAnimalID = intent.getStringExtra("animalID");
 
@@ -303,6 +303,8 @@ public class Post extends AppCompatActivity implements LocationListener {
             public void onClick(View v){
 
                 String animalID;
+                Intent intent = new Intent(Post.this, Profile.class);
+
 
                 // find out whether to run the onEdit method or the onSubmit method
                 if (isEditInstance) {
@@ -310,6 +312,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                     // Once the submit button is clicked, the onEdit method will do the work of editing the info in the database.
                     // animalID is the database key for animal.
                     animalID = onEdit(editAnimalID);
+                    intent.putExtra("fromEditInstance", "true");
 
                     // TODO add code for submission verification before displaying success toast
                     Toast toast = Toast.makeText(getApplicationContext(), "Your pet listing has been edited!", LENGTH_LONG);
@@ -329,7 +332,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 // Create
                 // to open profile of submitted/edited animal
-                Intent intent = new Intent(Post.this, Profile.class);
                 intent.putExtra("animalID", animalID);
                 finish();
                 startActivity(intent);
@@ -405,12 +407,17 @@ public class Post extends AppCompatActivity implements LocationListener {
     private String onEdit(final String editAnimalID) {
 
 
+        yourAnimalList = FileUtils.readFromFile(getApplicationContext());
+
         // Find the old animal in yourAnimalList and delete it
         if (yourAnimalList.size() > 0) {
-            for (String animal : yourAnimalList) {
-
-                if (animal.equals(editAnimalID)) {
-                    yourAnimalList.remove(animal);
+            String animalID;
+            int length = yourAnimalList.size();
+            for (int i = 0; i < length; i++) {
+                animalID = yourAnimalList.get(i);
+                if (animalID.equals(editAnimalID)) {
+                    yourAnimalList.remove(animalID);
+                    break;
                 }
             }
         }
@@ -436,7 +443,7 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
 
-        //TODO test picture functionality
+        //TODO get photo editing working
         if (isImagePicked) {
 
             if (imageBmp != null) {

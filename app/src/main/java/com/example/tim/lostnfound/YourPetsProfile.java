@@ -2,6 +2,7 @@ package com.example.tim.lostnfound;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -72,12 +73,14 @@ public class YourPetsProfile extends AppCompatActivity {
         emailView = (TextView) findViewById(R.id.profileEmail);
         statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
+        editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
+        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
+        removeListingButton = (ImageButton) findViewById(R.id.profileRemoveButton);
 
 
         // TODO fix buttons to reflect YourPetsProfile button usage
 
         // Initialize button and listener
-        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
         changeStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,8 +96,7 @@ public class YourPetsProfile extends AppCompatActivity {
         // show the edit listing button if the listing is created by the user
         if (isOwnedAnimal) {
 
-            // Initialize button and listener
-            editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
+            editListingButton.setVisibility(View.VISIBLE);
             editListingButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -106,6 +108,22 @@ public class YourPetsProfile extends AppCompatActivity {
 
                 }
             });
+
+            removeListingButton.setVisibility(View.VISIBLE);
+            removeListingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(getApplicationContext(), Post.class);
+                    intent.putExtra("animalID", animalID);
+                    finish();
+                    startActivity(intent);
+
+                }
+            });
+
+
+
 
         }
 

@@ -41,6 +41,7 @@ import com.squareup.picasso.Picasso;
 
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -48,14 +49,16 @@ import static android.content.Intent.EXTRA_TEXT;
 
 public class Profile extends AppCompatActivity {
 
+
+
     private DatabaseReference dataReference;
     private FirebaseStorage storage;
-    private StorageReference storageReference;
+//    private StorageReference storageReference;
 
     private String animalID;
     private boolean isOwnedAnimal;
-    private DataSnapshot mSnapshot;
-    private HashMap<String, Object> mAnimal;
+    private boolean isFromEditInstance;
+
 
     // Declare UI elements
     private TextView nameView;
@@ -125,24 +128,27 @@ public class Profile extends AppCompatActivity {
 
 
         isOwnedAnimal = false;
+        isFromEditInstance = false;
 
         dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
         storage = FirebaseStorage.getInstance();
 
 
-        // Retrieve animalID from the intent used to start this instance of Profile
-        Intent intent = getIntent();
 
+        Intent intent = getIntent();
         if (intent.hasExtra("animalID")) {
             animalID = intent.getStringExtra("animalID");
         }
 
-        storageReference = storage.getReference().child("server")
-                                                .child("animals")
-                                                .child("images")
-                                                .child("thumb")
-                                                .child(animalID);
+        if (intent.hasExtra("yourpet")) {
+            if (intent.getStringExtra("yourpet").equals("true")) {
+                isOwnedAnimal = true;
+            }
+        }
 
+        if (intent.hasExtra("fromEditInstance") && intent.getStringExtra("fromEditInstance").equals("true")) {
+            isFromEditInstance = true;
+        }
 
 
         // Initialize UI elements
@@ -156,6 +162,60 @@ public class Profile extends AppCompatActivity {
         statusView = (TextView) findViewById(R.id.profileFound);
         typeView = (TextView) findViewById(R.id.profileType);
         imageView = (ImageView) findViewById(R.id.profileImage);
+        editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
+        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
+        removeListingButton = (ImageButton) findViewById(R.id.profileRemoveButton);
+
+        editListingButton.setVisibility(View.GONE);
+        removeListingButton.setVisibility(View.GONE);
+
+        if (isOwnedAnimal || isFromEditInstance) {
+
+            editListingButton.setVisibility(View.VISIBLE);
+            editListingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    Intent editProfileIntent = new Intent(Profile.this, Post.class);
+
+                    editProfileIntent.putExtra("animalID", animalID);
+                    editProfileIntent.putExtra("editInstance", "true");
+                    finish();
+                    startActivity(editProfileIntent);
+
+
+                }
+            });
+
+
+            removeListingButton.setVisibility(View.VISIBLE);
+            removeListingButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    dataReference.child(animalID).setValue(null);
+
+//                    List<String> yourAnimalList = FileUtils.readFromFile(getApplicationContext());
+//                    yourAnimalList.remove(animalID);
+//                    FileUtils.writeToFile(yourAnimalList, getApplicationContext());
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Listing queued for deletion in ~1 hour", Toast.LENGTH_LONG);
+                    toast.show();
+                    finish();
+
+//                    dataReference.child(animalID).removeValue(new DatabaseReference.CompletionListener() {
+//                        @Override
+//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                            Toast toast = Toast.makeText(getApplicationContext(), "Listing queued for deletion in ~1 hour.", Toast.LENGTH_LONG);
+//                            toast.show();
+//
+//                            finish();
+//                        }
+//                    });
+
+                }
+            });
+        }
 
 
         // TODO fix buttons to reflect Profile button usage
@@ -167,56 +227,28 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                dataReference.child(animalID).child("found").setValue("Found");
+                if (dataReference.child(animalID).child("found").toString().equals("Lost")) {
+                    dataReference.child(animalID).child("found").setValue("Found");
 
-                Toast toast = Toast.makeText(getApplicationContext(), "Animal listed as found!", Toast.LENGTH_LONG);
-                toast.show();
+                    Toast toast = Toast.makeText(getApplicationContext(), "Changed found status to lost!", Toast.LENGTH_LONG);
+                    toast.show();
+                } else if (dataReference.child(animalID).child("found").toString().equals("Found")) {
+                    dataReference.child(animalID).child("found").setValue("Found");
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Changed found status to found!", Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
+
             }
         });
-
-//        // todo separate profile into owned and not owned profiles
-//        // show the edit listing button if the listing is created by the user
-//        if (isOwnedAnimal) {
-//
-//            // Initialize button and listener
-//            editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
-//            editListingButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//
-//                    Intent intent = new Intent(getApplicationContext(), Post.class);
-//                    intent.putExtra("animalID", animalID);
-//                    finish();
-//                    startActivity(intent);
-//
-//                }
-//            });
-//
-//        }
 
 
         // Find the particular animal in the database according to the animalID passed in the intent
         dataReference = dataReference.child(animalID);
-//
-//        // Contact database, retrieve data elements and display them in the appropriate view
-//        dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//
-//
-//            }
-//
-//
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//                    Log.d("DEBUG", "Failure");
-//            }
-//        });
 
-        readDataOnce(dataReference, new OnGetDataListener() {
+
+        readDataContinuously(dataReference, new OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
 
@@ -292,15 +324,16 @@ public class Profile extends AppCompatActivity {
                 HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 if (animal.get("thumbURL") != null) {
-                    Glide
-                        .with(getApplicationContext())
-                        .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
-                        .into(imageView); //Your imageView variable
-//                    Picasso.get()
-//                            .load(animal.get("thumbURL").toString())
-//                            .resize(250,200)
-//                            .centerInside()
-//                            .into(imageView);
+//                    Glide
+//                        .with(getApplicationContext())
+//                        .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
+//                        .into(imageView); //Your imageView variable
+                    Picasso.get()
+                            .load(animal.get("thumbURL").toString())
+                            .resize(250,200)
+                            .rotate(90)
+                            .centerCrop(1)
+                            .into(imageView);
                 } else {
 
                     Drawable myDrawable;
@@ -357,36 +390,6 @@ public class Profile extends AppCompatActivity {
                 Log.d("onFailure", "Failed");
             }
         });
-
-
-
-
-
-
-
-
-
-        // fill the imageView
-//        final long ONE_MEGABYTE = 1024 * 1024;
-//        storageReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-//            @Override
-//            public void onSuccess(byte[] bytes) {
-//                // Data for "images/island.jpg" is returns, use this as needed
-//                if (bytes != null) {
-//                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//                    imageView.setImageBitmap(bitmap);
-//                }
-//
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//            }
-//        });
-
-
-
 
     }
 }
