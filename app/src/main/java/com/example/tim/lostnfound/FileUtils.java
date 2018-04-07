@@ -122,7 +122,7 @@ class FileUtils {
 
     }
 
-    static String readFirebaseID(Context context, String ID) {
+    static String readFirebaseID(Context context) {
 
         String firebaseID = "";
 

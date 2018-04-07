@@ -73,6 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot animalDatabase : dataSnapshot.getChildren()) {
+
                     animal = (HashMap<String, String>) animalDatabase.getValue();
                     animalLinkedList.add(animal);
 

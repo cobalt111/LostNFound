@@ -23,6 +23,16 @@
 -->
 
 
+        <ImageButton
+            android:id="@+id/postImage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:background="@android:color/transparent"
+            android:padding="6dp"
+            app:srcCompat="@drawable/submit_button_medium" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -126,16 +136,6 @@
             android:hint="@string/post_hint_description"
             android:inputType="textMultiLine"
             android:text="@string/post_description" />
-
-        <ImageButton
-            android:id="@+id/postImage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:padding="6dp"
-            app:srcCompat="@drawable/submit_button_medium" />
 
         <ImageButton
             android:id="@+id/postSubmit"

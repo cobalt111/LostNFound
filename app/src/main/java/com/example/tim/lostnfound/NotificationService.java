@@ -16,7 +16,8 @@ public class NotificationService extends FirebaseInstanceIdService {
     private static final String TAG = "FCMInitService";
 
     public NotificationService() {
-        
+
+
     }
 
     @Override

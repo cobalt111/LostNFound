@@ -117,18 +117,20 @@ public class Post extends AppCompatActivity implements LocationListener {
 
         // TODO handle location based errors
         // finds current location (lat long coordinates) to place the pin on the map
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        } else {
-            locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
+
         }
 
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
         location = getLastKnownLocation();
         LocationAddress locationAddress = new LocationAddress();
         getAddressFromLocation(location.getLatitude(), location.getLongitude(),
                 getApplicationContext(), new GeocoderHandler());
+
 
 
         // Verify local data file exists, and create it if not verified
@@ -400,7 +402,7 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
 
-    private String onEdit(String editAnimalID) {
+    private String onEdit(final String editAnimalID) {
 
 
         // Find the old animal in yourAnimalList and delete it
@@ -432,17 +434,75 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("key", editAnimalID);
 
 
-        //TODO add picture functionality
 
+
+        //TODO test picture functionality
+        if (isImagePicked) {
+
+            if (imageBmp != null) {
+                StorageReference animalStorageRef = storageReference.child("server")
+                        .child("animals")
+                        .child("images")
+                        .child("thumb/" + editAnimalID);
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                byte[] data = baos.toByteArray();
+
+                UploadTask uploadTask = animalStorageRef.putBytes(data);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // todo Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri imageURL = taskSnapshot.getDownloadUrl();
+
+                        dataReference.child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
+
+                    }
+                });
+
+            } else if (imageUri != null) {
+
+                StorageReference animalStorageRef = storageReference.child("server")
+                        .child("animals")
+                        .child("images")
+                        .child("thumb/" + editAnimalID);
+
+                UploadTask uploadTask = animalStorageRef.putFile(imageUri);
+                uploadTask.addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // todo Handle unsuccessful uploads
+                    }
+                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                        Uri imageURL = taskSnapshot.getDownloadUrl();
+
+                        dataReference.child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
+
+                    }
+                });
+
+            } else Log.d("Image", "Unable to submit image reference");
+
+
+        }
 
         // Update database with edited information
         dataReference.updateChildren(animal);
 
         // Add animal to local list of animals and save it to the data file
-        yourAnimalList.add(animal.get("key").toString());
+        yourAnimalList.add(editAnimalID);
         FileUtils.writeToFile(yourAnimalList, getApplicationContext());
 
-        return animal.get("key").toString();
+        return editAnimalID;
     }
 
 
@@ -466,6 +526,9 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
 
+        // Add user's device Firebase token
+
+        animal.put("token",  FileUtils.readFirebaseID(getApplicationContext()));
 
 
 

@@ -1,5 +1,6 @@
 package com.example.tim.lostnfound;
 
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -63,16 +68,22 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         String type = animal.get("type");
         String color = animal.get("color");
         String colType = color + " " + type;
-        if (name != null && color != null) {
+        if ((name != null && !name.equals("")) && (color != null && !color.equals(""))) {
             holder.nameView.setText(animal.get("name"));
             holder.typeView.setText(animal.get(colType));
-        } else if (color != null){
+        } else if ((name != null && !name.equals(""))){
+            holder.nameView.setText(name);
+            holder.typeView.setText(animal.get(type));
+        } else if (color != null && !color.equals("")) {
             holder.nameView.setText(colType);
         } else holder.nameView.setText(type);
 
+
+        // todo do proper rotations
         Picasso.get()
                 .load(animal.get("thumbURL"))
                 .resize(60,60)
+                .rotate(90)
                 .centerCrop()
                 .into(holder.imageView);
 
