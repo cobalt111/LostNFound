@@ -6,6 +6,7 @@ import android.content.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 class FileUtils {
 
     private final static String STORAGE_FILENAME = "lostNfound-animal_list.txt";
+    private final static String FIREBASE_ID_FILENAME = "lostNfound-firebase-id.txt";
 
     private static File filePath(Context context){
         return new File(context.getFilesDir(), FileUtils.STORAGE_FILENAME);
@@ -97,6 +99,50 @@ class FileUtils {
 
 
         return list;
+    }
+
+    static void saveFirebaseID(Context context, String ID) {
+
+        try {
+            File file = new File(context.getFilesDir(), FileUtils.FIREBASE_ID_FILENAME);
+            file.delete();
+            file.createNewFile();
+
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+
+            objectOutputStream.writeObject(ID);
+            objectOutputStream.close();
+            fileOutputStream.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    static String readFirebaseID(Context context, String ID) {
+
+        String firebaseID = "";
+
+        try {
+            File file = new File(context.getFilesDir(), FileUtils.FIREBASE_ID_FILENAME);
+
+            FileInputStream fileInputStream = new FileInputStream(file);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            firebaseID = (String) objectInputStream.readObject();
+
+            fileInputStream.close();
+            objectInputStream.close();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return firebaseID;
     }
     
 }
