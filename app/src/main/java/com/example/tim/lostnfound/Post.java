@@ -2,9 +2,11 @@ package com.example.tim.lostnfound;
 
 
 
+import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,6 +19,7 @@ import android.media.ExifInterface;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -43,6 +46,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -109,7 +113,33 @@ public class Post extends AppCompatActivity implements LocationListener {
     protected LocationManager locationManager;
     protected Location location;
 
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
+                    locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    try {
+                        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
+                    location = getLastKnownLocation();
+                    LocationAddress locationAddress = new LocationAddress();
+                    getAddressFromLocation(location.getLatitude(), location.getLongitude(),
+                            getApplicationContext(), new GeocoderHandler());
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,15 +151,17 @@ public class Post extends AppCompatActivity implements LocationListener {
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
+
+        } else {
+
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
+            location = getLastKnownLocation();
+            LocationAddress locationAddress = new LocationAddress();
+            getAddressFromLocation(location.getLatitude(), location.getLongitude(),
+                    getApplicationContext(), new GeocoderHandler());
         }
 
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
-        location = getLastKnownLocation();
-        LocationAddress locationAddress = new LocationAddress();
-        getAddressFromLocation(location.getLatitude(), location.getLongitude(),
-                getApplicationContext(), new GeocoderHandler());
 
 
 
@@ -534,9 +566,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("found", statusSelection);
 
         // Add user's device Firebase token
-
-        animal.put("token",  FileUtils.readFirebaseID(getApplicationContext()));
-
+        animal.put("token", FirebaseInstanceId.getInstance().getToken());
 
 
         // Create new key for animal

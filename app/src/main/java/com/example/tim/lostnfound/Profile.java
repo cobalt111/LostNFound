@@ -77,10 +77,6 @@ public class Profile extends AppCompatActivity {
     private ImageButton removeListingButton;
     private ImageButton editListingButton;
 
-    // TODO discuss best implementation of "match to other pets" with group
-    private ImageButton matchToLostButton;
-
-
 
     public interface OnGetDataListener {
         //this is for callbacks
@@ -224,21 +220,39 @@ public class Profile extends AppCompatActivity {
         // Initialize button and listener
         changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
         changeStatusButton.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
-                if (dataReference.child(animalID).child("found").toString().equals("Lost")) {
-                    dataReference.child(animalID).child("found").setValue("Found");
+                readDataOnce(dataReference, new OnGetDataListener() {
+                    @Override
+                    public void onSuccess(DataSnapshot dataSnapshot) {
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Changed found status to lost!", Toast.LENGTH_LONG);
-                    toast.show();
-                } else if (dataReference.child(animalID).child("found").toString().equals("Found")) {
-                    dataReference.child(animalID).child("found").setValue("Found");
+                        String status = (String) dataSnapshot.child("found").getValue();
+                        if (status.equals("Found")) {
+                            dataReference.child("found").setValue("Lost");
 
-                    Toast toast = Toast.makeText(getApplicationContext(), "Changed found status to found!", Toast.LENGTH_LONG);
-                    toast.show();
-                }
+                            Toast toast = Toast.makeText(getApplicationContext(), "Changed status to lost", Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else if (status.equals("Lost")) {
+                            dataReference.child("found").setValue("Found");
 
+                            Toast toast = Toast.makeText(getApplicationContext(), "Changed status to found", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+
+                    }
+
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
 
             }
         });

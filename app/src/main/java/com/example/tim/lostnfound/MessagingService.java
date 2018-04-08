@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -27,8 +28,13 @@ public class MessagingService extends FirebaseMessagingService {
 //        int color = getResources().getColor(R.color.notification_color);
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        Intent intent = new Intent(this, MainActivity.class);
+        String animalID = notification.getClickAction();
+
+        Intent intent = new Intent(this, Profile.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("animalID", animalID);
+        intent.putExtra("yourpet", "true");
+
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -37,7 +43,6 @@ public class MessagingService extends FirebaseMessagingService {
                 .setContentText(notification.getBody())
                 .setAutoCancel(true)
                 .setSmallIcon(R.mipmap.corgi_run)
-//                .setColor(color)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(notification.getBody()))
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent);
