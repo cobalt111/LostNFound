@@ -22,23 +22,27 @@
                 android:layout_height="87dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="16dp"
-                android:background="@mipmap/corgi_sit" />
+                android:layout_marginRight="16dp"/>
+                <!--android:background="@mipmap/corgi_sit" />-->
 
             <TextView
                 android:id="@+id/listingsNameView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_toRightOf="@+id/listingsImageView"
-                android:textSize="30sp" />
+                android:textSize="30sp"
+                android:text="Name"/>
 
             <TextView
                 android:id="@+id/listingsTypeView"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/listingsNameView"
-                android:layout_toRightOf="@+id/listingsImageView" />
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/listingsNameView"
+                android:layout_marginBottom="14dp"
+                android:text="Type"
+                android:textSize="15sp" />
 
 
         </RelativeLayout>

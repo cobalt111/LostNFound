@@ -1,5 +1,7 @@
 package com.example.tim.lostnfound;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -48,8 +50,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
 
     // Create new views (invoked by the layout manager)
     @Override
-    public ListingsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+    public ListingsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_animal_listing_row, parent, false);
@@ -67,25 +68,63 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
         String name = animal.get("name");
         String type = animal.get("type");
         String color = animal.get("color");
-        String colType = color + " " + type;
         if ((name != null && !name.equals("")) && (color != null && !color.equals(""))) {
+            String colType = color.substring(0,1).toUpperCase() + color.substring(1) + " " + type;
             holder.nameView.setText(animal.get("name"));
             holder.typeView.setText(animal.get(colType));
         } else if ((name != null && !name.equals(""))){
             holder.nameView.setText(name);
             holder.typeView.setText(animal.get(type));
         } else if (color != null && !color.equals("")) {
+            String colType = color.substring(0,1).toUpperCase() + color.substring(1) + " " + type;
             holder.nameView.setText(colType);
         } else holder.nameView.setText(type);
 
+        if (animal.get("thumbURL") != null) {
+            // todo do proper rotations
+            Picasso.get()
+                    .load(animal.get("thumbURL"))
+                    .resize(60,60)
+                    .rotate(90)
+                    .centerCrop()
+                    .into(holder.imageView);
+        } else {
 
-        // todo do proper rotations
-        Picasso.get()
-                .load(animal.get("thumbURL"))
-                .resize(60,60)
-                .rotate(90)
-                .centerCrop()
-                .into(holder.imageView);
+            Context context = holder.imageView.getContext();
+            holder.imageView.setMaxHeight(60);
+            holder.imageView.setMaxWidth(60);
+
+            switch (type) {
+                case "Dog":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_dog));
+                    break;
+                case "Cat":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_cat));
+                    break;
+                case "Bird":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_bird));
+                    break;
+                case "Ferret":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_ferret));
+                    break;
+                case "Hamster/Guinea Pig":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_hamster));
+                    break;
+                case "Mouse/Rat":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_mouse));
+                    break;
+                case "Snake/Lizard":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_snake));
+                    break;
+                case "Other":
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_other));
+                    break;
+                default:
+                    holder.imageView.setImageDrawable(context.getResources().getDrawable(R.drawable.lnf_other));
+                    break;
+            }
+        }
+
 
     }
 
