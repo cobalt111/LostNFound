@@ -81,19 +81,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
 
+                String currentType;
                 MarkerOptions currentOptions = new MarkerOptions();
                 for (HashMap<String, String> currentAnimal : animalLinkedList) {
 
+                    currentType = currentAnimal.get("type");
+                    
 
                     LatLng currentLatLng = new LatLng(  Double.parseDouble(currentAnimal.get("latitude")),
                                                         Double.parseDouble(currentAnimal.get("longitude")));
-
+                    currentOptions.snippet(currentAnimal.get("key"));
                     currentOptions.position(currentLatLng);
                     if (currentAnimal.get("name").equals("")) {
                         currentOptions.title(currentAnimal.get("type"));
                     } else currentOptions.title(currentAnimal.get("name"));
-
-                    currentOptions.snippet(currentAnimal.get("key"));
                     if (currentAnimal.get("found").equals("Found")) {
                         currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_pin_small));
 
@@ -101,7 +102,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
 
                     mMap.addMarker(currentOptions);
-
 
                 }
 

@@ -170,7 +170,7 @@ public class Profile extends AppCompatActivity {
         removeListingButton = (ImageButton) findViewById(R.id.profileRemoveButton);
 
         editListingButton.setVisibility(View.GONE);
-        editListingButton.setVisibility(View.GONE);
+        removeListingButton.setVisibility(View.GONE);
 
         changeToLostButton.setVisibility(View.GONE);
         changeToFoundButton.setVisibility(View.GONE);
@@ -200,25 +200,18 @@ public class Profile extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
 
-                    dataReference.child(animalID).setValue(null);
-
-//                    List<String> yourAnimalList = FileUtils.readFromFile(getApplicationContext());
-//                    yourAnimalList.remove(animalID);
-//                    FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
-                    Toast toast = Toast.makeText(getApplicationContext(), "Listing queued for deletion in ~1 hour", Toast.LENGTH_LONG);
-                    toast.show();
                     finish();
 
-//                    dataReference.child(animalID).removeValue(new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                            Toast toast = Toast.makeText(getApplicationContext(), "Listing queued for deletion in ~1 hour.", Toast.LENGTH_LONG);
-//                            toast.show();
-//
-//                            finish();
-//                        }
-//                    });
+                    dataReference.removeValue();
+
+                    List<String> yourAnimalList = FileUtils.readFromFile(getApplicationContext());
+                    yourAnimalList.remove(animalID);
+                    FileUtils.writeToFile(yourAnimalList, getApplicationContext());
+
+                    Toast toast = Toast.makeText(getApplicationContext(), "Listing deleted", Toast.LENGTH_LONG);
+                    toast.show();
+
+
 
                 }
             });
@@ -313,155 +306,139 @@ public class Profile extends AppCompatActivity {
                 @SuppressWarnings("unchecked")
                 HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
 
-                if (animal.get("found").toString().equals("Found")){
-                    isAnimalFound = true;
-                    changeToLostButton.setVisibility(View.VISIBLE);
-                    changeToFoundButton.setVisibility(View.GONE);
+                if (animal != null) {
+                    if (animal.get("found").toString().equals("Found")){
+                        isAnimalFound = true;
+                        changeToLostButton.setVisibility(View.VISIBLE);
+                        changeToFoundButton.setVisibility(View.GONE);
 
 
 
-                }
-                else {
-                    isAnimalFound = false;
-                    changeToFoundButton.setVisibility(View.VISIBLE);
-                    changeToLostButton.setVisibility(View.GONE);
+                    }
+                    else {
+                        isAnimalFound = false;
+                        changeToFoundButton.setVisibility(View.VISIBLE);
+                        changeToLostButton.setVisibility(View.GONE);
 
 
-                }
+                    }
 
-                // TODO add all these strings to the strings.xml instead
+                    // TODO add all these strings to the strings.xml instead
 
-                if (animal.get("name").equals("")){
-                    nameView.setText("(none listed)");
-                } else {
-                    nameView.setText(animal.get("name").toString());
-                }
+                    if (animal.get("name").equals("")){
+                        nameView.setText("(none listed)");
+                    } else {
+                        nameView.setText(animal.get("name").toString());
+                    }
 
-                if (animal.get("color").equals("")){
-                    colorView.setText("(none listed)");
-                } else {
-                    colorView.setText(animal.get("color").toString());
-                }
+                    if (animal.get("color").equals("")){
+                        colorView.setText("(none listed)");
+                    } else {
+                        colorView.setText(animal.get("color").toString());
+                    }
 
-                if (animal.get("date").equals("")){
-                    dateView.setText("(none listed)");
-                } else {
-                    dateView.setText(animal.get("date").toString());
-                }
+                    if (animal.get("date").equals("")){
+                        dateView.setText("(none listed)");
+                    } else {
+                        dateView.setText(animal.get("date").toString());
+                    }
 
-                if (animal.get("description").equals("")){
-                    descView.setText("(none listed)");
-                } else {
-                    descView.setText(animal.get("description").toString());
-                }
+                    if (animal.get("description").equals("")){
+                        descView.setText("(none listed)");
+                    } else {
+                        descView.setText(animal.get("description").toString());
+                    }
 
-                if (animal.get("location").equals("")){
-                    locationView.setText("(none listed)");
-                } else {
-                    locationView.setText(animal.get("location").toString());
-                }
+                    if (animal.get("location").equals("")){
+                        locationView.setText("(none listed)");
+                    } else {
+                        locationView.setText(animal.get("location").toString());
+                    }
 
-                if (animal.get("phone").equals("")){
-                    phoneView.setText("(none listed)");
-                } else {
-                    phoneView.setText(animal.get("phone").toString());
-                }
+                    if (animal.get("phone").equals("")){
+                        phoneView.setText("(none listed)");
+                    } else {
+                        phoneView.setText(animal.get("phone").toString());
+                    }
 
-                if (animal.get("email").equals("")){
-                    emailView.setText("(none listed)");
-                } else {
-                    emailView.setText(animal.get("email").toString());
-                }
+                    if (animal.get("email").equals("")){
+                        emailView.setText("(none listed)");
+                    } else {
+                        emailView.setText(animal.get("email").toString());
+                    }
 
-                typeView.setText(animal.get("type").toString());
+                    typeView.setText(animal.get("type").toString());
 
-                statusView.setText(animal.get("found").toString());
+                    statusView.setText(animal.get("found").toString());
 
-            }
 
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onFailure() {
-
-            }
-        });
-
-        readDataContinuously(dataReference, new OnGetDataListener() {
-            @Override
-            public void onSuccess(DataSnapshot dataSnapshot) {
-
-                HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
-
-                if (animal.get("thumbURL") != null) {
-                    Glide
-                        .with(getApplicationContext())
-                        .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
-                        .into(imageView); //Your imageView variable
+                    if (animal.get("thumbURL") != null) {
+                        Glide
+                                .with(getApplicationContext())
+                                .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
+                                .into(imageView); //Your imageView variable
 //                    Picasso.get()
 //                            .load(animal.get("thumbURL").toString())
 //                            .resize(250,200)
 //                            .into(imageView);
 
-                } else {
+                    } else {
 
-                    Drawable myDrawable;
-                    switch (animal.get("type").toString()) {
-                        case "Dog":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_dog);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Cat":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_cat);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Bird":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_bird);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Ferret":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_ferret);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Hamster/Guinea Pig":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_hamster);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Mouse/Rat":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_mouse);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Snake/Lizard":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_snake);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        case "Other":
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_other);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
-                        default:
-                            myDrawable = getResources().getDrawable(R.drawable.lnf_other);
-                            imageView.setImageDrawable(myDrawable);
-                            break;
+                        Drawable myDrawable;
+                        switch (animal.get("type").toString()) {
+                            case "Dog":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_dog);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Cat":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_cat);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Bird":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_bird);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Ferret":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_ferret);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Hamster/Guinea Pig":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_hamster);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Mouse/Rat":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_mouse);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Snake/Lizard":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_snake);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            case "Other":
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_other);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                            default:
+                                myDrawable = getResources().getDrawable(R.drawable.lnf_other);
+                                imageView.setImageDrawable(myDrawable);
+                                break;
+                        }
                     }
                 }
 
-
             }
+
             @Override
             public void onStart() {
-                //when starting
-                Log.d("ONSTART", "Started");
+
             }
 
             @Override
             public void onFailure() {
-                Log.d("onFailure", "Failed");
+
             }
         });
+
 
     }
 }
