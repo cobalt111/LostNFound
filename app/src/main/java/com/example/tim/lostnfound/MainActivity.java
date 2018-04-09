@@ -1,5 +1,6 @@
 package com.example.tim.lostnfound;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -41,6 +42,9 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements ListingsFragment.OnMenuItemSelectedListener {
 
 
+    private static final int WRITE_STORAGE_REQUEST = 3;
+
+
     public void showSettingsAlert(){
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
 
@@ -80,12 +84,15 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
+                    setTitle("Home");
                     mViewPager.setCurrentItem(0);
                     return true;
                 case R.id.navigation_listings:
+                    setTitle("Listings");
                     mViewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_animals:
+                    setTitle("Your Pets");
                     mViewPager.setCurrentItem(2);
                     return true;
             }
@@ -147,7 +154,12 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         setContentView(R.layout.main_activity);
 
 
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
 
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    WRITE_STORAGE_REQUEST);
+        }
 
 
 
@@ -263,8 +275,10 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
+                    setTitle("Home");
                     return "page 1";
                 case 1:
+                    setTitle("Listings");
                     return "page 2";
                 case 2:
                     return "page 3";

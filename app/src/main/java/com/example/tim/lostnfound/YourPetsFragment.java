@@ -99,29 +99,32 @@ public class YourPetsFragment extends Fragment {
     @SuppressWarnings("unchecked")
     private ListingsAdapter queryDatabaseForData(final List<String> savedAnimalList) {
 
-        dataReference.addListenerForSingleValueEvent((new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (savedAnimalList != null) {
+            dataReference.addListenerForSingleValueEvent((new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                List<HashMap<String, String>> animalList = new ArrayList<>();
-                HashMap<String, String> animal;
+                    List<HashMap<String, String>> animalList = new ArrayList<>();
+                    HashMap<String, String> animal;
 
-                for (String savedAnimal : savedAnimalList) {
+                    for (String savedAnimal : savedAnimalList) {
 
-                    animal = (HashMap<String, String>) dataSnapshot.child(savedAnimal).getValue();
-                    animalList.add(animal);
+                        animal = (HashMap<String, String>) dataSnapshot.child(savedAnimal).getValue();
+                        animalList.add(animal);
+                    }
+
+                    listingsAdapter = new ListingsAdapter(animalList);
+                    recyclerView.setAdapter(listingsAdapter);
                 }
 
-                listingsAdapter = new ListingsAdapter(animalList);
-                recyclerView.setAdapter(listingsAdapter);
-            }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                }
+            }));
+        }
 
-            }
-        }));
 
         return listingsAdapter;
     }

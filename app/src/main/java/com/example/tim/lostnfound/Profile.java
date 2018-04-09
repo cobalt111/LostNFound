@@ -58,6 +58,7 @@ public class Profile extends AppCompatActivity {
     private String animalID;
     private boolean isOwnedAnimal;
     private boolean isFromEditInstance;
+    private boolean isAnimalFound;
 
 
     // Declare UI elements
@@ -70,7 +71,9 @@ public class Profile extends AppCompatActivity {
     private TextView emailView;
     private TextView statusView;
     private TextView typeView;
-    private ImageButton changeStatusButton;
+    private ImageButton changeToFoundButton;
+    private ImageButton changeToLostButton;
+
     private ImageView imageView;
 
     // new buttons for capstone
@@ -123,8 +126,11 @@ public class Profile extends AppCompatActivity {
         setContentView(R.layout.activity_profile);
 
 
+        setTitle("Animal Profile");
+
         isOwnedAnimal = false;
         isFromEditInstance = false;
+        isAnimalFound = false;
 
         dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
         storage = FirebaseStorage.getInstance();
@@ -159,11 +165,16 @@ public class Profile extends AppCompatActivity {
         typeView = (TextView) findViewById(R.id.profileType);
         imageView = (ImageView) findViewById(R.id.profileImage);
         editListingButton = (ImageButton) findViewById(R.id.profileEditButton);
-        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
+        changeToFoundButton = (ImageButton) findViewById(R.id.profileChangeToFoundButton);
+        changeToLostButton = (ImageButton) findViewById(R.id.profileChangeToLostButton);
         removeListingButton = (ImageButton) findViewById(R.id.profileRemoveButton);
 
         editListingButton.setVisibility(View.GONE);
-        removeListingButton.setVisibility(View.GONE);
+        editListingButton.setVisibility(View.GONE);
+
+        changeToLostButton.setVisibility(View.GONE);
+        changeToFoundButton.setVisibility(View.GONE);
+
 
         if (isOwnedAnimal || isFromEditInstance) {
 
@@ -218,8 +229,42 @@ public class Profile extends AppCompatActivity {
 
 
         // Initialize button and listener
-        changeStatusButton = (ImageButton) findViewById(R.id.profileChangeButton);
-        changeStatusButton.setOnClickListener(new View.OnClickListener() {
+        changeToFoundButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                readDataOnce(dataReference, new OnGetDataListener() {
+                    @Override
+                    public void onSuccess(DataSnapshot dataSnapshot) {
+
+                        String status = (String) dataSnapshot.child("found").getValue();
+
+                        if (status.equals("Lost")) {
+                            dataReference.child("found").setValue("Found");
+                            Toast toast = Toast.makeText(getApplicationContext(), "Changed status to found", Toast.LENGTH_SHORT);
+                            toast.show();
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), "Animal already listed as lost", Toast.LENGTH_SHORT);
+                            toast.show();
+                        }
+                    }
+
+                    @Override
+                    public void onStart() {
+
+                    }
+
+                    @Override
+                    public void onFailure() {
+
+                    }
+                });
+
+            }
+        });
+
+        changeToLostButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -234,11 +279,10 @@ public class Profile extends AppCompatActivity {
 
                             Toast toast = Toast.makeText(getApplicationContext(), "Changed status to lost", Toast.LENGTH_SHORT);
                             toast.show();
-                        } else if (status.equals("Lost")) {
-                            dataReference.child("found").setValue("Found");
-
-                            Toast toast = Toast.makeText(getApplicationContext(), "Changed status to found", Toast.LENGTH_SHORT);
+                        } else {
+                            Toast toast = Toast.makeText(getApplicationContext(), "Animal already listed as found", Toast.LENGTH_SHORT);
                             toast.show();
+
                         }
 
                     }
@@ -268,6 +312,22 @@ public class Profile extends AppCompatActivity {
 
                 @SuppressWarnings("unchecked")
                 HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
+
+                if (animal.get("found").toString().equals("Found")){
+                    isAnimalFound = true;
+                    changeToLostButton.setVisibility(View.VISIBLE);
+                    changeToFoundButton.setVisibility(View.GONE);
+
+
+
+                }
+                else {
+                    isAnimalFound = false;
+                    changeToFoundButton.setVisibility(View.VISIBLE);
+                    changeToLostButton.setVisibility(View.GONE);
+
+
+                }
 
                 // TODO add all these strings to the strings.xml instead
 
@@ -330,7 +390,6 @@ public class Profile extends AppCompatActivity {
             }
         });
 
-
         readDataContinuously(dataReference, new OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
@@ -338,16 +397,15 @@ public class Profile extends AppCompatActivity {
                 HashMap<String, Object> animal = (HashMap<String, Object>) dataSnapshot.getValue();
 
                 if (animal.get("thumbURL") != null) {
-//                    Glide
-//                        .with(getApplicationContext())
-//                        .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
-//                        .into(imageView); //Your imageView variable
-                    Picasso.get()
-                            .load(animal.get("thumbURL").toString())
-                            .resize(250,200)
-                            .rotate(90)
-                            .centerCrop(1)
-                            .into(imageView);
+                    Glide
+                        .with(getApplicationContext())
+                        .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
+                        .into(imageView); //Your imageView variable
+//                    Picasso.get()
+//                            .load(animal.get("thumbURL").toString())
+//                            .resize(250,200)
+//                            .into(imageView);
+
                 } else {
 
                     Drawable myDrawable;

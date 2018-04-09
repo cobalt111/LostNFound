@@ -2,6 +2,7 @@ package com.example.tim.lostnfound;
 
 
 
+import android.Manifest;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -37,6 +38,8 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 import com.example.tim.lostnfound.LocationAddress;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -86,6 +89,7 @@ public class Post extends AppCompatActivity implements LocationListener {
     private String editAnimalID;
     private boolean isEditInstance;
     private boolean isImagePicked;
+    private boolean useBitmap;
     private Bitmap imageBmp;
     private Uri imageUri;
 
@@ -165,6 +169,9 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
 
+
+        setTitle("Post an Animal");
+
         // Verify local data file exists, and create it if not verified
         FileUtils.createFile(getApplicationContext());
 
@@ -187,6 +194,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         locationView = (EditText) findViewById(R.id.postLocation);
 
         isImagePicked = false;
+        useBitmap = false;
 
 
         // button to open camera and take picture
@@ -204,9 +212,11 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                         if (items[item].equals("Take Photo")) {
                             isImagePicked = true;
+                            useBitmap = true;
                             dispatchTakePictureIntent();
                         } else if (items[item].equals("Choose from Library")) {
                             isImagePicked = true;
+                            useBitmap = false;
                             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                             startActivityForResult(galleryIntent, GALLERY_REQUEST);
@@ -353,6 +363,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                 } else {
                     // Once the submit button is clicked, the onSubmitAnimal method will do the work of submitting the info to the database.
                     // animalID is the database key for animal.
+                    intent.putExtra("yourpet", "true");
                     animalID = onSubmit();
 
                     // TODO add code for submission verification before displaying success toast
@@ -379,23 +390,14 @@ public class Post extends AppCompatActivity implements LocationListener {
             Bundle extras = data.getExtras();
 
             imageBmp = (Bitmap) extras.get("data");
+            Uri tempURI = getImageUri(getApplicationContext(), imageBmp);
+            Glide.with(getApplicationContext())
+                    .load(tempURI)
+                    .into(picButton);
+//            Picasso.get()
+//                    .load(tempURI)
+//                    .into(picButton);
 
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-            try {
-                File image = File.createTempFile(
-
-                        imageFileName,  /* prefix */
-                        ".jpg",         /* suffix */
-                        storageDir      /* directory */
-                );
-                picButton.setImageURI(Uri.parse(image.getAbsolutePath()));
-
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
 
             // TODO figure out how to represent picked image on post activity
 //            mImageView.setImageBitmap(imageBitmap);
@@ -403,12 +405,19 @@ public class Post extends AppCompatActivity implements LocationListener {
         } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
 
             imageUri = data.getData();
-            picButton.setImageURI(imageUri);
+            Glide.with(getApplicationContext())
+                    .load(imageUri)
+                    .into(picButton);
 
         }
     }
 
-
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -478,7 +487,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         //TODO get photo editing working
         if (isImagePicked) {
 
-            if (imageBmp != null) {
+            if (imageBmp != null && useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
                         .child("animals")
                         .child("images")
@@ -505,7 +514,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                     }
                 });
 
-            } else if (imageUri != null) {
+            } else if (imageUri != null && !useBitmap) {
 
                 StorageReference animalStorageRef = storageReference.child("server")
                         .child("animals")
@@ -582,7 +591,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         //TODO add picture functionality
         if (isImagePicked) {
 
-            if (imageBmp != null) {
+            if (imageBmp != null && useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
                                                                     .child("animals")
                                                                     .child("images")
@@ -609,7 +618,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                     }
                 });
 
-            } else if (imageUri != null) {
+            } else if (imageUri != null && !useBitmap) {
 
                 StorageReference animalStorageRef = storageReference.child("server")
                                                                     .child("animals")

@@ -20,8 +20,10 @@
             <ImageView
                 android:id="@+id/profileImage"
                 android:layout_width="match_parent"
-                android:layout_height="266dp"
-                app:srcCompat="@mipmap/corgi_sit" />
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="center"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -43,14 +45,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Name: "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                     <TextView
                         android:id="@+id/profileName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_name"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 </LinearLayout>
 
@@ -58,20 +60,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/content_profile_margin"
+
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Type: "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                     <TextView
                         android:id="@+id/profileType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_type"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 </LinearLayout>
 
@@ -105,14 +108,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Appearance: "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                     <TextView
                         android:id="@+id/profileColor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/profile_color"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                 </LinearLayout>
 
@@ -217,14 +220,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Status: "
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
                     <TextView
                         android:id="@+id/profileFound"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="TextView"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
                 </LinearLayout>
 
                 <RelativeLayout
@@ -232,31 +235,57 @@
                     android:layout_height="match_parent"
                     android:layout_weight="0.81">
 
+                    <Space
+                        android:id="@+id/spacelostfound"
+                        android:layout_width="193dp"
+                        android:layout_height="10dp"
+                        android:layout_centerHorizontal="true" />
+
                     <ImageButton
-                        android:id="@+id/profileChangeButton"
+                        android:id="@+id/profileChangeToFoundButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignTop="@+id/spacelostfound"
+                        android:layout_marginTop="10dp"
+
+                        android:layout_centerHorizontal="true"
+                        android:background="@android:color/transparent"
+                        app:srcCompat="@drawable/lnf_list_found" />
+
+                    <ImageButton
+                        android:id="@+id/profileChangeToLostButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginTop="41dp"
+                        android:layout_alignTop="@+id/spacelostfound"
+                        android:layout_marginTop="10dp"
+
                         android:background="@android:color/transparent"
-                        app:srcCompat="@drawable/list_as_lost" />
+                        app:srcCompat="@drawable/lnf_list_lost" />
 
                     <!-- TODO change this button drawable to represent function -->
 
+
+                    <Space
+                        android:id="@+id/spaceeditrem"
+                        android:layout_width="193dp"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="69dp" />
 
                     <ImageButton
                         android:id="@+id/profileEditButton"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:layout_below="@id/profileChangeButton"
-                        android:layout_marginTop="105dp"
-                        android:background="@android:color/transparent"
-                        app:srcCompat="@drawable/list_as_lost" />
-                    <!-- TODO change this button drawable to represent function -->
+                        android:layout_height="79dp"
+                        android:layout_below="@+id/spaceeditrem"
 
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:background="@android:color/transparent"
+                        android:paddingTop="10dp"
+                        app:srcCompat="@drawable/lnf_edit_animal" />
 
                     <ImageButton
                         android:id="@+id/profileRemoveButton"
@@ -264,10 +293,10 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:paddingTop="10dp"
+                        android:layout_marginTop="13dp"
                         android:layout_below="@id/profileEditButton"
                         android:background="@android:color/transparent"
-                        app:srcCompat="@drawable/list_as_lost" />
+                        app:srcCompat="@drawable/lnf_remove_animal" />
                     <!-- TODO change this button drawable to represent function -->
 
                 </RelativeLayout>
