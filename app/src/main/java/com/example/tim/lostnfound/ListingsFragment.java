@@ -137,7 +137,7 @@ public class ListingsFragment extends Fragment {
         }
 
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
+        query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
