@@ -176,14 +176,17 @@ public class ListingsFragment extends Fragment {
             case R.id.lost_animals:
                 userIntention = "Lost";
                 listingsAdapter = queryDatabaseForData(userIntention);
+                recyclerView.setAdapter(listingsAdapter);
                 return true;
             case R.id.found_animals:
                 userIntention = "Found";
                 listingsAdapter = queryDatabaseForData(userIntention);
+                recyclerView.setAdapter(listingsAdapter);
                 return true;
             case R.id.all_animals:
                 userIntention = null;
                 listingsAdapter = queryDatabaseForData(userIntention);
+                recyclerView.setAdapter(listingsAdapter);
                 return true;
         }
         return false;

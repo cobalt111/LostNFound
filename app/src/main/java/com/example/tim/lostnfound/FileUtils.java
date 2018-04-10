@@ -14,7 +14,7 @@ import java.util.List;
 
 class FileUtils {
 
-    private final static String STORAGE_FILENAME = "lostNfound-animal_list.txt";
+    private final static String STORAGE_FILENAME = "lostNfound-animals.txt";
     private final static String FIREBASE_ID_FILENAME = "lostNfound-firebase-id.txt";
 
     private static File filePath(Context context){

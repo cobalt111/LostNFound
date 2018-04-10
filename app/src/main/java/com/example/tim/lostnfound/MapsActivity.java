@@ -86,7 +86,62 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 for (HashMap<String, String> currentAnimal : animalLinkedList) {
 
                     currentType = currentAnimal.get("type");
-                    
+                    switch (currentType) {
+                        case "Dog":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_pin_small));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_pin_small));
+                            break;
+                        case "Cat":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_cat));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_cat));
+                            break;
+                        case "Bird":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_bird));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_bird));
+                            break;
+                        case "Ferret":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_ferret));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_ferret));
+                            break;
+                        case "Hamster/Guinea Pig":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_hamster));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_hamster));
+                            break;
+                        case "Mouse/Rat":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_mouse));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_mouse));
+                            break;
+                        case "Snake/Lizard":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_snake));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_snake));
+                            break;
+                        case "Other":
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_other));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_other));
+                            break;
+                        default:
+                            if (currentAnimal.get("found").equals("Found")) {
+                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_other));
+
+                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_other));
+                            break;
+                    }
 
                     LatLng currentLatLng = new LatLng(  Double.parseDouble(currentAnimal.get("latitude")),
                                                         Double.parseDouble(currentAnimal.get("longitude")));
@@ -95,10 +150,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     if (currentAnimal.get("name").equals("")) {
                         currentOptions.title(currentAnimal.get("type"));
                     } else currentOptions.title(currentAnimal.get("name"));
-                    if (currentAnimal.get("found").equals("Found")) {
-                        currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_pin_small));
 
-                    } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_pin_small));
 
 
                     mMap.addMarker(currentOptions);
