@@ -1,59 +1,30 @@
 package com.example.tim.lostnfound;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
+import com.example.tim.lostnfound.Utilities.Database;
+import com.example.tim.lostnfound.Utilities.FileUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.example.tim.lostnfound.DatabaseUtils;
 import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.OkHttp3Downloader;
-import com.squareup.picasso.Picasso;
-
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-
-import static android.content.Intent.EXTRA_TEXT;
 
 public class Profile extends AppCompatActivity {
 
 
 
-    private DatabaseReference dataReference;
-    private FirebaseStorage storage;
-//    private StorageReference storageReference;
+    private Database mDatabase;
 
     private String animalID;
     private boolean isOwnedAnimal;
@@ -81,50 +52,10 @@ public class Profile extends AppCompatActivity {
     private ImageButton editListingButton;
 
 
-    public interface OnGetDataListener {
-        //this is for callbacks
-        void onSuccess(DataSnapshot dataSnapshot);
-        void onStart();
-        void onFailure();
-    }
-
-    public void readDataContinuously(DatabaseReference ref, final OnGetDataListener listener) {
-        listener.onStart();
-        ref.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listener.onSuccess(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure();
-            }
-        });
-
-    }
-
-    public void readDataOnce(DatabaseReference ref, final OnGetDataListener listener) {
-        listener.onStart();
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                listener.onSuccess(dataSnapshot);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                listener.onFailure();
-            }
-        });
-
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
 
         setTitle("Animal Profile");
 
@@ -132,10 +63,7 @@ public class Profile extends AppCompatActivity {
         isFromEditInstance = false;
         isAnimalFound = false;
 
-        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
-        storage = FirebaseStorage.getInstance();
-
-
+        mDatabase = Database.getInstance();
 
         Intent intent = getIntent();
         if (intent.hasExtra("animalID")) {
@@ -194,15 +122,13 @@ public class Profile extends AppCompatActivity {
                 }
             });
 
-
             removeListingButton.setVisibility(View.VISIBLE);
             removeListingButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     finish();
 
-                    dataReference.removeValue();
+                    mDatabase.getDatabaseReference().child(animalID).removeValue();
 
                     List<String> yourAnimalList = FileUtils.readFromFile(getApplicationContext());
                     yourAnimalList.remove(animalID);
@@ -210,9 +136,6 @@ public class Profile extends AppCompatActivity {
 
                     Toast toast = Toast.makeText(getApplicationContext(), "Listing deleted", Toast.LENGTH_LONG);
                     toast.show();
-
-
-
                 }
             });
         }
@@ -226,15 +149,14 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
-                readDataOnce(dataReference, new OnGetDataListener() {
+                mDatabase.readDataOnce(new Database.OnGetDataListener() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
 
-                        String status = (String) dataSnapshot.child("found").getValue();
+                        String status = (String) dataSnapshot.child(animalID).child("found").getValue();
 
                         if (status.equals("Lost")) {
-                            dataReference.child("found").setValue("Found");
+                            mDatabase.getDatabaseReference().child(animalID).child("found").setValue("Found");
                             Toast toast = Toast.makeText(getApplicationContext(), "Changed status to found", Toast.LENGTH_SHORT);
                             toast.show();
                         } else {
@@ -249,11 +171,10 @@ public class Profile extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure() {
+                    public void onFailure(DatabaseError databaseError) {
 
                     }
                 });
-
             }
         });
 
@@ -261,14 +182,13 @@ public class Profile extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
-                readDataOnce(dataReference, new OnGetDataListener() {
+                mDatabase.readDataOnce(new Database.OnGetDataListener() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
 
-                        String status = (String) dataSnapshot.child("found").getValue();
+                        String status = (String) dataSnapshot.child(animalID).child("found").getValue();
                         if (status.equals("Found")) {
-                            dataReference.child("found").setValue("Lost");
+                            mDatabase.getDatabaseReference().child(animalID).child("found").setValue("Lost");
 
                             Toast toast = Toast.makeText(getApplicationContext(), "Changed status to lost", Toast.LENGTH_SHORT);
                             toast.show();
@@ -286,7 +206,7 @@ public class Profile extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure() {
+                    public void onFailure(DatabaseError databaseError) {
 
                     }
                 });
@@ -295,11 +215,7 @@ public class Profile extends AppCompatActivity {
         });
 
 
-        // Find the particular animal in the database according to the animalID passed in the intent
-        dataReference = dataReference.child(animalID);
-
-
-        readDataContinuously(dataReference, new OnGetDataListener() {
+        mDatabase.readDataContinuousFromQuery(mDatabase.getDatabaseReference().child(animalID), new Database.OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
 
@@ -311,16 +227,11 @@ public class Profile extends AppCompatActivity {
                         isAnimalFound = true;
                         changeToLostButton.setVisibility(View.VISIBLE);
                         changeToFoundButton.setVisibility(View.GONE);
-
-
-
                     }
                     else {
                         isAnimalFound = false;
                         changeToFoundButton.setVisibility(View.VISIBLE);
                         changeToLostButton.setVisibility(View.GONE);
-
-
                     }
 
                     // TODO add all these strings to the strings.xml instead
@@ -425,7 +336,6 @@ public class Profile extends AppCompatActivity {
                         }
                     }
                 }
-
             }
 
             @Override
@@ -434,7 +344,7 @@ public class Profile extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure() {
+            public void onFailure(DatabaseError databaseError) {
 
             }
         });

@@ -1,75 +1,48 @@
 package com.example.tim.lostnfound;
 
 
-
-import android.Manifest;
-import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Environment;
-import android.preference.PreferenceManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.LocationAddress;
-
+import com.example.tim.lostnfound.Utilities.Database;
+import com.example.tim.lostnfound.Utilities.FileUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
-
-import android.os.Handler;
-import android.os.Message;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-
-import static android.content.Intent.EXTRA_TEXT;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
@@ -78,7 +51,7 @@ import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
 public class Post extends AppCompatActivity implements LocationListener {
 
     // Reference to database
-    private DatabaseReference dataReference;
+    private Database mDatabase;
 
     // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
     private FirebaseStorage storage;
@@ -100,7 +73,6 @@ public class Post extends AppCompatActivity implements LocationListener {
     private String typeSelection;
     private String statusSelection;
     private ImageButton submitButton;
-    private ImageButton selectImageButton;
     private EditText nameView;
     private EditText colorView;
     private EditText dateView;
@@ -166,10 +138,6 @@ public class Post extends AppCompatActivity implements LocationListener {
                     getApplicationContext(), new GeocoderHandler());
         }
 
-
-
-
-
         setTitle("Post an Animal");
 
         // Verify local data file exists, and create it if not verified
@@ -179,7 +147,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         yourAnimalList = FileUtils.readFromFile(getApplicationContext());
 
         // Create reference to database
-        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
+        mDatabase = Database.getInstance();
 
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -241,6 +209,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                                     "Ferret",
                                     "Other"
         };
+
         ArrayAdapter<String> typeAdapter = new ArrayAdapter<>(Post.this, android.R.layout.simple_spinner_item, typesList);
         typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         typeDropdown.setAdapter(typeAdapter);
@@ -276,7 +245,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         });
 
 
-
         // Retrieve animalID from the intent used to start this instance of Profile
         Intent intent = getIntent();
 
@@ -290,14 +258,9 @@ public class Post extends AppCompatActivity implements LocationListener {
             isEditInstance = true;
             editAnimalID = intent.getStringExtra("animalID");
 
-            // Find the particular animal in the database according to the animalID passed in the intent
-            dataReference = dataReference.child(editAnimalID);
-
-            // Contact database, retrieve data elements and display them in the appropriate view
-            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
-
+            mDatabase.readDataOnceFromQuery(mDatabase.getDatabaseReference().child(editAnimalID), new Database.OnGetDataListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onSuccess(DataSnapshot dataSnapshot) {
 
                     @SuppressWarnings("unchecked")
                     HashMap<String, String> animal = (HashMap<String, String>) dataSnapshot.getValue();
@@ -311,7 +274,8 @@ public class Post extends AppCompatActivity implements LocationListener {
                     locationView.setText(animal.get("location"));
 
                     typeSelection = animal.get("type");
-                    for (int i = 0; i < typesList.length; i++) {
+                    int typeLength = typesList.length;
+                    for (int i = 0; i < typeLength; i++) {
                         if (typeSelection.equals(typesList[i])) {
                             typeDropdown.setSelection(i);
                             break;
@@ -319,7 +283,8 @@ public class Post extends AppCompatActivity implements LocationListener {
                     }
 
                     statusSelection = animal.get("found");
-                    for (int i = 0; i < statusList.length; i++) {
+                    int statusLength = statusList.length;
+                    for (int i = 0; i < statusLength; i++) {
                         if (typeSelection.equals(statusList[i])) {
                             typeDropdown.setSelection(i);
                             break;
@@ -329,12 +294,61 @@ public class Post extends AppCompatActivity implements LocationListener {
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.d("DEBUG", "Failure");
+                public void onStart() {
+
+                }
+
+                @Override
+                public void onFailure(DatabaseError databaseError) {
+
                 }
             });
-
-            // TODO retrieve already uploaded picture for editing
+//
+//            // Find the particular animal in the database according to the animalID passed in the intent
+//            dataReference = dataReference.child(editAnimalID);
+//
+//            // Contact database, retrieve data elements and display them in the appropriate view
+//            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
+//
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                    @SuppressWarnings("unchecked")
+//                    HashMap<String, String> animal = (HashMap<String, String>) dataSnapshot.getValue();
+//
+//                    nameView.setText(animal.get("name"));
+//                    colorView.setText(animal.get("color"));
+//                    dateView.setText(animal.get("date"));
+//                    emailView.setText(animal.get("email"));
+//                    descView.setText(animal.get("description"));
+//                    phoneView.setText(animal.get("phone"));
+//                    locationView.setText(animal.get("location"));
+//
+//                    typeSelection = animal.get("type");
+//                    for (int i = 0; i < typesList.length; i++) {
+//                        if (typeSelection.equals(typesList[i])) {
+//                            typeDropdown.setSelection(i);
+//                            break;
+//                        }
+//                    }
+//
+//                    statusSelection = animal.get("found");
+//                    for (int i = 0; i < statusList.length; i++) {
+//                        if (typeSelection.equals(statusList[i])) {
+//                            typeDropdown.setSelection(i);
+//                            break;
+//                        }
+//                    }
+//
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//                    Log.d("DEBUG", "Failure");
+//                }
+//            });
+//
+//            // TODO retrieve already uploaded picture for editing
         }
 
 
@@ -346,7 +360,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 String animalID;
                 Intent intent = new Intent(Post.this, Profile.class);
-
 
                 // find out whether to run the onEdit method or the onSubmit method
                 if (isEditInstance) {
@@ -372,8 +385,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 }
 
-
-                // Create
                 // to open profile of submitted/edited animal
                 intent.putExtra("animalID", animalID);
                 finish();
@@ -402,7 +413,8 @@ public class Post extends AppCompatActivity implements LocationListener {
             // TODO figure out how to represent picked image on post activity
 //            mImageView.setImageBitmap(imageBitmap);
 
-        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
+        }
+        else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
 
             imageUri = data.getData();
             Glide.with(getApplicationContext())
@@ -447,7 +459,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
     private String onEdit(final String editAnimalID) {
 
-
         yourAnimalList = FileUtils.readFromFile(getApplicationContext());
 
         // Find the old animal in yourAnimalList and delete it
@@ -481,9 +492,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("found", statusSelection);
         animal.put("key", editAnimalID);
 
-
-
-
         //TODO get photo editing working
         if (isImagePicked) {
 
@@ -509,12 +517,13 @@ public class Post extends AppCompatActivity implements LocationListener {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri imageURL = taskSnapshot.getDownloadUrl();
 
-                        dataReference.child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
+                        mDatabase.getDatabaseReference().child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
 
                     }
                 });
 
-            } else if (imageUri != null && !useBitmap) {
+            }
+            else if (imageUri != null && !useBitmap) {
 
                 StorageReference animalStorageRef = storageReference.child("server")
                         .child("animals")
@@ -533,18 +542,19 @@ public class Post extends AppCompatActivity implements LocationListener {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri imageURL = taskSnapshot.getDownloadUrl();
 
-                        dataReference.child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
+                        mDatabase.getDatabaseReference().child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
 
                     }
                 });
 
-            } else Log.d("Image", "Unable to submit image reference");
+            }
+            else Log.d("Image", "Unable to submit image reference");
 
 
         }
 
         // Update database with edited information
-        dataReference.updateChildren(animal);
+        mDatabase.getDatabaseReference().updateChildren(animal);
 
         // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(editAnimalID);
@@ -579,23 +589,22 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
         // Create new key for animal
-        final DatabaseReference newAnimalRef = dataReference.push();
-        String key = newAnimalRef.getKey();
+        final DatabaseReference newAnimalRef = mDatabase.getDatabaseReference().push();
+        final String KEY = newAnimalRef.getKey();
 
         // Add animal's own key to its database entry
-        animal.put("key", key);
+        animal.put("key", KEY);
 
         // Add animal to database
         newAnimalRef.setValue(animal);
 
         //TODO add picture functionality
         if (isImagePicked) {
-
             if (imageBmp != null && useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
                                                                     .child("animals")
                                                                     .child("images")
-                                                                    .child("thumb/" + key);
+                                                                    .child("thumb/" + KEY);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
@@ -623,13 +632,13 @@ public class Post extends AppCompatActivity implements LocationListener {
                 StorageReference animalStorageRef = storageReference.child("server")
                                                                     .child("animals")
                                                                     .child("images")
-                                                                    .child("thumb/" + key);
+                                                                    .child("thumb/" + KEY);
 
                 UploadTask uploadTask = animalStorageRef.putFile(imageUri);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Handle unsuccessful uploads
+                        // todo Handle unsuccessful uploads
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
@@ -648,10 +657,10 @@ public class Post extends AppCompatActivity implements LocationListener {
         }
 
         // Add animal to local list of animals and save it to the data file
-        yourAnimalList.add(animal.get("key").toString());
+        yourAnimalList.add(KEY);
         FileUtils.writeToFile(yourAnimalList, getApplicationContext());
 
-        return key;
+        return KEY;
     }
 
 

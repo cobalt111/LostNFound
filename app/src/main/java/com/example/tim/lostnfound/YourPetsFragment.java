@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import com.example.tim.lostnfound.Utilities.*;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,7 +42,7 @@ public class YourPetsFragment extends Fragment {
         return fragment;
     }
 
-    private DatabaseReference dataReference;
+    private Database mDatabase;
     private RecyclerView.LayoutManager layoutManager;
     private ListingsAdapter listingsAdapter;
     private List<String> yourAnimalList;
@@ -57,7 +58,7 @@ public class YourPetsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_your_pets, container, false);
 
-        dataReference = DatabaseUtils.getReference(DatabaseUtils.getDatabase());
+        mDatabase = Database.getInstance();
         yourAnimalList = FileUtils.readFromFile(getContext());
 
         recyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview);
@@ -67,7 +68,7 @@ public class YourPetsFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        listingsAdapter = queryDatabaseForData(yourAnimalList);
+        queryDatabaseToFillAdapter(yourAnimalList);
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView, new RecyclerTouchListener.ClickListener() {
 
             @Override
@@ -97,18 +98,17 @@ public class YourPetsFragment extends Fragment {
 
 
     @SuppressWarnings("unchecked")
-    private ListingsAdapter queryDatabaseForData(final List<String> savedAnimalList) {
+    private void queryDatabaseToFillAdapter(final List<String> savedAnimalList) {
 
         if (savedAnimalList != null) {
-            dataReference.addListenerForSingleValueEvent((new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
 
+            mDatabase.readDataOnce(new Database.OnGetDataListener() {
+                @Override
+                public void onSuccess(DataSnapshot dataSnapshot) {
                     List<HashMap<String, String>> animalList = new ArrayList<>();
                     HashMap<String, String> animal;
 
                     for (String savedAnimal : savedAnimalList) {
-
                         animal = (HashMap<String, String>) dataSnapshot.child(savedAnimal).getValue();
                         animalList.add(animal);
                     }
@@ -117,16 +117,44 @@ public class YourPetsFragment extends Fragment {
                     recyclerView.setAdapter(listingsAdapter);
                 }
 
-
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onStart() {
 
                 }
-            }));
+
+                @Override
+                public void onFailure(DatabaseError databaseError) {
+
+                }
+            });
+
+//            dataReference.addListenerForSingleValueEvent((new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//
+//                    List<HashMap<String, String>> animalList = new ArrayList<>();
+//                    HashMap<String, String> animal;
+//
+//                    for (String savedAnimal : savedAnimalList) {
+//
+//                        animal = (HashMap<String, String>) dataSnapshot.child(savedAnimal).getValue();
+//                        animalList.add(animal);
+//                    }
+//
+//                    listingsAdapter = new ListingsAdapter(animalList);
+//                    recyclerView.setAdapter(listingsAdapter);
+//                }
+//
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            }));
         }
 
 
-        return listingsAdapter;
+//        return listingsAdapter;
     }
 
 }

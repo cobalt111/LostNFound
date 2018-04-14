@@ -1,7 +1,6 @@
 package com.example.tim.lostnfound;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,18 +23,9 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.example.tim.lostnfound.Utilities.Database;
+import com.example.tim.lostnfound.Utilities.FileUtils;
 
-import java.io.File;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -146,9 +136,6 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);

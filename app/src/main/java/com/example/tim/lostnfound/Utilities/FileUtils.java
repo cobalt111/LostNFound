@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.Utilities;
 
 import android.content.Context;
 
@@ -6,23 +6,22 @@ import android.content.Context;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-class FileUtils {
+public class FileUtils {
 
     private final static String STORAGE_FILENAME = "lostNfound-animals.txt";
     private final static String FIREBASE_ID_FILENAME = "lostNfound-firebase-id.txt";
 
-    private static File filePath(Context context){
+    public static File filePath(Context context){
         return new File(context.getFilesDir(), FileUtils.STORAGE_FILENAME);
     }
 
     // Verifies that the file exists, and if not, creates it
-    static boolean createFile(Context context){
+    public static boolean createFile(Context context){
         final File file = filePath(context);
         try{
             if (!file.isFile()){
@@ -37,7 +36,7 @@ class FileUtils {
     }
 
     // Deletes outdated data and re-writes file with up-to-date data
-    static boolean writeToFile(List<String> list, Context context) {
+    public static boolean writeToFile(List<String> list, Context context) {
 
         File file = filePath(context);
 
@@ -76,7 +75,7 @@ class FileUtils {
 
 
     @SuppressWarnings("unchecked")
-    static List<String> readFromFile(Context context) {
+    public static List<String> readFromFile(Context context) {
 
         List<String> list = new ArrayList<>();
 
@@ -101,7 +100,7 @@ class FileUtils {
         return list;
     }
 
-    static void saveFirebaseID(Context context, String ID) {
+    public static void saveFirebaseID(Context context, String ID) {
 
         try {
             File file = new File(context.getFilesDir(), FileUtils.FIREBASE_ID_FILENAME);
@@ -122,7 +121,7 @@ class FileUtils {
 
     }
 
-    static String readFirebaseID(Context context) {
+    public static String readFirebaseID(Context context) {
 
         String firebaseID = "";
 
