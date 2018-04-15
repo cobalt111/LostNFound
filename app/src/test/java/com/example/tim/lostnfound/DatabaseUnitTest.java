@@ -3,7 +3,7 @@ package com.example.tim.lostnfound;
 
 import android.content.Context;
 
-import com.example.tim.lostnfound.Utilities.Database;
+import com.example.tim.lostnfound.utilities.Database;
 
 import org.junit.Assert;
 import org.junit.Test;

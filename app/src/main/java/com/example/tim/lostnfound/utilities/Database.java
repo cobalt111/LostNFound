@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.Utilities;
+package com.example.tim.lostnfound.utilities;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

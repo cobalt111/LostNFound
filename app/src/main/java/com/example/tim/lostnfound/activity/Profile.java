@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -11,8 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.Utilities.Database;
-import com.example.tim.lostnfound.Utilities.FileUtils;
+import com.example.tim.lostnfound.R;
+import com.example.tim.lostnfound.utilities.Database;
+import com.example.tim.lostnfound.utilities.FileUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
@@ -25,7 +26,6 @@ public class Profile extends AppCompatActivity {
     private String animalID;
     private boolean isOwnedAnimal;
     private boolean isFromEditInstance;
-    private boolean isAnimalFound;
 
     // Declare UI elements
     private TextView nameView;
@@ -48,12 +48,10 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+        // todo localize string
         setTitle("Animal Profile");
-
         isOwnedAnimal = false;
         isFromEditInstance = false;
-        isAnimalFound = false;
-
         mDatabase = Database.getInstance();
 
         Intent intent = getIntent();
@@ -70,7 +68,6 @@ public class Profile extends AppCompatActivity {
         if (intent.hasExtra("fromEditInstance") && intent.getStringExtra("fromEditInstance").equals("true")) {
             isFromEditInstance = true;
         }
-
 
         // Initialize UI elements
         nameView = (TextView) findViewById(R.id.profileName);
@@ -90,7 +87,6 @@ public class Profile extends AppCompatActivity {
 
         editListingButton.setVisibility(View.GONE);
         removeListingButton.setVisibility(View.GONE);
-
         changeToLostButton.setVisibility(View.GONE);
         changeToFoundButton.setVisibility(View.GONE);
 
@@ -215,17 +211,15 @@ public class Profile extends AppCompatActivity {
 
                 if (animal != null) {
                     if (animal.get("found").toString().equals("Found")){
-                        isAnimalFound = true;
                         changeToLostButton.setVisibility(View.VISIBLE);
                         changeToFoundButton.setVisibility(View.GONE);
                     }
                     else {
-                        isAnimalFound = false;
                         changeToFoundButton.setVisibility(View.VISIBLE);
                         changeToLostButton.setVisibility(View.GONE);
                     }
 
-                    // TODO add all these strings to the strings.xml instead
+                    // TODO localize all these strings
 
                     if (animal.get("name").equals("")){
                         nameView.setText("(none listed)");
@@ -270,15 +264,13 @@ public class Profile extends AppCompatActivity {
                     }
 
                     typeView.setText(animal.get("type").toString());
-
                     statusView.setText(animal.get("found").toString());
 
-
+                    // Load image
                     if (animal.get("thumbURL") != null) {
-                        Glide
-                                .with(getApplicationContext())
-                                .load(animal.get("thumbURL").toString()) // the uri you got from Firebase
-                                .into(imageView); //Your imageView variable
+                        Glide   .with(getApplicationContext())
+                                .load(animal.get("thumbURL").toString())
+                                .into(imageView);
 //                    Picasso.get()
 //                            .load(animal.get("thumbURL").toString())
 //                            .resize(250,200)

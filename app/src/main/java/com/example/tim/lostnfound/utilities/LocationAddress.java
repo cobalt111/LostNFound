@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.utilities;
 
 import android.content.Context;
 import android.location.Address;

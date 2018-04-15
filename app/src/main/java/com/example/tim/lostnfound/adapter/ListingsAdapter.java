@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.tim.lostnfound.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHolder> {
 
-    List<HashMap<String, String>> animalList;
+    public List<HashMap<String, String>> animalList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and

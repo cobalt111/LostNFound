@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.activity;
 
 
 import android.content.Context;
@@ -27,8 +27,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.Utilities.Database;
-import com.example.tim.lostnfound.Utilities.FileUtils;
+import com.example.tim.lostnfound.utilities.LocationAddress;
+import com.example.tim.lostnfound.R;
+import com.example.tim.lostnfound.utilities.Database;
+import com.example.tim.lostnfound.utilities.FileUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -45,7 +47,7 @@ import java.util.List;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.widget.Toast.LENGTH_LONG;
-import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
+import static com.example.tim.lostnfound.utilities.LocationAddress.getAddressFromLocation;
 
 
 public class Post extends AppCompatActivity implements LocationListener {
@@ -303,52 +305,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
                 }
             });
-//
-//            // Find the particular animal in the database according to the animalID passed in the intent
-//            dataReference = dataReference.child(editAnimalID);
-//
-//            // Contact database, retrieve data elements and display them in the appropriate view
-//            dataReference.addListenerForSingleValueEvent(new ValueEventListener() {
-//
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                    @SuppressWarnings("unchecked")
-//                    HashMap<String, String> animal = (HashMap<String, String>) dataSnapshot.getValue();
-//
-//                    nameView.setText(animal.get("name"));
-//                    colorView.setText(animal.get("color"));
-//                    dateView.setText(animal.get("date"));
-//                    emailView.setText(animal.get("email"));
-//                    descView.setText(animal.get("description"));
-//                    phoneView.setText(animal.get("phone"));
-//                    locationView.setText(animal.get("location"));
-//
-//                    typeSelection = animal.get("type");
-//                    for (int i = 0; i < typesList.length; i++) {
-//                        if (typeSelection.equals(typesList[i])) {
-//                            typeDropdown.setSelection(i);
-//                            break;
-//                        }
-//                    }
-//
-//                    statusSelection = animal.get("found");
-//                    for (int i = 0; i < statusList.length; i++) {
-//                        if (typeSelection.equals(statusList[i])) {
-//                            typeDropdown.setSelection(i);
-//                            break;
-//                        }
-//                    }
-//
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//                    Log.d("DEBUG", "Failure");
-//                }
-//            });
-//
-//            // TODO retrieve already uploaded picture for editing
         }
 
 

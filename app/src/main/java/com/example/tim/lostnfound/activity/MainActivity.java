@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -23,8 +23,11 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 
-import com.example.tim.lostnfound.Utilities.Database;
-import com.example.tim.lostnfound.Utilities.FileUtils;
+import com.example.tim.lostnfound.fragment.HomeFragment;
+import com.example.tim.lostnfound.fragment.ListingsFragment;
+import com.example.tim.lostnfound.R;
+import com.example.tim.lostnfound.utilities.FileUtils;
+import com.example.tim.lostnfound.fragment.YourPetsFragment;
 
 import java.util.List;
 
@@ -103,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
         switch (item.getTitle().toString()) {
             case "Map":
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                startActivity(new Intent(MainActivity.this, Map.class));
                 Log.d("menu", "map yes");
                 return true;
         }

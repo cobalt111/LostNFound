@@ -1,11 +1,12 @@
-package com.example.tim.lostnfound;
+package com.example.tim.lostnfound.activity;
 
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.example.tim.lostnfound.Utilities.Database;
+import com.example.tim.lostnfound.R;
+import com.example.tim.lostnfound.utilities.Database;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -20,12 +21,10 @@ import com.google.firebase.database.DatabaseError;
 import java.util.HashMap;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
+public class Map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private GoogleMap mMap;
-    private String addingMarker;
     private Database mDatabase;
-    private List<HashMap<String, String>> animalList;
     private HashMap<String, String> animal;
 
     @Override
@@ -130,79 +129,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     mMap.addMarker(currentOptions);
 
                 }
-
-
-
-//                for (HashMap<String, String> currentAnimal : animalList) {
-//                    currentType = currentAnimal.get("type");
-//                    switch (currentType) {
-//                        case "Dog":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_pin_small));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_pin_small));
-//                            break;
-//                        case "Cat":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_cat));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_cat));
-//                            break;
-//                        case "Bird":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_bird));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_bird));
-//                            break;
-//                        case "Ferret":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_ferret));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_ferret));
-//                            break;
-//                        case "Hamster/Guinea Pig":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_hamster));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_hamster));
-//                            break;
-//                        case "Mouse/Rat":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_mouse));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_mouse));
-//                            break;
-//                        case "Snake/Lizard":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_snake));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_snake));
-//                            break;
-//                        case "Other":
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_other));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_other));
-//                            break;
-//                        default:
-//                            if (currentAnimal.get("found").equals("Found")) {
-//                                currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.found_other));
-//
-//                            } else currentOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.lost_other));
-//                            break;
-//                    }
-//
-//                    LatLng currentLatLng = new LatLng(  Double.parseDouble(currentAnimal.get("latitude")),
-//                                                        Double.parseDouble(currentAnimal.get("longitude")));
-//
-//                    currentOptions.snippet(currentAnimal.get("key"));
-//                    currentOptions.position(currentLatLng);
-//                    if (currentAnimal.get("name").equals("")) {
-//                        currentOptions.title(currentAnimal.get("type"));
-//                    } else currentOptions.title(currentAnimal.get("name"));
-//
-//                    mMap.addMarker(currentOptions);
-//                }
             }
 
             @Override
@@ -222,7 +148,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker marker) {
 
-        Intent profileIntent = new Intent(MapsActivity.this, Profile.class);
+        Intent profileIntent = new Intent(Map.this, Profile.class);
         String animalID = marker.getSnippet();
         profileIntent.putExtra("animalID", animalID);
 

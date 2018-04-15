@@ -2,9 +2,8 @@ package com.example.tim.lostnfound;
 
 
 import android.content.Context;
-import android.util.Log;
 
-import com.example.tim.lostnfound.Utilities.FileUtils;
+import com.example.tim.lostnfound.utilities.FileUtils;
 
 import org.junit.Assert;
 import org.junit.Test;
