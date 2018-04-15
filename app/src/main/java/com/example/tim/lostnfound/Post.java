@@ -258,7 +258,7 @@ public class Post extends AppCompatActivity implements LocationListener {
             isEditInstance = true;
             editAnimalID = intent.getStringExtra("animalID");
 
-            mDatabase.readDataOnceFromQuery(mDatabase.getDatabaseReference().child(editAnimalID), new Database.OnGetDataListener() {
+            mDatabase.readDataOnce(mDatabase.getDatabaseReference().child(editAnimalID), new Database.OnGetDataListener() {
                 @Override
                 public void onSuccess(DataSnapshot dataSnapshot) {
 
@@ -455,8 +455,6 @@ public class Post extends AppCompatActivity implements LocationListener {
         }
     }
 
-
-
     private String onEdit(final String editAnimalID) {
 
         yourAnimalList = FileUtils.readFromFile(getApplicationContext());
@@ -473,7 +471,6 @@ public class Post extends AppCompatActivity implements LocationListener {
                 }
             }
         }
-
 
         // Declare HashMap to enter animal data into, and declare reference to database to update
         HashMap<String, Object> animal = new HashMap<>();
@@ -524,7 +521,6 @@ public class Post extends AppCompatActivity implements LocationListener {
 
             }
             else if (imageUri != null && !useBitmap) {
-
                 StorageReference animalStorageRef = storageReference.child("server")
                         .child("animals")
                         .child("images")
@@ -541,36 +537,27 @@ public class Post extends AppCompatActivity implements LocationListener {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri imageURL = taskSnapshot.getDownloadUrl();
-
                         mDatabase.getDatabaseReference().child(editAnimalID).child("thumbURL").setValue(imageURL.toString());
-
                     }
                 });
 
             }
             else Log.d("Image", "Unable to submit image reference");
-
-
         }
 
         // Update database with edited information
         mDatabase.getDatabaseReference().updateChildren(animal);
-
         // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(editAnimalID);
         FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
         return editAnimalID;
     }
-
-
 
     // Implementing method to submit animal to database and return its unique key
     private String onSubmit() {
 
         // Declare HashMap to enter animal data into, and declare reference to database to add the HashMap to
         HashMap<String, Object> animal = new HashMap<>();
-
         // Collect entered data and add it to the HashMap
         animal.put("name", nameView.getText().toString());
         animal.put("color", colorView.getText().toString());
@@ -583,20 +570,16 @@ public class Post extends AppCompatActivity implements LocationListener {
         animal.put("longitude", Double.toString(location.getLongitude()));
         animal.put("type", typeSelection);
         animal.put("found", statusSelection);
-
         // Add user's device Firebase token
         animal.put("token", FirebaseInstanceId.getInstance().getToken());
 
-
         // Create new key for animal
-        final DatabaseReference newAnimalRef = mDatabase.getDatabaseReference().push();
-        final String KEY = newAnimalRef.getKey();
-
+        final DatabaseReference NEW_ANIMAL_REF = mDatabase.getDatabaseReference().push();
+        final String KEY = NEW_ANIMAL_REF.getKey();
         // Add animal's own key to its database entry
         animal.put("key", KEY);
-
         // Add animal to database
-        newAnimalRef.setValue(animal);
+        NEW_ANIMAL_REF.setValue(animal);
 
         //TODO add picture functionality
         if (isImagePicked) {
@@ -609,7 +592,6 @@ public class Post extends AppCompatActivity implements LocationListener {
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 imageBmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] data = baos.toByteArray();
-
                 UploadTask uploadTask = animalStorageRef.putBytes(data);
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -621,14 +603,13 @@ public class Post extends AppCompatActivity implements LocationListener {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri imageURL = taskSnapshot.getDownloadUrl();
-
-                        newAnimalRef.child("thumbURL").setValue(imageURL.toString());
+                        NEW_ANIMAL_REF.child("thumbURL").setValue(imageURL.toString());
 
                     }
                 });
 
-            } else if (imageUri != null && !useBitmap) {
-
+            }
+            else if (imageUri != null && !useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
                                                                     .child("animals")
                                                                     .child("images")
@@ -645,21 +626,16 @@ public class Post extends AppCompatActivity implements LocationListener {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
                         Uri imageURL = taskSnapshot.getDownloadUrl();
-
-                        newAnimalRef.child("thumbURL").setValue(imageURL.toString());
-
+                        NEW_ANIMAL_REF.child("thumbURL").setValue(imageURL.toString());
                     }
                 });
 
             } else Log.d("Image", "Unable to submit image reference");
-
-
         }
 
         // Add animal to local list of animals and save it to the data file
         yourAnimalList.add(KEY);
         FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
         return KEY;
     }
 

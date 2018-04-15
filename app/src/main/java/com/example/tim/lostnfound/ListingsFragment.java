@@ -107,7 +107,7 @@ public class ListingsFragment extends Fragment {
             query = mDatabase.getDatabaseReference().orderByChild("found").equalTo(intention);
         }
 
-        mDatabase.readDataContinuousFromQuery(query, new Database.OnGetDataListener() {
+        mDatabase.readDataContinuously(query, new Database.OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
                 List<HashMap<String, String>> animalList = new ArrayList<>();

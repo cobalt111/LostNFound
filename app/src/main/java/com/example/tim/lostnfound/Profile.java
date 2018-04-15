@@ -15,22 +15,17 @@ import com.example.tim.lostnfound.Utilities.Database;
 import com.example.tim.lostnfound.Utilities.FileUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.Query;
 
 import java.util.HashMap;
 import java.util.List;
 
 public class Profile extends AppCompatActivity {
 
-
-
     private Database mDatabase;
-
     private String animalID;
     private boolean isOwnedAnimal;
     private boolean isFromEditInstance;
     private boolean isAnimalFound;
-
 
     // Declare UI elements
     private TextView nameView;
@@ -44,13 +39,9 @@ public class Profile extends AppCompatActivity {
     private TextView typeView;
     private ImageButton changeToFoundButton;
     private ImageButton changeToLostButton;
-
     private ImageView imageView;
-
-    // new buttons for capstone
     private ImageButton removeListingButton;
     private ImageButton editListingButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -215,7 +206,7 @@ public class Profile extends AppCompatActivity {
         });
 
 
-        mDatabase.readDataContinuousFromQuery(mDatabase.getDatabaseReference().child(animalID), new Database.OnGetDataListener() {
+        mDatabase.readDataContinuously(mDatabase.getDatabaseReference().child(animalID), new Database.OnGetDataListener() {
             @Override
             public void onSuccess(DataSnapshot dataSnapshot) {
 

@@ -60,7 +60,7 @@ public class Database {
 
     }
 
-    public void readDataContinuousFromQuery(Query query, final OnGetDataListener listener) {
+    public void readDataContinuously(Query query, final OnGetDataListener listener) {
         listener.onStart();
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,7 +92,7 @@ public class Database {
 
     }
 
-    public void readDataOnceFromQuery(Query query, final OnGetDataListener listener) {
+    public void readDataOnce(Query query, final OnGetDataListener listener) {
         listener.onStart();
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

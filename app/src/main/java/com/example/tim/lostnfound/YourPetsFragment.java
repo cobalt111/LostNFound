@@ -29,8 +29,6 @@ import java.util.List;
 
 public class YourPetsFragment extends Fragment {
 
-
-
     private static final String ARG_SECTION_NUMBER = "section_number";
 
     // For fragment switching
@@ -50,7 +48,6 @@ public class YourPetsFragment extends Fragment {
 
     // UI element for listing animals
     private RecyclerView recyclerView;
-
 
 
     @Override
@@ -127,34 +124,6 @@ public class YourPetsFragment extends Fragment {
 
                 }
             });
-
-//            dataReference.addListenerForSingleValueEvent((new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//
-//                    List<HashMap<String, String>> animalList = new ArrayList<>();
-//                    HashMap<String, String> animal;
-//
-//                    for (String savedAnimal : savedAnimalList) {
-//
-//                        animal = (HashMap<String, String>) dataSnapshot.child(savedAnimal).getValue();
-//                        animalList.add(animal);
-//                    }
-//
-//                    listingsAdapter = new ListingsAdapter(animalList);
-//                    recyclerView.setAdapter(listingsAdapter);
-//                }
-//
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            }));
         }
-
-
-//        return listingsAdapter;
     }
-
 }
