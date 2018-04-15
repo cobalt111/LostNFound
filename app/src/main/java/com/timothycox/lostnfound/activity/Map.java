@@ -1,12 +1,12 @@
-package com.example.tim.lostnfound.activity;
+package com.timothycox.lostnfound.activity;
 
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 
-import com.example.tim.lostnfound.R;
-import com.example.tim.lostnfound.utilities.Database;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.utilities.Database;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,7 +19,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
 import java.util.HashMap;
-import java.util.List;
 
 public class Map extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 

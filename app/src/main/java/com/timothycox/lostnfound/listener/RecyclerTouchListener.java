@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.listener;
+package com.timothycox.lostnfound.listener;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;

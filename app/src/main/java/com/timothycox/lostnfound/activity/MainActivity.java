@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.activity;
+package com.timothycox.lostnfound.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -23,11 +23,11 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 
-import com.example.tim.lostnfound.fragment.HomeFragment;
-import com.example.tim.lostnfound.fragment.ListingsFragment;
-import com.example.tim.lostnfound.R;
-import com.example.tim.lostnfound.utilities.FileUtils;
-import com.example.tim.lostnfound.fragment.YourPetsFragment;
+import com.timothycox.lostnfound.fragment.HomeFragment;
+import com.timothycox.lostnfound.fragment.ListingsFragment;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.utilities.FileUtils;
+import com.timothycox.lostnfound.fragment.YourPetsFragment;
 
 import java.util.List;
 

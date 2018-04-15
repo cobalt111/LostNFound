@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.activity;
+package com.timothycox.lostnfound.activity;
 
 
 import android.content.Context;
@@ -27,10 +27,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.utilities.LocationAddress;
-import com.example.tim.lostnfound.R;
-import com.example.tim.lostnfound.utilities.Database;
-import com.example.tim.lostnfound.utilities.FileUtils;
+import com.timothycox.lostnfound.utilities.LocationAddress;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.utilities.Database;
+import com.timothycox.lostnfound.utilities.FileUtils;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,7 +47,6 @@ import java.util.List;
 
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.widget.Toast.LENGTH_LONG;
-import static com.example.tim.lostnfound.utilities.LocationAddress.getAddressFromLocation;
 
 
 public class Post extends AppCompatActivity implements LocationListener {
@@ -106,7 +105,7 @@ public class Post extends AppCompatActivity implements LocationListener {
                     }
                     location = getLastKnownLocation();
                     LocationAddress locationAddress = new LocationAddress();
-                    getAddressFromLocation(location.getLatitude(), location.getLongitude(),
+                    LocationAddress.getAddressFromLocation(location.getLatitude(), location.getLongitude(),
                             getApplicationContext(), new GeocoderHandler());
                 } else {
                     // permission denied, boo! Disable the
@@ -136,7 +135,7 @@ public class Post extends AppCompatActivity implements LocationListener {
             locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
             location = getLastKnownLocation();
             LocationAddress locationAddress = new LocationAddress();
-            getAddressFromLocation(location.getLatitude(), location.getLongitude(),
+            LocationAddress.getAddressFromLocation(location.getLatitude(), location.getLongitude(),
                     getApplicationContext(), new GeocoderHandler());
         }
 

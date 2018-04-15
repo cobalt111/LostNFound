@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.activity;
+package com.timothycox.lostnfound.activity;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -11,9 +11,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.R;
-import com.example.tim.lostnfound.utilities.Database;
-import com.example.tim.lostnfound.utilities.FileUtils;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.utilities.Database;
+import com.timothycox.lostnfound.utilities.FileUtils;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 

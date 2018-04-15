@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
     android:baselineAligned="false"
-    tools:context="com.example.tim.lostnfound.activity.Profile">
+    tools:context="com.timothycox.lostnfound.activity.Profile">
 
     <include
         layout="@layout/content_profile"

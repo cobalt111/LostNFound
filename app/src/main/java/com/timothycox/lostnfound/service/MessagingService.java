@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.service;
+package com.timothycox.lostnfound.service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,8 +9,8 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.tim.lostnfound.activity.Profile;
-import com.example.tim.lostnfound.R;
+import com.timothycox.lostnfound.activity.Profile;
+import com.timothycox.lostnfound.R;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 

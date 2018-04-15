@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.service;
+package com.timothycox.lostnfound.service;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;

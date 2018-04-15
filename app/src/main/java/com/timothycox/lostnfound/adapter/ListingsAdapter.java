@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.adapter;
+package com.timothycox.lostnfound.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.tim.lostnfound.R;
+import com.timothycox.lostnfound.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;

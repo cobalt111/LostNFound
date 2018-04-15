@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound.fragment;
+package com.timothycox.lostnfound.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,14 +10,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.tim.lostnfound.R;
-import com.example.tim.lostnfound.activity.Profile;
-import com.example.tim.lostnfound.adapter.ListingsAdapter;
-import com.example.tim.lostnfound.listener.RecyclerTouchListener;
-import com.example.tim.lostnfound.utilities.*;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.activity.Profile;
+import com.timothycox.lostnfound.adapter.ListingsAdapter;
+import com.timothycox.lostnfound.listener.RecyclerTouchListener;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.timothycox.lostnfound.utilities.Database;
+import com.timothycox.lostnfound.utilities.FileUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

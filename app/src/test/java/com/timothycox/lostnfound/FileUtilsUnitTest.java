@@ -1,9 +1,9 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound;
 
 
 import android.content.Context;
 
-import com.example.tim.lostnfound.utilities.FileUtils;
+import com.timothycox.lostnfound.utilities.FileUtils;
 
 import org.junit.Assert;
 import org.junit.Test;

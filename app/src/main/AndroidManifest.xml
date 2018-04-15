@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.tim.lostnfound">
+    package="com.timothycox.lostnfound">
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -43,7 +43,7 @@
         </provider>
 
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.timothycox.lostnfound.activity.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.Profile"
+            android:name="com.timothycox.lostnfound.activity.Profile"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.example.tim.lostnfound.OPEN_PROFILE"/>
@@ -60,7 +60,7 @@
         </activity>
 
         <activity
-            android:name=".activity.Post"
+            android:name="com.timothycox.lostnfound.activity.Post"
             android:exported="true" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -75,12 +75,12 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".activity.Map"
+            android:name="com.timothycox.lostnfound.activity.Map"
             android:label="@string/title_activity_map" />
 
 
         <service
-            android:name=".service.NotificationService"
+            android:name="com.timothycox.lostnfound.service.NotificationService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
@@ -89,7 +89,7 @@
         </service>
 
         <service
-            android:name=".service.MessagingService"
+            android:name="com.timothycox.lostnfound.service.MessagingService"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
