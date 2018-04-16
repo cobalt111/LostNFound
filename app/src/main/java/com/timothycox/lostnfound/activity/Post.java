@@ -87,9 +87,10 @@ public class Post extends AppCompatActivity implements LocationListener {
     private static final int GALLERY_REQUEST = 2;
 
 
-    protected LocationManager locationManager;
-    protected Location location;
+    private LocationManager locationManager;
+    private Location location;
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 1: {
@@ -127,10 +128,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-
-
         } else {
-
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             locationManager.requestLocationUpdates(GPS_PROVIDER, 0, 0, this);
             location = getLastKnownLocation();
@@ -357,16 +355,14 @@ public class Post extends AppCompatActivity implements LocationListener {
 
             imageBmp = (Bitmap) extras.get("data");
             Uri tempURI = getImageUri(getApplicationContext(), imageBmp);
-            Glide.with(getApplicationContext())
+            Glide   .with(getApplicationContext())
                     .load(tempURI)
                     .into(picButton);
 //            Picasso.get()
 //                    .load(tempURI)
 //                    .into(picButton);
 
-
             // TODO figure out how to represent picked image on post activity
-//            mImageView.setImageBitmap(imageBitmap);
 
         }
         else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK){
@@ -389,24 +385,7 @@ public class Post extends AppCompatActivity implements LocationListener {
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-
-//            // Create the File where the photo should go
-//            File photoFile = null;
-//            try {
-//                photoFile = createImageFile();
-//            } catch (IOException ex) {
-//                ex.printStackTrace();
-//            }
-//            // Continue only if the File was successfully created
-//            if (photoFile != null) {
-//                Uri photoURI = FileProvider.getUriForFile(this,
-//                        "com.example.android.fileprovider",
-//                        photoFile);
-//                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-//
-
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//            }
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
 
@@ -633,26 +612,26 @@ public class Post extends AppCompatActivity implements LocationListener {
     }
 
     private Location getLastKnownLocation() {
-        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        locationManager = (LocationManager) getApplicationContext().getSystemService(LOCATION_SERVICE);
         List<String> providers = locationManager.getProviders(true);
         Location bestLocation = null;
         for (String provider : providers) {
-            Location l = null;
+            Location tempLocation = null;
             if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                     ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-            } else {
-                l = locationManager.getLastKnownLocation(provider);
+                tempLocation = locationManager.getLastKnownLocation(provider);
+            }
+            else {
+                tempLocation = locationManager.getLastKnownLocation(provider);
             }
 
-
-
-            if (l == null) {
+            if (tempLocation == null) {
                 continue;
             }
-            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+            if (bestLocation == null || tempLocation.getAccuracy() < bestLocation.getAccuracy()) {
                 // Found best last known location: %s", l);
-                bestLocation = l;
+                bestLocation = tempLocation;
             }
         }
         return bestLocation;

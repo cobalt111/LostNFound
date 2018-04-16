@@ -114,13 +114,10 @@ public class Profile extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     finish();
-
                     mDatabase.getDatabaseReference().child(animalID).removeValue();
-
                     List<String> yourAnimalList = FileUtils.readFromFile(getApplicationContext());
                     yourAnimalList.remove(animalID);
                     FileUtils.writeToFile(yourAnimalList, getApplicationContext());
-
                     Toast toast = Toast.makeText(getApplicationContext(), "Listing deleted", Toast.LENGTH_LONG);
                     toast.show();
                 }
@@ -172,35 +169,27 @@ public class Profile extends AppCompatActivity {
                 mDatabase.readDataOnce(new Database.OnGetDataListener() {
                     @Override
                     public void onSuccess(DataSnapshot dataSnapshot) {
-
                         String status = (String) dataSnapshot.child(animalID).child("found").getValue();
                         if (status.equals("Found")) {
                             mDatabase.getDatabaseReference().child(animalID).child("found").setValue("Lost");
-
                             Toast toast = Toast.makeText(getApplicationContext(), "Changed status to lost", Toast.LENGTH_SHORT);
                             toast.show();
                         } else {
                             Toast toast = Toast.makeText(getApplicationContext(), "Animal already listed as found", Toast.LENGTH_SHORT);
                             toast.show();
-
                         }
-
                     }
 
                     @Override
                     public void onStart() {
-
                     }
 
                     @Override
                     public void onFailure(DatabaseError databaseError) {
-
                     }
                 });
-
             }
         });
-
 
         mDatabase.readDataContinuously(mDatabase.getDatabaseReference().child(animalID), new Database.OnGetDataListener() {
             @Override

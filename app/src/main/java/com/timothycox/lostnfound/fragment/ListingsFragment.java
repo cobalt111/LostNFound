@@ -138,7 +138,6 @@ public class ListingsFragment extends Fragment {
         });
     }
 
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.listings_options_menu, menu);
