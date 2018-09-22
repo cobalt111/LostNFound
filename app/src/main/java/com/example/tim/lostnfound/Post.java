@@ -2,74 +2,50 @@ package com.example.tim.lostnfound;
 
 
 
-import android.Manifest;
-import android.app.IntentService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.media.ExifInterface;
-import android.media.Image;
 import android.net.Uri;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.tim.lostnfound.LocationAddress;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 
 import android.os.Handler;
 import android.os.Message;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
-import static android.content.Intent.EXTRA_TEXT;
 import static android.location.LocationManager.GPS_PROVIDER;
 import static android.widget.Toast.LENGTH_LONG;
 import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
@@ -77,23 +53,20 @@ import static com.example.tim.lostnfound.LocationAddress.getAddressFromLocation;
 
 public class Post extends AppCompatActivity implements LocationListener {
 
-    // Reference to database
     private DatabaseReference dataReference;
 
     // The FirebaseStorage object is used to upload the pictures. StorageReference is the reference to the particular file uploaded
     private FirebaseStorage storage;
     private StorageReference storageReference;
 
-    // Declaring local variables
     private List<String> yourAnimalList;
     private String editAnimalID;
     private boolean isEditInstance;
-    private boolean isImagePicked;
+    private boolean imagePicked;
     private boolean useBitmap;
     private Bitmap imageBmp;
     private Uri imageUri;
 
-    // Declaring UI elements
     private Spinner typeDropdown;
     private Spinner statusDropdown;
     private ImageButton picButton;
@@ -193,7 +166,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         phoneView = (EditText) findViewById(R.id.postPhone);
         locationView = (EditText) findViewById(R.id.postLocation);
 
-        isImagePicked = false;
+        imagePicked = false;
         useBitmap = false;
 
 
@@ -211,11 +184,11 @@ public class Post extends AppCompatActivity implements LocationListener {
                     public void onClick(DialogInterface dialog, int item) {
 
                         if (items[item].equals("Take Photo")) {
-                            isImagePicked = true;
+                            imagePicked = true;
                             useBitmap = true;
                             dispatchTakePictureIntent();
                         } else if (items[item].equals("Choose from Library")) {
-                            isImagePicked = true;
+                            imagePicked = true;
                             useBitmap = false;
                             Intent galleryIntent = new Intent(Intent.ACTION_PICK,
                                     MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -485,7 +458,7 @@ public class Post extends AppCompatActivity implements LocationListener {
 
 
         //TODO get photo editing working
-        if (isImagePicked) {
+        if (imagePicked) {
 
             if (imageBmp != null && useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
@@ -589,7 +562,7 @@ public class Post extends AppCompatActivity implements LocationListener {
         newAnimalRef.setValue(animal);
 
         //TODO add picture functionality
-        if (isImagePicked) {
+        if (imagePicked) {
 
             if (imageBmp != null && useBitmap) {
                 StorageReference animalStorageRef = storageReference.child("server")
