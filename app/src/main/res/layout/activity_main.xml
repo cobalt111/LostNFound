@@ -6,6 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.tim.lostnfound.MainActivity">
+    tools:context="com.timothycox.lostnfound.activity.MainActivity">
 
 </LinearLayout>

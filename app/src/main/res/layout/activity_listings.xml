@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/blue"
 
-    tools:context="com.example.tim.lostnfound.MainActivity">
+    tools:context="com.timothycox.lostnfound.activity.MainActivity">
 
     <include
         layout="@layout/content_listings" />

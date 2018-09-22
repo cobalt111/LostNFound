@@ -1,7 +1,6 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound.activity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,18 +23,12 @@ import android.view.MenuItem;
 
 import android.widget.Toast;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
+import com.timothycox.lostnfound.fragment.HomeFragment;
+import com.timothycox.lostnfound.fragment.ListingsFragment;
+import com.timothycox.lostnfound.R;
+import com.timothycox.lostnfound.utilities.FileUtils;
+import com.timothycox.lostnfound.fragment.YourPetsFragment;
 
-import java.io.File;
-
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -113,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
         switch (item.getTitle().toString()) {
             case "Map":
-                startActivity(new Intent(MainActivity.this, MapsActivity.class));
+                startActivity(new Intent(MainActivity.this, Map.class));
                 Log.d("menu", "map yes");
                 return true;
         }
@@ -146,9 +139,6 @@ public class MainActivity extends AppCompatActivity implements ListingsFragment.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
-
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);

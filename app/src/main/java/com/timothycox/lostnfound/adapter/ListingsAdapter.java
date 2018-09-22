@@ -1,8 +1,6 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,22 +8,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
+import com.timothycox.lostnfound.R;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHolder> {
 
-
-
-    List<HashMap<String, String>> animalList;
+    public List<HashMap<String, String>> animalList;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -75,13 +66,16 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                 String colType = color.substring(0,1).toUpperCase() + color.substring(1) + " " + type;
                 holder.nameView.setText(name);
                 holder.typeView.setText(colType);
-            } else if ((name != null && !name.equals(""))){
+            }
+            else if ((name != null && !name.equals(""))){
                 holder.nameView.setText(name);
                 holder.typeView.setText(type);
-            } else if (color != null && !color.equals("")) {
+            }
+            else if (color != null && !color.equals("")) {
                 String colType = color.substring(0,1).toUpperCase() + color.substring(1) + " " + type;
                 holder.nameView.setText(colType);
-            } else holder.nameView.setText(type);
+            }
+            else holder.nameView.setText(type);
 
             if (animal.get("thumbURL") != null) {
                 // todo do proper rotations
@@ -90,7 +84,8 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                         .resize(60,60)
                         .centerCrop()
                         .into(holder.imageView);
-            } else {
+            }
+            else {
 
                 Context context = holder.imageView.getContext();
                 holder.imageView.setMaxHeight(60);
@@ -126,10 +121,7 @@ public class ListingsAdapter extends RecyclerView.Adapter<ListingsAdapter.ViewHo
                         break;
                 }
             }
-
-
         }
-
     }
 
     // Return the size of your dataset (invoked by the layout manager)

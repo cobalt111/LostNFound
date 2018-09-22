@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

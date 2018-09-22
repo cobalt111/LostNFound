@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +7,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+
+import com.timothycox.lostnfound.activity.Post;
+import com.timothycox.lostnfound.R;
 
 public class HomeFragment extends Fragment {
 

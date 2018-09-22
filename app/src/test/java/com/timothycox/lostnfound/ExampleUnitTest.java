@@ -1,4 +1,4 @@
-package com.example.tim.lostnfound;
+package com.timothycox.lostnfound;
 
 import org.junit.Test;
 
